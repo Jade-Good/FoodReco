@@ -1,10 +1,10 @@
-package com.example.recmenu;
+package com.ssafy.special;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RecmenuApplicationTests {
+class SpecialApplicationTests {
 
 	@Test
 	void contextLoads() {
