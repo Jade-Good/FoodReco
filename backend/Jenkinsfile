@@ -28,6 +28,7 @@ stages {
             dir('backend'){
 
                 sh '''
+
                 echo 'Deploy'
                 docker stop springboot
                 docker rm springboot
