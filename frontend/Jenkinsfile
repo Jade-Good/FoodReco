@@ -1,0 +1,30 @@
+pipeline {
+    agent none
+    options { skipDefaultCheckout(true) }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+        stage('Docker build') {
+            agent any
+            steps {
+                sh 'docker build -t docker-react .'
+            }
+        }
+        stage('Docker run') {
+            agent any
+            steps {
+                sh '''
+                echo 'Deploy'
+                docker stop react
+                docker rm react
+                docker run -d -p 3000:3000 --name react docker-react
+                '''
+
+            }
+        }
+    }
+}
