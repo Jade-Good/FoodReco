@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+     tools {nodejs "node"}
+
+stages {
+    stage('prepare') {
+        steps {
+            dir('frontend/waterbell'){
+                sh 'npm install'
+               
+            }
+        }
+    }
+    stage('build') {
+        steps {
+            dir('frontend/waterbell'){
+                sh 'npm run build'
+
+                sh '''
+                echo 'Dockerimage build'
+                docker build -t docker-vue:0.0.1 .
+                '''
+            }
+        }
+    }
+    stage('Deploy') {
+        steps {
+            dir('frontend/waterbell'){
+                sh '''
+                echo 'Deploy'
+                docker run -d -p 3000:3000 --name WaterBellFront docker-vue:0.0.1
+                
+                docker stop WaterBellFront
+                docker rm WaterBellFront
+                docker run -d -p 3000:3000 --name WaterBellFront docker-vue:0.0.1
+                '''
+            }
+        }
+    }
+}
+}
