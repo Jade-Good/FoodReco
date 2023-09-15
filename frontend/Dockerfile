@@ -1,11 +1,8 @@
 FROM node:18.17.1
 
-WORKDIR /app
+RUN npm install -g serve
 
-ENV PATH /app/node_modules/.bin:$PATH
+RUN mkdir ./build
+ADD ./build ./build
 
-COPY package.json /app/package.json
-RUN npm install 
-RUN npm install react-scripts@3.0.1 -g
-
-CMD ["npm", "start"]
+ENTRYPOINT ["serve", "-s", "build"]
