@@ -1,4 +1,4 @@
-FROM node:18.16.1
+FROM node:18.17.1
 ENV TZ=Asia/Seoul
 WORKDIR /app
 COPY package*.json ./
