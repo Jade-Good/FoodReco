@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
     options { skipDefaultCheckout(true) }
     stages {
         stage('Build') {
@@ -20,7 +20,7 @@ pipeline {
                 sh '''
                 echo 'Deploy'
                 docker run -d -p 3000:3000 --name react docker-react
-                
+
                 docker stop react
                 docker rm react
                 docker run -d -p 3000:3000 --name react docker-react
