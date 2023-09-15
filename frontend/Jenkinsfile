@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        nodejs "Node18" // 여기서 "Node18"은 위에서 설정한 Node.js의 이름입니다.
+    }
     options { skipDefaultCheckout(true) }
     stages {
         stage('Build') {
