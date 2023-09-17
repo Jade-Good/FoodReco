@@ -22,12 +22,16 @@ repositories {
 }
 
 dependencies {
-//	// JPA
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//
-//	// thymeleaf
-//	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-//
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation group: 'org.hibernate', name: 'hibernate-validator', version: '7.0.5.Final'
+
+	// thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// mysql
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
 	// 기본 설정
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
