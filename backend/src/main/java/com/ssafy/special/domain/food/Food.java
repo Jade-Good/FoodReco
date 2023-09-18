@@ -26,28 +26,38 @@ public class Food {
 
     // food_name
     @NotNull
-    @Column(name = "food_name", length = 30)
+    @Column(name = "name", length = 30)
     private String foodName;
 
     // food_cooking_method
     @NotNull
-    @Column(name = "food_cooking_method", length = 16)
+    @Column(name = "cooking_method", length = 16)
     private String foodCookingMethod;
 
     // food_type
     @NotNull
-    @Column(name = "food_type", length = 12)
+    @Column(name = "type", length = 12)
     private String foodType;
 
     // food_category
     @NotNull
-    @Column(name = "food_category", length = 12)
+    @Column(name = "category", length = 12)
     private String foodCategory;
 
     // food_association
     @NotNull
-    @Column(name = "food_association",columnDefinition = "tinyint")
+    @Column(name = "association",columnDefinition = "tinyint")
     private int food_type;
+
+    // avg_price
+    @NotNull
+    @Column(name = "avg_price")
+    private int avgPrice;
+
+    // img
+    @NotNull
+    @Column(name = "img", length = 50)
+    private String img;
 
     @OneToMany(mappedBy = "food",fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Ingredient> ingredientList;

@@ -26,14 +26,9 @@ public class Ingredient {
     @JoinColumn(name="allergy_seq")
     private Allergy allergy;
 
-    // food_seq
-    @ManyToOne
-    @JoinColumn(name="food_seq")
-    private Food food;
-
     // ingredient_name
     @NotNull
-    @Column(name = "ingredient_name", length = 18)
+    @Column(name = "ingredient_name", length = 16)
     private String ingredientName;
 
     //is_allergy

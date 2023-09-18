@@ -36,10 +36,6 @@ public class MemberAllergy {
     @JoinColumn(name="allergy_seq")
     private Allergy allergy;
 
-    //activity
-    @Column(name = "activity", length = 3,nullable = true)
-    private String activity;
-
     //is_deleted
     @NotNull
     @Column(name = "is_deleted",columnDefinition = "tinyint default 0") // 컬럼 정의를 설정
@@ -51,9 +47,8 @@ public class MemberAllergy {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    //last_modified_at
-    @NotNull
+    // deleted_at
     @UpdateTimestamp
-    @Column(name = "last_modified_at")
-    private LocalDateTime lastModifiedAt;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

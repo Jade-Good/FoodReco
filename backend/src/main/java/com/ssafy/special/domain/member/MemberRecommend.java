@@ -33,20 +33,10 @@ public class MemberRecommend {
     @JoinColumn(name="food_seq")
     private Food food;
 
-    // situation_type
-    @NotNull
-    @Column(name = "situation_type", length = 6)
-    private String situationType;
-
     //weather
     @NotNull
     @Column(name = "weather", length = 6)
     private String weather;
-
-    //is_situation
-    @NotNull
-    @Column(name = "is_situation",columnDefinition = "tinyint")
-    private int isSituation;
 
     //food_rating
     @NotNull
@@ -59,4 +49,7 @@ public class MemberRecommend {
     @Column(name = "recommend_at")
     private LocalDateTime recommendAt;
 
+    //activity_calorie
+    @Column(name = "activity_calorie",columnDefinition = "smallint")
+    private int activityCalorie;
 }
