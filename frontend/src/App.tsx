@@ -17,6 +17,7 @@ import { MemberRecommendation } from './pages/memberRecommendation/MemberRecomme
 import { CrewRecommendation } from './pages/crewRecomendation/CrewRecommendation';
 import NotFound from './pages/notfound/NotFound';
 import MediaQueryProvider from 'react-responsive';
+import { Test } from './pages/Test';
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => {
               path="/crewrecommendation/:crewId"
               element={<CrewRecommendation />}
             />
+            <Route path="/test" element={<Test />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

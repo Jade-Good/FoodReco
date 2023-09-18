@@ -17,10 +17,12 @@ export const MemberFooterRecommendation = () => {
         onClick={() => navigate(`/friend/${memberId}`)}
         style={iconStyle}
       />
-      <AiOutlineStar
+      <div
+        style={circleStyle}
         onClick={() => navigate(`/recommendation/${memberId}`)}
-        style={{ color: '#FE9D3A', fontSize: '2em' }}
-      />
+      >
+        <AiOutlineStar style={starIconStyle} />
+      </div>
       <BiWindows
         onClick={() => navigate(`/crew/${memberId}`)}
         style={iconStyle}
@@ -45,4 +47,22 @@ const iconStyle = {
   cursor: 'pointer', // 아이콘에 커서 스타일 지정
   fontSize: '2em', // 아이콘 크기 조정
   color: '#C6C5C5',
+};
+// 원 모양의 아이콘을 감싸는 div 스타일
+const circleStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '3em',
+  height: '3em',
+  borderRadius: '50%', // 원 모양을 만듦
+  backgroundColor: '#FE9D3A', // 배경색 지정
+  boxShadow: '0px -2px 4px rgba(0, 0, 0, 0.2)', // 위쪽에 그림자 효과를 줌
+};
+
+// 별 모양의 아이콘 스타일
+const starIconStyle = {
+  fontSize: '2.5em', // 아이콘 크기 조정
+  color: 'white',
+  cursor: 'pointer',
 };
