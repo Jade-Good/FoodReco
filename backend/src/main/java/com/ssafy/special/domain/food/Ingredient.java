@@ -22,7 +22,7 @@ public class Ingredient {
     private Long ingredientSeq;
 
     // allergy_seq
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="allergy_seq")
     private Allergy allergy;
 

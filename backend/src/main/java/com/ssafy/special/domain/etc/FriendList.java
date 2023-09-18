@@ -20,14 +20,14 @@ import java.time.LocalDateTime;
 public class FriendList {
     // 사용자 seq
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "member_seq")
     @JsonBackReference
     private Member member;
 
     // 친구 seq
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "friend_seq")
     @JsonBackReference
     private Member friend;

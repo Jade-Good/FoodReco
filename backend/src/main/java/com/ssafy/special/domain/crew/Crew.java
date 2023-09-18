@@ -42,7 +42,7 @@ public class Crew {
     private LocalDateTime lastModifiedAt;
 
     // 자신이 속한 crew member list
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member")
     private List<CrewMember> crewMembers = new ArrayList<>();
 
 }

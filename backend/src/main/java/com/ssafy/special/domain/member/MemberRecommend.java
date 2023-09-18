@@ -24,12 +24,12 @@ public class MemberRecommend {
     private Long memberRecommendSeq;
 
     // member_seq
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_seq")
     private Member member;
 
     // food_seq
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="food_seq")
     private Food food;
 

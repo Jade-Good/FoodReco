@@ -24,7 +24,7 @@ public class Alarm {
     private Long alarmSeq;
 
     // member_seq
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_seq")
     private Member member;
 

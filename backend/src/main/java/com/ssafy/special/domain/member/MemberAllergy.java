@@ -27,12 +27,12 @@ public class MemberAllergy {
     private Long memberAllergySeq;
 
     // member_seq
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_seq")
     private Member member;
 
     // food_seq
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="allergy_seq")
     private Allergy allergy;
 

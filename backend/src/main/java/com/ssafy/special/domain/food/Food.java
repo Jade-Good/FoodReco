@@ -59,6 +59,6 @@ public class Food {
     @Column(name = "img", length = 50)
     private String img;
 
-    @OneToMany(mappedBy = "food",fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "food", cascade = CascadeType.ALL)
     private List<Ingredient> ingredientList;
 }
