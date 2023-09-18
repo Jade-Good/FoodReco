@@ -13,9 +13,10 @@ import { CrewList } from './pages/crew/CrewList';
 import { CrewDetail } from './pages/crew/CrewDetail';
 import { CrewMake } from './pages/crew/CrewMake';
 import { CrewInvite } from './pages/crew/CrewInvite';
-import { MemberRecommedation } from './pages/memberRecommendation/MemberRecommedation';
-import { CrewRecommedation } from './pages/crewRecomendation/CrewRecommedation';
+import { MemberRecommendation } from './pages/memberRecommendation/MemberRecommendation';
+import { CrewRecommendation } from './pages/crewRecomendation/CrewRecommendation';
 import NotFound from './pages/notfound/NotFound';
+import MediaQueryProvider from 'react-responsive';
 
 const queryClient = new QueryClient();
 
@@ -37,15 +38,15 @@ const App = () => {
             <Route path="/mypage/edit/:memberId" element={<MyPageEdit />} />
             {/* 개인 메뉴 추천페이지 */}
             <Route
-              path="/recommedation/:memberId"
-              element={<MemberRecommedation />}
+              path="/recommendation/:memberId"
+              element={<MemberRecommendation />}
             />
             {/* 자기 친구목록 페이지 */}
             <Route path="/friend/:memberId" element={<FriendList />} />
             {/* 친구 초대QR 초대하는사람의 ID, 초대받는사람의 ID 두개가 필요할까 고민*/}
             <Route path="/friend/invite/:memberId" element={<FriendInvite />} />
             {/* 그룹목록 페이지 */}
-            <Route path="/crew" element={<CrewList />} />
+            <Route path="/crew/:memberId" element={<CrewList />} />
             {/* 특정 그룹 상세보기 */}
             <Route path="/crew/:crewId" element={<CrewDetail />} />
             {/* 그룹생성 - 그룹생성자의 친구목록 보여주기 */}
@@ -54,8 +55,8 @@ const App = () => {
             <Route path="/crew/invite/:crewId" element={<CrewInvite />} />
             {/* 그룹메뉴추천페이지 */}
             <Route
-              path="/crewrecommedation/:crewId"
-              element={<CrewRecommedation />}
+              path="/crewrecommendation/:crewId"
+              element={<CrewRecommendation />}
             />
             <Route path="*" element={<NotFound />} />
           </Routes>
