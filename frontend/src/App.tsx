@@ -1,7 +1,7 @@
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import './App.css';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
 import { Main } from './pages/main/Main';
 import { Login } from './pages/login/Login';
 import { SignUp } from './pages/singup/SignUp';
@@ -15,6 +15,7 @@ import { CrewMake } from './pages/crew/CrewMake';
 import { CrewInvite } from './pages/crew/CrewInvite';
 import { MemberRecommedation } from './pages/memberRecommendation/MemberRecommedation';
 import { CrewRecommedation } from './pages/crewRecomendation/CrewRecommedation';
+import NotFound from './pages/notfound/NotFound';
 
 const queryClient = new QueryClient();
 
@@ -23,38 +24,41 @@ const App = () => {
     <>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          {/* 메인페이지 */}
-          <Route path="/" element={<Main />} />
-          {/* 로그인페이지 */}
-          <Route path="/login" element={<Login />} />
-          {/* 회원가입페이지 */}
-          <Route path="/signup" element={<SignUp />} />
-          {/* 마이페이지 */}
-          <Route path="/mypage/:memberId" element={<MyPage />} />
-          {/* 마이페이지 수정페이지 */}
-          <Route path="/mypage/edit/:memberId" element={<MyPageEdit />} />
-          {/* 개인 메뉴 추천페이지 */}
-          <Route
-            path="/recommedation/:memberId"
-            element={<MemberRecommedation />}
-          />
-          {/* 자기 친구목록 페이지 */}
-          <Route path="/friend/:memberId" element={<FriendList />} />
-          {/* 친구 초대QR 초대하는사람의 ID, 초대받는사람의 ID 두개가 필요할까 고민*/}
-          <Route path="/friend/invite/:memberId" element={<FriendInvite />} />
-          {/* 그룹목록 페이지 */}
-          <Route path="/crew" element={<CrewList />} />
-          {/* 특정 그룹 상세보기 */}
-          <Route path="/crew/:crewId" element={<CrewDetail />} />
-          {/* 그룹생성 - 그룹생성자의 친구목록 보여주기 */}
-          <Route path="/crew/make/:memberId" element={<CrewMake />} />
-          {/* 그룹초대 QR */}
-          <Route path="/crew/invite/:crewId" element={<CrewInvite />} />
-          {/* 그룹메뉴추천페이지 */}
-          <Route
-            path="/crewrecommedation/:crewId"
-            element={<CrewRecommedation />}
-          />
+          <Routes>
+            {/* 메인페이지 */}
+            <Route path="/" element={<Main />} />
+            {/* 로그인페이지 */}
+            <Route path="/login" element={<Login />} />
+            {/* 회원가입페이지 */}
+            <Route path="/signup" element={<SignUp />} />
+            {/* 마이페이지 */}
+            <Route path="/mypage/:memberId" element={<MyPage />} />
+            {/* 마이페이지 수정페이지 */}
+            <Route path="/mypage/edit/:memberId" element={<MyPageEdit />} />
+            {/* 개인 메뉴 추천페이지 */}
+            <Route
+              path="/recommedation/:memberId"
+              element={<MemberRecommedation />}
+            />
+            {/* 자기 친구목록 페이지 */}
+            <Route path="/friend/:memberId" element={<FriendList />} />
+            {/* 친구 초대QR 초대하는사람의 ID, 초대받는사람의 ID 두개가 필요할까 고민*/}
+            <Route path="/friend/invite/:memberId" element={<FriendInvite />} />
+            {/* 그룹목록 페이지 */}
+            <Route path="/crew" element={<CrewList />} />
+            {/* 특정 그룹 상세보기 */}
+            <Route path="/crew/:crewId" element={<CrewDetail />} />
+            {/* 그룹생성 - 그룹생성자의 친구목록 보여주기 */}
+            <Route path="/crew/make/:memberId" element={<CrewMake />} />
+            {/* 그룹초대 QR */}
+            <Route path="/crew/invite/:crewId" element={<CrewInvite />} />
+            {/* 그룹메뉴추천페이지 */}
+            <Route
+              path="/crewrecommedation/:crewId"
+              element={<CrewRecommedation />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </QueryClientProvider>
     </>
