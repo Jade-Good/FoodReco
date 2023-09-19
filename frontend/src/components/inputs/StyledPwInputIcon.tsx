@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { AiOutlineUser } from 'react-icons/ai';
+import { AiOutlineLock } from 'react-icons/ai';
 
 const InputContainer = styled.div`
   display: flex;
@@ -20,27 +20,27 @@ const StyledInput = styled.input`
   outline: none; /* 입력란 포커스 시 외곽선 제거 */
 `;
 
-const Icon = styled(AiOutlineUser)`
+const Icon = styled(AiOutlineLock)`
   font-size: 1.5rem;
   flex-shrink: 0;
   color: #c6c5c5;
 `;
 
 interface StyledBasicInputWithIconProps {
-  placeholder?: string;
+  placeholder: string;
   style?: React.CSSProperties;
 }
 
-const StyledIdInput: React.FC<StyledBasicInputWithIconProps> = ({
+const StyledPwInputIcon: React.FC<StyledBasicInputWithIconProps> = ({
   placeholder,
   style,
 }) => {
   return (
-    <InputContainer>
+    <InputContainer style={style}>
       <Icon />
-      <StyledInput placeholder={placeholder} style={style} />
+      <StyledInput placeholder={placeholder} />
     </InputContainer>
   );
 };
 
-export default StyledIdInput;
+export default StyledPwInputIcon;
