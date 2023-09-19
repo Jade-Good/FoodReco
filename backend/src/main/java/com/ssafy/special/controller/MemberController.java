@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 public class MemberController {
 
-    
-
+    @GetMapping("/test")
+    private String test() {
+        return "test";
+    }
 
 }
