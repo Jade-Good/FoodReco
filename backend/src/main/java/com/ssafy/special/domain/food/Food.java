@@ -59,6 +59,6 @@ public class Food {
     @Column(name = "img", length = 50)
     private String img;
 
-    @OneToMany(mappedBy = "food", cascade = CascadeType.ALL)
-    private List<Ingredient> ingredientList;
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
+    private List<FoodIngredient> foodIngredientList;
 }
