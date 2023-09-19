@@ -20,21 +20,21 @@ import java.time.LocalDateTime;
 public class FriendList {
     // 사용자 seq
     @Id
-    @ManyToOne
-    @JoinColumn(name= "member_seq",insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "member_seq")
     @JsonBackReference
     private Member member;
 
     // 친구 seq
     @Id
-    @ManyToOne
-    @JoinColumn(name= "member_seq")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "friend_seq")
     @JsonBackReference
     private Member friend;
 
     //friend_status
     @NotNull
-    @Column(columnDefinition = "tinyint") // 컬럼 정의를 설정
+    @Column(columnDefinition = "tinyint default 0") // 컬럼 정의를 설정
     private int friendStatus;
 
     //created_at

@@ -1,9 +1,8 @@
 package com.ssafy.special.domain.member;
 
 
-import com.ssafy.special.domain.crew.Crew;
+import com.ssafy.special.domain.crew.CrewMember;
 import com.ssafy.special.domain.etc.FriendList;
-import com.ssafy.special.domain.food.Ingredient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,29 +45,25 @@ public class Member {
     private String nickname;
 
     //tendency
-    @Column(name = "tendency", length = 18,nullable = true)
+    @Column(name = "tendency", length = 18)
     private String tendency;
 
     //height
-    @Column(name = "height",nullable = true, columnDefinition = "smallint")
+    @Column(name = "height", columnDefinition = "smallint")
     private int height;
 
     //weight
-    @Column(name = "weight",nullable = true, columnDefinition = "smallint")
+    @Column(name = "weight", columnDefinition = "smallint")
     private int weight;
 
     //sex
-    @Column(name = "sex", length = 3,nullable = true)
+    @Column(name = "sex", length = 3)
     private String sex;
-
-    //activity
-    @Column(name = "activity", length = 3,nullable = true)
-    private String activity;
 
     //is_deleted
     @NotNull
     @Column(name = "is_deleted",columnDefinition = "tinyint default 0") // 컬럼 정의를 설정
-    private boolean isDeleted;
+    private int isDeleted;
 
     //created_at
     @NotNull
@@ -81,9 +77,13 @@ public class Member {
     @Column(name = "last_modified_at")
     private LocalDateTime lastModifiedAt;
 
+    // img
+    @Column(length = 50, name = "img")
+    private String img;
+
     // 자신이 속한 crew list
-    @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
-    private List<Crew> crews = new ArrayList<>();
+    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
+    private List<CrewMember> crewMembers = new ArrayList<>();
 
     // 친구 리스트
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY) // member 필드와 연관 관계 설정

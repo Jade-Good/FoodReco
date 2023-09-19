@@ -27,18 +27,14 @@ public class MemberAllergy {
     private Long memberAllergySeq;
 
     // member_seq
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_seq")
     private Member member;
 
     // food_seq
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="allergy_seq")
     private Allergy allergy;
-
-    //activity
-    @Column(name = "activity", length = 3,nullable = true)
-    private String activity;
 
     //is_deleted
     @NotNull
@@ -51,9 +47,8 @@ public class MemberAllergy {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    //last_modified_at
-    @NotNull
+    // deleted_at
     @UpdateTimestamp
-    @Column(name = "last_modified_at")
-    private LocalDateTime lastModifiedAt;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

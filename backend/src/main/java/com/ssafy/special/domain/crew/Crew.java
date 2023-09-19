@@ -41,10 +41,8 @@ public class Crew {
     @Column(name = "last_modified_at")
     private LocalDateTime lastModifiedAt;
 
+    // 자신이 속한 crew member list
+    @OneToMany(mappedBy = "member")
+    private List<CrewMember> crewMembers = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "crew_member",
-            joinColumns = @JoinColumn(name = "crew_seq"),
-            inverseJoinColumns = @JoinColumn(name = "member_seq"))
-    private List<Member> members = new ArrayList<>();
 }

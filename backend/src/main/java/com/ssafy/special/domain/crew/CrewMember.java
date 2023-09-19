@@ -16,14 +16,14 @@ import java.io.Serializable;
 public class CrewMember {
     // 사용자 seq
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "member_seq")
     @JsonBackReference
     private Member member;
 
     // 그룹 seq
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "crew_seq")
     @JsonBackReference
     private Crew crew;
