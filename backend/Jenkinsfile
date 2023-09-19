@@ -32,7 +32,7 @@ stages {
                 docker run -d -p 8080:8080 --name springboot docker-springboot:0.0.1
                 docker stop springboot
                 docker rm springboot
-                docker run -d -p 8080:8080 --name springboot docker-springboot:0.0.1
+                docker run -d -p 127.0.0.1:8080:8080 --name springboot docker-springboot:0.0.1
                 '''
             }
         }
