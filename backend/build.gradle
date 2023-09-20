@@ -45,6 +45,14 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
+	// redis 설정
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// smtp
+	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.0'
+
 }
 
 tasks.named('test') {
