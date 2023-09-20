@@ -1,6 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { AiOutlineLock } from 'react-icons/ai';
+import {
+  Control,
+  FieldPath,
+  FieldValues,
+  RegisterOptions,
+  useController,
+} from 'react-hook-form';
 
 const InputContainer = styled.div`
   display: flex;
@@ -26,19 +33,39 @@ const Icon = styled(AiOutlineLock)`
   color: #c6c5c5;
 `;
 
-interface StyledBasicInputWithIconProps {
-  placeholder: string;
+export type TControl<T extends FieldValues> = {
+  placeholder?: string;
   style?: React.CSSProperties;
-}
+  className?: string;
+  control: Control<T>;
+  name: FieldPath<T>;
+  rules?: Omit<
+    RegisterOptions<T>,
+    'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
+  >;
+};
 
-const StyledPwInputIcon: React.FC<StyledBasicInputWithIconProps> = ({
+const StyledPwInputIcon: React.FC<TControl<any>> = ({
+  className,
   placeholder,
   style,
+  name,
+  rules,
+  control,
 }) => {
+  const {
+    field: { value, onChange },
+  } = useController({ name, rules, control });
   return (
     <InputContainer style={style}>
       <Icon />
-      <StyledInput placeholder={placeholder} />
+      <StyledInput
+        className={className}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        style={style}
+      />
     </InputContainer>
   );
 };

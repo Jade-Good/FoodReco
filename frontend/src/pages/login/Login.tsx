@@ -42,6 +42,12 @@ export const Login = () => {
 
       <form onSubmit={handleSubmit(handleLogin)}>
         <div className={classes.inputContainer}>
+          {errors.email && (
+            <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
+              {errors.email.message}
+            </small>
+          )}
+
           <StyledIdInputIcon
             name="email" // 필드의 이름
             placeholder="이메일"
@@ -53,34 +59,28 @@ export const Login = () => {
                 message: '이메일 형식에 맞지 않습니다.',
               },
             }}
-            // {...register('email', {
-            //   pattern: {
-            //     value:
-            //       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
-            //     message: '이메일 형식에 맞지 않습니다.',
-            //   },
-            // })}
           />
-          <br />
 
+          <br />
+          {errors.password && (
+            <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
+              {errors.password.message}
+            </small>
+          )}
           <StyledPwInputIcon
-            style={{ borderTop: 'none' }}
+            name="password"
             placeholder="비밀번호"
-            aria-invalid={
-              isSubmitted ? (errors.password ? 'true' : 'false') : undefined
-            }
-            {...register('password', {
+            control={control}
+            rules={{
               minLength: {
                 value: 8,
                 message: '8자리 이상 비밀번호를 사용하세요.',
               },
-            })}
+            }}
+            aria-invalid={
+              isSubmitted ? (errors.password ? 'true' : 'false') : undefined
+            }
           />
-          {errors.email && <small role="alert">{errors.email.message}</small>}
-
-          {errors.password && (
-            <small role="alert">{errors.password.message}</small>
-          )}
 
           <div>
             <p style={{ color: '#918C8C' }}>회원가입</p>

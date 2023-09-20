@@ -7,7 +7,6 @@ export const StyledBasicInput = styled.input`
   width: 17.125rem;
   height: 4.6875rem;
   flex-shrink: 0;
-  background-image: 'images/foodreco.png';
 `;
 
 export const StyledColorInput = styled.input`
