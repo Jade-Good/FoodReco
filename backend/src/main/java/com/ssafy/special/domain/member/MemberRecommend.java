@@ -2,9 +2,7 @@ package com.ssafy.special.domain.member;
 
 
 import com.ssafy.special.domain.food.Food;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -12,9 +10,8 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Entity(name = "member_recommend")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberRecommend {
 
     // member_recommend_seq, PK값
@@ -39,7 +36,6 @@ public class MemberRecommend {
     private String weather;
 
     //food_rating
-    @NotNull
     @Column(name = "food_rating",columnDefinition = "tinyint")
     private int foodRating;
 
@@ -52,4 +48,15 @@ public class MemberRecommend {
     //activity_calorie
     @Column(name = "activity_calorie",columnDefinition = "smallint")
     private int activityCalorie;
+
+    @Builder
+    public MemberRecommend(Long memberRecommendSeq, Member member, Food food, String weather, int foodRating, LocalDateTime recommendAt, int activityCalorie) {
+        this.memberRecommendSeq = memberRecommendSeq;
+        this.member = member;
+        this.food = food;
+        this.weather = weather;
+        this.foodRating = foodRating;
+        this.recommendAt = recommendAt;
+        this.activityCalorie = activityCalorie;
+    }
 }

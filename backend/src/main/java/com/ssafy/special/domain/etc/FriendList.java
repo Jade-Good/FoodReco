@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity(name = "friend_list")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @IdClass(FriendList.FriendListId.class)
 public class FriendList {
     // 사용자 seq
@@ -58,6 +58,12 @@ public class FriendList {
         private Long friend;
     }
 
-
-
+    @Builder
+    public FriendList(Member member, Member friend, int friendStatus, LocalDateTime createdAt, LocalDateTime lastModifiedAt) {
+        this.member = member;
+        this.friend = friend;
+        this.friendStatus = friendStatus;
+        this.createdAt = createdAt;
+        this.lastModifiedAt = lastModifiedAt;
+    }
 }

@@ -1,23 +1,20 @@
 package com.ssafy.special.domain.food;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @Entity(name="food")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Food {
-
     // food_seq, PK값
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,5 +57,19 @@ public class Food {
     private String img;
 
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
-    private List<FoodIngredient> foodIngredientList;
+    @Builder.Default
+    private List<FoodIngredient> foodIngredientList = new ArrayList<>();
+
+    @Builder
+    public Food(Long foodSeq, String foodName, String foodCookingMethod, String foodType, String foodCategory, int food_type, int avgPrice, String img, List<FoodIngredient> foodIngredientList) {
+        this.foodSeq = foodSeq;
+        this.foodName = foodName;
+        this.foodCookingMethod = foodCookingMethod;
+        this.foodType = foodType;
+        this.foodCategory = foodCategory;
+        this.food_type = food_type;
+        this.avgPrice = avgPrice;
+        this.img = img;
+        this.foodIngredientList = foodIngredientList;
+    }
 }

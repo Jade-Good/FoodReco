@@ -3,9 +3,7 @@ package com.ssafy.special.domain.member;
 
 import com.ssafy.special.domain.etc.Allergy;
 import com.ssafy.special.domain.food.Food;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity(name = "member_allergy")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberAllergy {
 
     // member_allergy_seq, PK값
@@ -37,9 +35,8 @@ public class MemberAllergy {
     private Allergy allergy;
 
     //is_deleted
-    @NotNull
     @Column(name = "is_deleted",columnDefinition = "tinyint default 0") // 컬럼 정의를 설정
-    private boolean isDeleted;
+    private int isDeleted;
 
     //created_at
     @NotNull
@@ -51,4 +48,14 @@ public class MemberAllergy {
     @UpdateTimestamp
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @Builder
+    public MemberAllergy(Long memberAllergySeq, Member member, Allergy allergy, int isDeleted, LocalDateTime createdAt, LocalDateTime deletedAt) {
+        this.memberAllergySeq = memberAllergySeq;
+        this.member = member;
+        this.allergy = allergy;
+        this.isDeleted = isDeleted;
+        this.createdAt = createdAt;
+        this.deletedAt = deletedAt;
+    }
 }

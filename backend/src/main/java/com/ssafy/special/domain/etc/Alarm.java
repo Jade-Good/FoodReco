@@ -2,9 +2,7 @@ package com.ssafy.special.domain.etc;
 
 
 import com.ssafy.special.domain.member.Member;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -12,9 +10,8 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Entity(name="alarm")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Alarm {
 
     // alarm_seq, PK값
@@ -39,7 +36,6 @@ public class Alarm {
     private String type;
 
     //status
-    @NotNull
     @Column(name = "status", columnDefinition = "tinyint default 0")
     private int status;
 
@@ -56,4 +52,16 @@ public class Alarm {
     //deleted_at
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @Builder
+    public Alarm(Long alarmSeq, Member member, String content, String type, int status, LocalDateTime checkAt, LocalDateTime createdAt, LocalDateTime deletedAt) {
+        this.alarmSeq = alarmSeq;
+        this.member = member;
+        this.content = content;
+        this.type = type;
+        this.status = status;
+        this.checkAt = checkAt;
+        this.createdAt = createdAt;
+        this.deletedAt = deletedAt;
+    }
 }

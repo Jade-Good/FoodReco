@@ -1,16 +1,13 @@
 package com.ssafy.special.domain.etc;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter
 @Entity(name="allergy")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Allergy {
     // allergy_seq, PK값
     @Id
@@ -22,4 +19,10 @@ public class Allergy {
     @NotNull
     @Column(name = "allergy_name", length = 10)
     private String allergyName;
+
+    @Builder
+    public Allergy(int allergySeq, String allergyName) {
+        this.allergySeq = allergySeq;
+        this.allergyName = allergyName;
+    }
 }
