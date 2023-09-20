@@ -12,9 +12,8 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 @Getter
-@Setter
 @Entity(name = "food_ingredient")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @IdClass(FoodIngredient.FoodIngredientId.class)
 public class FoodIngredient {
 
@@ -38,5 +37,11 @@ public class FoodIngredient {
     public class FoodIngredientId implements Serializable {
         private Long food;
         private Long ingredient;
+    }
+
+    @Builder
+    public FoodIngredient(Food food, Ingredient ingredient) {
+        this.food = food;
+        this.ingredient = ingredient;
     }
 }

@@ -9,9 +9,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
-@Setter
 @Entity(name = "crew_member")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @IdClass(CrewMember.CrewId.class)
 public class CrewMember {
     // 사용자 seq
@@ -34,5 +33,12 @@ public class CrewMember {
     public class CrewId implements Serializable {
         private Long member;
         private Long crew;
+    }
+
+    // Builder 클래스 정의
+    @Builder
+    public CrewMember(Member member, Crew crew) {
+        this.member = member;
+        this.crew = crew;
     }
 }

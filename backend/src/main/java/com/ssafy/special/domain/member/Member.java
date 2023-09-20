@@ -3,24 +3,23 @@ package com.ssafy.special.domain.member;
 
 import com.ssafy.special.domain.crew.CrewMember;
 import com.ssafy.special.domain.etc.FriendList;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Getter
-@Setter
 @Entity(name = "member")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
     // member_seq, PK값
@@ -61,7 +60,6 @@ public class Member {
     private String sex;
 
     //is_deleted
-    @NotNull
     @Column(name = "is_deleted",columnDefinition = "tinyint default 0") // 컬럼 정의를 설정
     private int isDeleted;
 
@@ -88,4 +86,21 @@ public class Member {
     // 친구 리스트
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY) // member 필드와 연관 관계 설정
     private List<FriendList> friendLists = new ArrayList<>();
+    @Builder
+    public Member(Long memberSeq, String email, String password, String nickname, String tendency, int height, int weight, String sex, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt, String img, List<CrewMember> crewMembers, List<FriendList> friendLists) {
+        this.memberSeq = memberSeq;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.tendency = tendency;
+        this.height = height;
+        this.weight = weight;
+        this.sex = sex;
+        this.isDeleted = isDeleted;
+        this.createdAt = createdAt;
+        this.lastModifiedAt = lastModifiedAt;
+        this.img = img;
+        this.crewMembers = crewMembers;
+        this.friendLists = friendLists;
+    }
 }

@@ -4,6 +4,7 @@ package com.ssafy.special.domain.crew;
 import com.ssafy.special.domain.food.Ingredient;
 import com.ssafy.special.domain.member.Member;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,9 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @Entity(name = "crew")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Crew {
     // crew_seq, PK값
     @Id
@@ -43,6 +43,16 @@ public class Crew {
 
     // 자신이 속한 crew member list
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private List<CrewMember> crewMembers = new ArrayList<>();
 
+    @Builder
+    public Crew(Long crewSeq, String crewName, LocalDateTime createdAt, LocalDateTime lastModifiedAt, List<CrewMember> crewMembers) {
+        this.crewSeq = crewSeq;
+        this.crewName = crewName;
+        this.createdAt = createdAt;
+        this.lastModifiedAt = lastModifiedAt;
+        this.crewMembers = crewMembers;
+
+    }
 }

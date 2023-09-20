@@ -2,17 +2,14 @@ package com.ssafy.special.domain.food;
 
 
 import com.ssafy.special.domain.etc.Allergy;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter
 @Entity(name="ingredient")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Ingredient {
 
     // ingredient_seq, PK값
@@ -36,4 +33,11 @@ public class Ingredient {
     @Column(name = "is_allergy", columnDefinition = "tinyint")
     private int isAllergy;
 
+    @Builder
+    public Ingredient(Long ingredientSeq, Allergy allergy, String ingredientName, int isAllergy) {
+        this.ingredientSeq = ingredientSeq;
+        this.allergy = allergy;
+        this.ingredientName = ingredientName;
+        this.isAllergy = isAllergy;
+    }
 }
