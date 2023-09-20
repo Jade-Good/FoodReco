@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { AiOutlineLock } from 'react-icons/ai';
+import { BiLockAlt } from 'react-icons/bi';
 import {
   Control,
   FieldPath,
@@ -12,25 +12,29 @@ import {
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  border: 3px solid #c6c5c5;
   width: 17.125rem;
-  height: 4.6875rem;
+  height: 4rem;
+  background-color: #fff6ec;
 `;
 
 const StyledInput = styled.input`
-  fill: #fff;
+  background-color: #fff6ec;
   stroke-width: 3px;
   stroke: #c6c5c5;
   flex-shrink: 0;
   padding-left: 2rem;
   border: none; /* 입력란 테두리 제거 */
   outline: none; /* 입력란 포커스 시 외곽선 제거 */
+  font-weight: bold;
 `;
 
-const Icon = styled(AiOutlineLock)`
+const Icon = styled(BiLockAlt)`
   font-size: 1.5rem;
   flex-shrink: 0;
-  color: #c6c5c5;
+  color: #7d7b7b;
+  margin-left: 10px;
+  height: 7rem;
+  weight: 7rem;
 `;
 
 export type TControl<T extends FieldValues> = {

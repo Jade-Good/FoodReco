@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { AiOutlineUser } from 'react-icons/ai';
+
 import {
   Control,
   FieldPath,
@@ -29,15 +29,6 @@ const StyledInput = styled.input`
   font-weight: bold;
 `;
 
-const Icon = styled(AiOutlineUser)`
-  font-size: 1.5rem;
-  flex-shrink: 0;
-  color: #7d7b7b;
-  margin-left: 10px;
-  height: 7rem;
-  weight: 7rem;
-`;
-
 // useController을 사용하는 컴포넌트를 위한 type 지정
 export type TControl<T extends FieldValues> = {
   placeholder?: string;
@@ -51,7 +42,7 @@ export type TControl<T extends FieldValues> = {
   >;
 };
 
-const StyledIdInputIcon: React.FC<TControl<any>> = ({
+const StyledInputBasic: React.FC<TControl<any>> = ({
   className,
   placeholder,
   style,
@@ -65,7 +56,6 @@ const StyledIdInputIcon: React.FC<TControl<any>> = ({
 
   return (
     <InputContainer>
-      <Icon />
       <StyledInput
         className={className}
         placeholder={placeholder}
@@ -77,4 +67,4 @@ const StyledIdInputIcon: React.FC<TControl<any>> = ({
   );
 };
 
-export default StyledIdInputIcon;
+export default StyledInputBasic;

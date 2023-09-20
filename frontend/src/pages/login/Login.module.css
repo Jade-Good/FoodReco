@@ -9,3 +9,8 @@
 .inputContainer {
   margin: 10px;
 }
+
+.autoLoginContainer {
+  display: flex;
+  justify-content: left;
+}

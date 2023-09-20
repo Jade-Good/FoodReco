@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import StyledIdInputIcon from '../../components/inputs/StyledIdInputIcon';
 import StyledPwInputIcon from '../../components/inputs/StyledPwInputIcon';
 import StyledButton from '../../styles/StyledButton';
 import classes from './Login.module.css';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { BiCircle } from 'react-icons/bi';
+import { FaCircleCheck } from 'react-icons/fa6';
+import { MdOutlineVisibilityOff } from 'react-icons/md';
+import { MdOutlineVisibility } from 'react-icons/md';
+import { BsCircle } from 'react-icons/bs';
 
 interface IForm {
   email: string;
@@ -11,6 +16,9 @@ interface IForm {
 }
 
 export const Login = () => {
+  const [isAutoLogin, setIsAutoLogin] = useState(0);
+  const [isRememberId, setIsRememberId] = useState(0);
+
   const {
     register,
     formState: { errors, isSubmitting, isSubmitted },
@@ -31,15 +39,17 @@ export const Login = () => {
 
   return (
     <div className={classes.container}>
+      <br />
       <div>
         <img
           src="images/foodreco.png"
           alt="sdsd"
           width={'200rem'}
-          height={'150rem'}
+          height={'100rem'}
         />
       </div>
-
+      <br />
+      <br />
       <form onSubmit={handleSubmit(handleLogin)}>
         <div className={classes.inputContainer}>
           {errors.email && (
@@ -61,7 +71,6 @@ export const Login = () => {
             }}
           />
 
-          <br />
           {errors.password && (
             <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
               {errors.password.message}
@@ -81,10 +90,57 @@ export const Login = () => {
               isSubmitted ? (errors.password ? 'true' : 'false') : undefined
             }
           />
+        </div>
 
-          <div>
-            <p style={{ color: '#918C8C' }}>회원가입</p>
-          </div>
+        <div className={classes.autoLoginContainer}>
+          {isAutoLogin ? (
+            <FaCircleCheck
+              style={{
+                height: '17px',
+                width: '17px',
+                marginLeft: '5px',
+                color: '#FE9D3A',
+              }}
+              onClick={() => {
+                setIsAutoLogin(0);
+              }}
+            />
+          ) : (
+            <BsCircle
+              color="#C6C5C5"
+              style={{ height: '17px', width: '17px' }}
+              onClick={() => {
+                setIsAutoLogin(1);
+              }}
+            />
+          )}
+          <span style={{ fontSize: '13px', color: '#C6C5C5' }}>
+            자동 로그인
+          </span>
+          {isRememberId ? (
+            <FaCircleCheck
+              style={{
+                height: '17px',
+                width: '17px',
+                marginLeft: '5px',
+                color: '#FE9D3A',
+              }}
+              onClick={() => {
+                setIsRememberId(0);
+              }}
+            />
+          ) : (
+            <BiCircle
+              color="#C6C5C5"
+              style={{ height: '17px', width: '17px' }}
+              onClick={() => {
+                setIsRememberId(1);
+              }}
+            />
+          )}
+          <span style={{ fontSize: '13px', color: '#C6C5C5' }}>
+            아이디 저장
+          </span>
         </div>
         <br />
         <br />
@@ -97,6 +153,9 @@ export const Login = () => {
           로그인
         </StyledButton>
       </form>
+      <div>
+        <p style={{ color: '#918C8C', fontWeight: 700 }}>회원가입</p>
+      </div>
     </div>
   );
 };
