@@ -1,6 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { AiOutlineUser } from 'react-icons/ai';
+import {
+  Control,
+  FieldPath,
+  FieldValues,
+  RegisterOptions,
+  useController,
+} from 'react-hook-form';
 
 const InputContainer = styled.div`
   display: flex;
@@ -26,19 +33,41 @@ const Icon = styled(AiOutlineUser)`
   color: #c6c5c5;
 `;
 
-interface StyledBasicInputWithIconProps {
+// useController을 사용하는 컴포넌트를 위한 type 지정
+export type TControl<T extends FieldValues> = {
   placeholder?: string;
   style?: React.CSSProperties;
-}
+  className?: string;
+  control: Control<T>;
+  name: FieldPath<T>;
+  rules?: Omit<
+    RegisterOptions<T>,
+    'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
+  >;
+};
 
-const StyledIdInputIcon: React.FC<StyledBasicInputWithIconProps> = ({
+const StyledIdInputIcon: React.FC<TControl<any>> = ({
+  className,
   placeholder,
   style,
+  name,
+  rules,
+  control,
 }) => {
+  const {
+    field: { value, onChange },
+  } = useController({ name, rules, control });
+
   return (
     <InputContainer>
       <Icon />
-      <StyledInput placeholder={placeholder} style={style} />
+      <StyledInput
+        className={className}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        style={style}
+      />
     </InputContainer>
   );
 };

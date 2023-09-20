@@ -2,15 +2,35 @@ import React from 'react';
 import StyledIdInputIcon from '../../components/inputs/StyledIdInputIcon';
 import StyledPwInputIcon from '../../components/inputs/StyledPwInputIcon';
 import StyledButton from '../../styles/StyledButton';
+import classes from './Login.module.css';
+import { SubmitHandler, useForm } from 'react-hook-form';
+
+interface IForm {
+  email: string;
+  password: string;
+}
 
 export const Login = () => {
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log('로그인 axios');
+  const {
+    register,
+    formState: { errors, isSubmitting, isSubmitted },
+    handleSubmit,
+    control,
+  } = useForm<IForm>({
+    mode: 'onSubmit',
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const handleLogin: SubmitHandler<IForm> = (data) => {
+    console.log(data);
+    console.log(errors);
   };
 
   return (
-    <div>
+    <div className={classes.container}>
       <div>
         <img
           src="images/foodreco.png"
@@ -20,17 +40,61 @@ export const Login = () => {
         />
       </div>
 
-      <form onSubmit={handleLogin}>
-        <StyledIdInputIcon placeholder="이메일" />
-        <StyledPwInputIcon
-          style={{ borderTop: 'none' }}
-          placeholder="비밀번호"
-        />
-        <div>
-          <p>회원가입</p>
+      <form onSubmit={handleSubmit(handleLogin)}>
+        <div className={classes.inputContainer}>
+          <StyledIdInputIcon
+            name="email" // 필드의 이름
+            placeholder="이메일"
+            control={control} // useForm에서 가져온 control
+            rules={{
+              pattern: {
+                value:
+                  /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+                message: '이메일 형식에 맞지 않습니다.',
+              },
+            }}
+            // {...register('email', {
+            //   pattern: {
+            //     value:
+            //       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+            //     message: '이메일 형식에 맞지 않습니다.',
+            //   },
+            // })}
+          />
+          <br />
+
+          <StyledPwInputIcon
+            style={{ borderTop: 'none' }}
+            placeholder="비밀번호"
+            aria-invalid={
+              isSubmitted ? (errors.password ? 'true' : 'false') : undefined
+            }
+            {...register('password', {
+              minLength: {
+                value: 8,
+                message: '8자리 이상 비밀번호를 사용하세요.',
+              },
+            })}
+          />
+          {errors.email && <small role="alert">{errors.email.message}</small>}
+
+          {errors.password && (
+            <small role="alert">{errors.password.message}</small>
+          )}
+
+          <div>
+            <p style={{ color: '#918C8C' }}>회원가입</p>
+          </div>
         </div>
-        <StyledButton type="submit" width="18.8125rem" height="height: 5rem">
-          등록
+        <br />
+        <br />
+        <StyledButton
+          disabled={isSubmitting}
+          type="submit"
+          width="18.8125rem"
+          height="height: 5rem"
+        >
+          로그인
         </StyledButton>
       </form>
     </div>
