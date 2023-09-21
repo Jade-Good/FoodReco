@@ -5,13 +5,14 @@ import { BsPersonCircle } from 'react-icons/bs';
 import { AiOutlineStar } from 'react-icons/ai';
 import { BiWindows } from 'react-icons/bi';
 import { Navigate, useNavigate } from 'react-router-dom';
+import './Footer.css';
 
 export const MemberFooterCrew = () => {
   const navigate = useNavigate();
   let memberId = 1;
 
   return (
-    <div style={footerStyle}>
+    <div className="footer">
       <AiOutlineHome onClick={() => navigate('/')} style={iconStyle} />
       <BiGroup
         onClick={() => navigate(`/friend/${memberId}`)}
