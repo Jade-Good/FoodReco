@@ -2,9 +2,7 @@ package com.ssafy.special.domain.crew;
 
 
 import com.ssafy.special.domain.food.Food;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -12,11 +10,9 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Entity(name = "crew_recommend")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CrewRecommend {
-
     // crew_recommand_seq, PK값
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +34,12 @@ public class CrewRecommend {
     @CreationTimestamp
     @Column(name = "recommend_at")
     private LocalDateTime recommendAt;
+
+    @Builder
+    public CrewRecommend(Long crewRecommendSeq, Crew crew, Food food, LocalDateTime recommendAt) {
+        this.crewRecommendSeq = crewRecommendSeq;
+        this.crew = crew;
+        this.food = food;
+        this.recommendAt = recommendAt;
+    }
 }

@@ -14,7 +14,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class MemberController {
-
     private final VerificationService verificationService;
 
     @PostMapping("/sendVerification")
