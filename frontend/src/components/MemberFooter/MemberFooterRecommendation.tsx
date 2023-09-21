@@ -5,13 +5,14 @@ import { BsPersonCircle } from 'react-icons/bs';
 import { AiOutlineStar } from 'react-icons/ai';
 import { BiWindows } from 'react-icons/bi';
 import { Navigate, useNavigate } from 'react-router-dom';
+import './Footer.css';
 
 export const MemberFooterRecommendation = () => {
   const navigate = useNavigate();
   let memberId = 1;
 
   return (
-    <div style={footerStyle}>
+    <div className="footer">
       <AiOutlineHome onClick={() => navigate('/')} style={iconStyle} />
       <BiGroup
         onClick={() => navigate(`/friend/${memberId}`)}
@@ -41,7 +42,7 @@ const footerStyle = {
   justifyContent: 'space-between',
   alignItems: 'center',
   padding: '10px',
-  boxShadow: '0px -4px 6px rgba(0, 0, 0, 0.1)', // 위쪽에 그림자 효과를 줌 (y-offset을 음수로 설정)
+  boxShadow: '0px -4px 6px rgba(0, 0, 0, 0.1)', // 위쪽에 그림자 효과를 줌 (y-offset을 음수로 설정),
 };
 const iconStyle = {
   cursor: 'pointer', // 아이콘에 커서 스타일 지정

@@ -7,8 +7,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: string;
   background?: string;
   white?: boolean;
-  onClick?: () => void;
-  // onClick?: (props: any) => void;
+  // onClick?: () => void;
+  onClick?: (props: any) => void;
   radius?: string;
   green?: boolean;
   red?: boolean;
@@ -69,7 +69,7 @@ const BasicButton = styled.button<ButtonProps>`
     `}
 `;
 
-function StyledButton({ children, ...props }: ButtonProps) {
+function StyledButtonProps({ children, ...props }: ButtonProps) {
   return (
     <BasicButton {...props} onClick={props.onClick}>
       {children}
@@ -77,4 +77,4 @@ function StyledButton({ children, ...props }: ButtonProps) {
   );
 }
 
-export default StyledButton;
+export default StyledButtonProps;
