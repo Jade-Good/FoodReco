@@ -1,15 +1,5 @@
 import React from 'react';
-import { MemberFooterHome } from '../components/MemberFooter/MemberFooterHome';
-import { MemberFooterFriend } from '../components/MemberFooter/MemberFooterFriend';
-import { MemberFooterRecommendation } from '../components/MemberFooter/MemberFooterRecommendation';
-import { MemberFooterCrew } from '../components/MemberFooter/MemberFooterCrew';
-import { MemberFooterMypage } from '../components/MemberFooter/MemberFooterMypage';
-import styled from 'styled-components';
-import { SlideImage } from './../styles/Carousel';
-import HeaderLogo from '../components/header/HeaderLogo';
-import HeaderQuestion from '../components/header/HeaderQuestion';
-import HeaderFriendAdd from '../components/header/HeaderFriendAdd';
-import HeaderCrew from '../components/header/HeaderCrew';
+import StyledBasicInput from '../components/inputs/StyledBasicInput';
 
 export const Test = () => {
   const testclick = () => {
@@ -17,7 +7,7 @@ export const Test = () => {
   };
   return (
     <div className="check">
-      <HeaderCrew />
+      <StyledBasicInput name="check" placeholder="이메일을 입력하세요" />
     </div>
   );
 };

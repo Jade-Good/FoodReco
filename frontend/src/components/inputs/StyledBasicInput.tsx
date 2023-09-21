@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { AiOutlineUser } from 'react-icons/ai';
+
 import {
   Control,
   FieldPath,
@@ -12,31 +12,20 @@ import {
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 18.2rem;
-
-  height: 4rem;
-  background-color: #fff6ec;
+  width: 18.4rem;
+  height: 2.625rem;
+  color: #c6c5c5;
+  border: 1px solid #fe9d3a;
+  border-radius: 5px;
 `;
 
 const StyledInput = styled.input`
-  background-color: #fff6ec;
-  stroke-width: 3px;
-  stroke: #c6c5c5;
   flex-shrink: 0;
   padding-left: 2rem;
-  border: none; /* 입력란 테두리 제거 */
-  outline: none; /* 입력란 포커스 시 외곽선 제거 */
-  color: #7d7b7b;
+  border: none;
+  outline: none;
+  color: #525252;
   font-weight: bold;
-`;
-
-const Icon = styled(AiOutlineUser)`
-  font-size: 1.5rem;
-  flex-shrink: 0;
-  color: #7d7b7b;
-  margin-left: 10px;
-  height: 7rem;
-  weight: 7rem;
 `;
 
 // useController을 사용하는 컴포넌트를 위한 type 지정
@@ -44,7 +33,7 @@ export type TControl<T extends FieldValues> = {
   placeholder?: string;
   style?: React.CSSProperties;
   className?: string;
-  control: Control<T>;
+  control?: Control<T>;
   name: FieldPath<T>;
   rules?: Omit<
     RegisterOptions<T>,
@@ -52,7 +41,7 @@ export type TControl<T extends FieldValues> = {
   >;
 };
 
-const StyledIdInputIcon: React.FC<TControl<any>> = ({
+const StyledBasicInput: React.FC<TControl<any>> = ({
   className,
   placeholder,
   style,
@@ -66,7 +55,6 @@ const StyledIdInputIcon: React.FC<TControl<any>> = ({
 
   return (
     <InputContainer>
-      <Icon />
       <StyledInput
         className={className}
         placeholder={placeholder}
@@ -78,4 +66,4 @@ const StyledIdInputIcon: React.FC<TControl<any>> = ({
   );
 };
 
-export default StyledIdInputIcon;
+export default StyledBasicInput;

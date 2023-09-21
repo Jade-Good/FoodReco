@@ -4,11 +4,8 @@ import StyledPwInputIcon from '../../components/inputs/StyledPwInputIcon';
 import StyledButton from '../../styles/StyledButton';
 import classes from './Login.module.css';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { BiCircle } from 'react-icons/bi';
-import { FaCircleCheck } from 'react-icons/fa6';
-import { MdOutlineVisibilityOff } from 'react-icons/md';
-import { MdOutlineVisibility } from 'react-icons/md';
-import { BsCircle } from 'react-icons/bs';
+import { BsSquare } from 'react-icons/bs';
+import { BsFillCheckSquareFill } from 'react-icons/bs';
 
 interface IForm {
   email: string;
@@ -57,7 +54,7 @@ export const Login = () => {
               {errors.email.message}
             </small>
           )}
-
+          {/* 아이디 입력창 */}
           <StyledIdInputIcon
             name="email" // 필드의 이름
             placeholder="이메일"
@@ -76,6 +73,9 @@ export const Login = () => {
               {errors.password.message}
             </small>
           )}
+
+          {/* 비밀번호 입력창 */}
+          <br />
           <StyledPwInputIcon
             name="password"
             placeholder="비밀번호"
@@ -94,11 +94,11 @@ export const Login = () => {
 
         <div className={classes.autoLoginContainer}>
           {isAutoLogin ? (
-            <FaCircleCheck
+            <BsFillCheckSquareFill
               style={{
                 height: '17px',
                 width: '17px',
-                marginLeft: '5px',
+                marginLeft: '8px',
                 color: '#FE9D3A',
               }}
               onClick={() => {
@@ -106,19 +106,21 @@ export const Login = () => {
               }}
             />
           ) : (
-            <BsCircle
+            <BsSquare
               color="#C6C5C5"
-              style={{ height: '17px', width: '17px' }}
+              style={{ height: '17px', width: '17px', marginLeft: '8px' }}
               onClick={() => {
                 setIsAutoLogin(1);
               }}
             />
           )}
+          &nbsp;
           <span style={{ fontSize: '13px', color: '#C6C5C5' }}>
             자동 로그인
           </span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           {isRememberId ? (
-            <FaCircleCheck
+            <BsFillCheckSquareFill
               style={{
                 height: '17px',
                 width: '17px',
@@ -130,26 +132,22 @@ export const Login = () => {
               }}
             />
           ) : (
-            <BiCircle
+            <BsSquare
               color="#C6C5C5"
-              style={{ height: '17px', width: '17px' }}
+              style={{ height: '17px', width: '17px', marginLeft: '5px' }}
               onClick={() => {
                 setIsRememberId(1);
               }}
             />
           )}
+          &nbsp;
           <span style={{ fontSize: '13px', color: '#C6C5C5' }}>
             아이디 저장
           </span>
         </div>
         <br />
         <br />
-        <StyledButton
-          disabled={isSubmitting}
-          type="submit"
-          width="18.8125rem"
-          height="height: 5rem"
-        >
+        <StyledButton disabled={isSubmitting} type="submit" width="18.8125rem">
           로그인
         </StyledButton>
       </form>

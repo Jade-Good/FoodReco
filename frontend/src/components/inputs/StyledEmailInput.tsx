@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children } from 'react';
 import styled from 'styled-components';
 
 import {
@@ -8,24 +8,24 @@ import {
   RegisterOptions,
   useController,
 } from 'react-hook-form';
+import StyledButton from '../../styles/StyledButton';
 
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 17.125rem;
-  height: 4rem;
-  background-color: #fff6ec;
+  width: 18.4rem;
+  height: 2.625rem;
+  color: #c6c5c5;
+  border: 1px solid #fe9d3a;
+  border-radius: 5px;
 `;
 
 const StyledInput = styled.input`
-  background-color: #fff6ec;
-  stroke-width: 3px;
-  stroke: #c6c5c5;
   flex-shrink: 0;
   padding-left: 2rem;
-  border: none; /* 입력란 테두리 제거 */
-  outline: none; /* 입력란 포커스 시 외곽선 제거 */
-  color: #7d7b7b;
+  border: none;
+  outline: none;
+  color: #525252;
   font-weight: bold;
 `;
 
@@ -34,21 +34,23 @@ export type TControl<T extends FieldValues> = {
   placeholder?: string;
   style?: React.CSSProperties;
   className?: string;
-  control: Control<T>;
+  control?: Control<T>;
   name: FieldPath<T>;
   rules?: Omit<
     RegisterOptions<T>,
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
   >;
+  children: string;
 };
 
-const StyledInputBasic: React.FC<TControl<any>> = ({
+const StyledEmailInput: React.FC<TControl<any>> = ({
   className,
   placeholder,
   style,
   name,
   rules,
   control,
+  children,
 }) => {
   const {
     field: { value, onChange },
@@ -63,8 +65,17 @@ const StyledInputBasic: React.FC<TControl<any>> = ({
         onChange={onChange}
         style={style}
       />
+      <StyledButton
+        width="4rem
+      "
+        height="1srem"
+        fontSize="0.62rem"
+        radius="15px"
+      >
+        {children}
+      </StyledButton>
     </InputContainer>
   );
 };
 
-export default StyledInputBasic;
+export default StyledEmailInput;
