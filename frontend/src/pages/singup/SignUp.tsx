@@ -267,7 +267,7 @@ export const SignUp = () => {
                     },
                   },
                 })}
-                placeholder="비밀번호를 재입력하세요."
+                placeholder="비밀번호를 재입력하세요"
               />
             </InputContainer>
           </div>
