@@ -13,6 +13,8 @@ import {
   InputContainer,
   StyledInput,
 } from './../../components/inputs/StyledInputs';
+import axios from 'axios';
+import StyledButtonProps from '../../styles/StyledButtonProps';
 
 interface IForm {
   email: string;
@@ -23,6 +25,11 @@ interface IForm {
   height: number;
   weight: number;
   activity: number;
+  passwordconfirm: string;
+}
+
+interface EmailCheck {
+  email: string;
 }
 
 export const SignUp = () => {
@@ -30,14 +37,19 @@ export const SignUp = () => {
   const [isRememberId, setIsRememberId] = useState(0);
   const [progress, setProgress] = useState(0);
   const [chekcEmail, setCheckEmail] = useState(0);
+  const [email, setEmail] = useState('');
+  const [checkPassword, setCheckPassword] = useState(0);
+  // useForm에서 watch 함수를 가져옵니다.
 
   const {
     register,
     formState: { errors, isSubmitting, isSubmitted },
     handleSubmit,
     control,
+    getValues,
+    watch,
   } = useForm<IForm>({
-    mode: 'onSubmit',
+    mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
@@ -47,15 +59,50 @@ export const SignUp = () => {
       height: 0,
       weight: 0,
       activity: 0,
+      passwordconfirm: '',
     },
   });
+  // watch 함수를 사용하여 email 값을 실시간으로 관찰합니다.
+  const watchedEmail = watch('email');
 
+  // 회원가입 로직
   const handleSignUp: SubmitHandler<IForm> = (data) => {
-    console.log(data);
-    console.log(errors);
+    const { email, password, nickname, age, sex, height, weight, activity } =
+      data;
+    // axios
+    //   .post(`${process.env.REACT_APP_BASE_URL}signup/email`, {
+    //     email,
+    //     password,
+    //   })
+    //   .catch((error) => {
+    //     console.dir(error);
+    //   });
   };
 
-  //인증확인 체크
+  //이메일 인증 요청
+  const handleSendEmail = () => {
+    console.log('sadfasdf');
+    console.log(watchedEmail);
+
+    // if (errors.email) {
+    //   alert('이메일을 다시 확인해 주십시오');
+    // } else {
+    //   axios
+    //     .post(`${process.env.REACT_APP_BASE_URL}signup/email`, {
+    //       email,
+    //     })
+    //     .then((res) => {
+    //       alert('인증번호를 전송했습니다.');
+    //       console.log(res);
+    //     })
+    //     .catch((err) => {
+    //       alert('이메일을 다시 확인해 주십시오');
+    //       console.log('이메일 전송 오류:', err);
+    //     });
+    // }
+  };
+
+  //이메일 인증확인
   const handleCheckEmail = () => {
     // api요청해서 맞으면 setcheckemail
   };
@@ -100,7 +147,9 @@ export const SignUp = () => {
                   /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
                 message: '이메일 형식에 맞지 않습니다.',
               },
+              required: '이메일은 필수 입력입니다.',
             }}
+            onClick={handleSendEmail}
           />
 
           <label
@@ -113,7 +162,7 @@ export const SignUp = () => {
           {/* 인증번호 확인 */}
           <InputContainer>
             <StyledInput placeholder="인증번호를 입력하세요" />
-            <StyledButton
+            <StyledButtonProps
               width="4rem"
               height="1srem"
               fontSize="0.62rem"
@@ -121,23 +170,29 @@ export const SignUp = () => {
               onClick={handleCheckEmail}
             >
               인증확인
-            </StyledButton>
+            </StyledButtonProps>
           </InputContainer>
 
           {/* 비밀번호 입력창 */}
           <br />
           <div className={classes.InputContainer}>
-            <label
-              htmlFor="password"
-              style={{ color: '#525252', fontSize: '1rem', fontWeight: '600' }}
-            >
-              비밀번호
-            </label>
-            {errors.password && (
-              <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
-                {errors.password.message}
-              </small>
-            )}
+            <div className={classes.labelContainer}>
+              <label
+                htmlFor="password"
+                style={{
+                  color: '#525252',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                }}
+              >
+                비밀번호
+              </label>
+              {errors.password && (
+                <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
+                  {errors.password.message}
+                </small>
+              )}
+            </div>
           </div>
 
           <StyledBasicInput
@@ -149,6 +204,7 @@ export const SignUp = () => {
                 value: 8,
                 message: '8자리 이상 비밀번호를 사용하세요.',
               },
+              required: '비밀번호는 필수 입력입니다.',
             }}
             aria-invalid={
               isSubmitted ? (errors.password ? 'true' : 'false') : undefined
@@ -156,15 +212,43 @@ export const SignUp = () => {
           />
         </div>
         {/* 비밀번호확인 */}
-        <label
-          style={{ color: '#525252', fontSize: '1rem', fontWeight: '600' }}
-          htmlFor="passwordcheck"
-        >
-          비밀번호 확인
-        </label>
+        <div className={classes.labelContainer}>
+          <label
+            style={{ color: '#525252', fontSize: '1rem', fontWeight: '600' }}
+            htmlFor="passwordcheck"
+          >
+            비밀번호 확인
+          </label>
+          {errors.passwordconfirm && (
+            <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
+              {errors.passwordconfirm.message}
+            </small>
+          )}
+        </div>
+
         <InputContainer>
-          <StyledInput placeholder="비밀번호를 재입력하세요" />
+          <StyledInput
+            id="passwordconfirm"
+            type="passwordconfirm"
+            {...register('passwordconfirm', {
+              required: true,
+              validate: {
+                check: (val) => {
+                  const originalPassword = getValues('password');
+                  if (originalPassword && originalPassword !== val) {
+                    return '비밀번호가 일치하지 않습니다.';
+                  } else {
+                    const checkPasswords = () => {
+                      setCheckPassword(1);
+                    };
+                  }
+                },
+              },
+            })}
+            placeholder="비밀번호를 재입력하세요"
+          />
         </InputContainer>
+
         <br />
         <br />
       </form>
@@ -178,6 +262,9 @@ export const SignUp = () => {
           fontSize="1.25rem"
           background="#F9F9F9"
           radius="20px"
+          onClick={() => {
+            if (progress > 0) setProgress(progress - 1);
+          }}
         >
           이전
         </StyledButton>
@@ -190,6 +277,11 @@ export const SignUp = () => {
           fontSize="1.25rem"
           background="#FE9D3A"
           radius="20px"
+          onClick={() => {
+            if (progress < 7) {
+              setProgress(progress + 1);
+            }
+          }}
         >
           다음
         </StyledButton>

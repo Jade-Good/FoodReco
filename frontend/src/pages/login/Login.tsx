@@ -54,7 +54,7 @@ export const Login = () => {
               {errors.email.message}
             </small>
           )}
-          {/* 아이디 입력창 */}
+          {/* 이메일 입력창 */}
           <StyledIdInputIcon
             name="email" // 필드의 이름
             placeholder="이메일"

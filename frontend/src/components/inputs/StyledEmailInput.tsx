@@ -9,6 +9,7 @@ import {
   useController,
 } from 'react-hook-form';
 import StyledButton from '../../styles/StyledButton';
+import StyledButtonProps from '../../styles/StyledButtonProps';
 
 const InputContainer = styled.div`
   display: flex;
@@ -40,7 +41,8 @@ export type TControl<T extends FieldValues> = {
     RegisterOptions<T>,
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
   >;
-  children: string;
+  children?: string;
+  onClick: () => void;
 };
 
 const StyledEmailInput: React.FC<TControl<any>> = ({
@@ -51,6 +53,7 @@ const StyledEmailInput: React.FC<TControl<any>> = ({
   rules,
   control,
   children,
+  onClick,
 }) => {
   const {
     field: { value, onChange },
@@ -71,6 +74,7 @@ const StyledEmailInput: React.FC<TControl<any>> = ({
         height="1srem"
         fontSize="0.62rem"
         radius="15px"
+        onClick={onClick}
       >
         {children}
       </StyledButton>
