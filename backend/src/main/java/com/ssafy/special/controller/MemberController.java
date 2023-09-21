@@ -1,5 +1,7 @@
 package com.ssafy.special.controller;
 
+import com.ssafy.special.dto.UserSignUpDto;
+import com.ssafy.special.service.member.MemberService;
 import com.ssafy.special.service.member.VerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,24 +14,32 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class MemberController {
     private final VerificationService verificationService;
+    private final MemberService memberService;
+
+    @PostMapping("/sign-up")
+    public String signUp(@RequestBody UserSignUpDto userSignUpDto) throws Exception {
+        memberService.signUp(userSignUpDto);
+        return "회원가입 성공";
+    }
+
+    @GetMapping("/jwt-test")
+    public String jwtTest() {
+        return "jwtTest 요청 성공";
+    }
 
     @PostMapping("/sendVerification")
     private ResponseEntity<Map<String,String>> setVerifyCode(@RequestParam String email) {
         Map<String,String> resultMap = new HashMap<>();
-        HttpStatus status = null;
-
+        HttpStatus status = HttpStatus.OK;
         try {
             verificationService.sendVerifyCode(email);
             resultMap.put("message", "인증번호 전송 완료");
-            status = HttpStatus.OK;
         } catch(Exception e) {
             resultMap.put("message","인증번호 전송 실패");
             status = HttpStatus.BAD_REQUEST;
         }
-
         return new ResponseEntity<>(resultMap,status);
     }
 

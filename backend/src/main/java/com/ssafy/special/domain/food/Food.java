@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Builder
 @Entity(name="food")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Food {

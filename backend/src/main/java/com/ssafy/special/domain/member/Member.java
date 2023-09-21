@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -35,7 +36,7 @@ public class Member {
 
     // password
     @NotNull
-    @Column(name = "password", length = 255)
+    @Column(name = "password", length = 60)
     private String password;
 
     //nickname
@@ -86,6 +87,18 @@ public class Member {
     // 친구 리스트
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY) // member 필드와 연관 관계 설정
     private List<FriendList> friendLists = new ArrayList<>();
+
+    // refreshToken
+    @Column(length = 512, name = "refresh_token")
+    private String refreshToken;
+    // 비밀번호 암호화 메소드
+    public void passwordEncode(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+    }
+
+    public void updateRefreshToken(String updateRefreshToken) {
+        this.refreshToken = updateRefreshToken;
+    }
     @Builder
     public Member(Long memberSeq, String email, String password, String nickname, String tendency, int height, int weight, String sex, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt, String img, List<CrewMember> crewMembers, List<FriendList> friendLists) {
         this.memberSeq = memberSeq;
