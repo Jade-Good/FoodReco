@@ -5,6 +5,12 @@
   align-items: center;
 }
 
+.containerNoHeight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .inputContainer {
   margin: 10px;
 }

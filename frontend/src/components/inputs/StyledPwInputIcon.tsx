@@ -82,17 +82,13 @@ const StyledPwInputIcon: React.FC<TControl<any>> = ({
     field: { value, onChange },
   } = useController({ name, rules, control });
   const [visiblity, setVisiblity] = useState(0);
-  const handleVisiblity = () => {
-    setVisiblity(1);
-  };
-  const handleVisiblityOff = () => {
-    setVisiblity(0);
-  };
+
   return (
     <InputContainer style={style}>
       <Icon />
       <StyledInput
         className={className}
+        type={visiblity ? 'text' : 'password'} // 비밀번호 표시 여부에 따라 타입 변경
         placeholder={placeholder}
         value={value}
         onChange={onChange}
