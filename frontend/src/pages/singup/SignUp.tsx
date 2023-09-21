@@ -212,6 +212,7 @@ export const SignUp = () => {
               </div>
 
               <StyledBasicInput
+                type="password"
                 name="password"
                 placeholder="비밀번호를 입력하세요"
                 control={control}
@@ -250,7 +251,7 @@ export const SignUp = () => {
             <InputContainer>
               <StyledInput
                 id="passwordconfirm"
-                type="passwordconfirm"
+                type="password"
                 {...register('passwordconfirm', {
                   required: true,
                   validate: {

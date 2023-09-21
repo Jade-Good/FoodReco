@@ -30,6 +30,7 @@ const StyledInput = styled.input`
 
 // useController을 사용하는 컴포넌트를 위한 type 지정
 export type TControl<T extends FieldValues> = {
+  type?: string;
   placeholder?: string;
   style?: React.CSSProperties;
   className?: string;
@@ -48,6 +49,7 @@ const StyledBasicInput: React.FC<TControl<any>> = ({
   name,
   rules,
   control,
+  type,
 }) => {
   const {
     field: { value, onChange },
@@ -61,6 +63,7 @@ const StyledBasicInput: React.FC<TControl<any>> = ({
         value={value}
         onChange={onChange}
         style={style}
+        type={type}
       />
     </InputContainer>
   );
