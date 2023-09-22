@@ -82,6 +82,12 @@ export const SignUp = () => {
   const watchedEmail = watch('email');
   const sendEmail = getValues('email');
 
+  const codeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // setCode(e.target.value)
+    console.log(e);
+  }
+
+
   // 회원가입 로직
   const handleSignUp: SubmitHandler<IForm> = (data) => {
     const { email, password, nickname, age, sex, height, weight, activity } =
@@ -99,6 +105,10 @@ export const SignUp = () => {
   //이메일 인증 요청
   const handleSendEmail = () => {
     console.log(sendEmail);
+    
+    const formData = new FormData();
+    
+    formData.append("email", sendEmail);
 
     if (errors.email) {
       alert('이메일을 다시 확인해 주십시오');
@@ -106,8 +116,9 @@ export const SignUp = () => {
       console.log(`${process.env.REACT_APP_BASE_URL}/member/sendVerification`);
       axios
         .post(
+          // `https://j9b102.p.ssafy.io/api/member/sendVerification`,
           `${process.env.REACT_APP_BASE_URL}/member/sendVerification`,
-          sendEmail
+          formData
         )
         .then((res) => {
           alert('인증번호를 전송했습니다.');
@@ -123,10 +134,17 @@ export const SignUp = () => {
 
   //이메일 인증확인
   const handleCheckEmail = () => {
+
+    const formData = new FormData();
+    
+    formData.append("email", sendEmail);
+    // formData.append("code", code);
+
     axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/member/verification/email/code`,
-        { sendEmail, code }
+        // `https://j9b102.p.ssafy.io/api/member/checkVerification`,
+        `${process.env.REACT_APP_BASE_URL}/member/checkVerification`,
+        formData
       )
       .then((res) => {
         if (res.status === 200) {
@@ -259,7 +277,10 @@ export const SignUp = () => {
               {/* 인증번호 확인 */}
               {checkEmail ? (
                 <InputContainer>
-                  <StyledInput placeholder="인증번호를 입력하세요" />
+                  <StyledInput 
+                  placeholder="인증번호를 입력하세요"
+                  onChange={codeChange}
+                   />
                   <StyledButtonProps
                     width="4rem"
                     height="1srem"
