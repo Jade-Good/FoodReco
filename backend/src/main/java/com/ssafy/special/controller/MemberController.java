@@ -34,6 +34,8 @@ public class MemberController {
 
     @PostMapping("/sendVerification")
     private ResponseEntity<Map<String,String>> setVerifyCode(@RequestParam String email) {
+
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         Map<String,String> resultMap = new HashMap<>();
         HttpStatus status = null;
         try {
