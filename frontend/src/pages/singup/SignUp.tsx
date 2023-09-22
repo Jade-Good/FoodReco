@@ -22,6 +22,9 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import styled from 'styled-components';
 import { Agree } from '../../components/option/Agree';
+import BasicStringSelect from '../../components/option/BasicStringSelect';
+import RadioButtonsGroup from '../../components/option/ColorToggleButton';
+import ColorToggleButton from '../../components/option/ColorToggleButton';
 
 interface IForm {
   email: string;
@@ -51,6 +54,7 @@ export const SignUp = () => {
   const [agree1, setAgree1] = useState(0);
   const [agree2, setAgree2] = useState(0);
   const steps = ['약관동의', '회원 정보', '취향 설문'];
+  const ageList = ['10대', '20대', '30대', '40대', '50대', '60대', '70대이상'];
 
   const {
     register,
@@ -75,7 +79,7 @@ export const SignUp = () => {
   });
   // watch 함수를 사용하여 email 값을 실시간으로 관찰합니다.
   const watchedEmail = watch('email');
-  const testEmail = getValues('email');
+  const sendEmail = getValues('email');
 
   // 회원가입 로직
   const handleSignUp: SubmitHandler<IForm> = (data) => {
@@ -93,24 +97,24 @@ export const SignUp = () => {
 
   //이메일 인증 요청
   const handleSendEmail = () => {
-    console.log('이메일 인증요청');
+    console.log(sendEmail);
 
-    // if (errors.email) {
-    //   alert('이메일을 다시 확인해 주십시오');
-    // } else {
-    //   axios
-    //     .post(`${process.env.REACT_APP_BASE_URL}signup/email`, {
-    //       email,
-    //     })
-    //     .then((res) => {
-    //       alert('인증번호를 전송했습니다.');
-    //       console.log(res);
-    //     })
-    //     .catch((err) => {
-    //       alert('이메일을 다시 확인해 주십시오');
-    //       console.log('이메일 전송 오류:', err);
-    //     });
-    // }
+    if (errors.email) {
+      alert('이메일을 다시 확인해 주십시오');
+    } else {
+      axios
+        .get(
+          `${process.env.REACT_APP_BASE_URL}/member/sendVerification${sendEmail}`
+        )
+        .then((res) => {
+          alert('인증번호를 전송했습니다.');
+          console.log(res);
+        })
+        .catch((err) => {
+          alert('이메일을 다시 확인해 주십시오');
+          console.log('이메일 전송 오류:', err);
+        });
+    }
   };
 
   //이메일 인증확인
@@ -197,14 +201,7 @@ export const SignUp = () => {
             <div className={classes.InputContainer}>
               {/* 이메일 입력창 */}
               <div className={classes.labelContainer}>
-                <label
-                  htmlFor="email"
-                  style={{
-                    color: '#525252',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                  }}
-                >
+                <label htmlFor="email" className={classes.labelStyle}>
                   이메일 입력
                 </label>
                 {errors.email && (
@@ -235,14 +232,7 @@ export const SignUp = () => {
                 onClick={handleSendEmail}
               />
 
-              <label
-                htmlFor="emailcheck"
-                style={{
-                  color: '#525252',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                }}
-              >
+              <label htmlFor="emailcheck" className={classes.labelStyle}>
                 이메일 인증번호
               </label>
 
@@ -279,14 +269,7 @@ export const SignUp = () => {
               <br />
               <div className={classes.InputContainer}>
                 <div className={classes.labelContainer}>
-                  <label
-                    htmlFor="password"
-                    style={{
-                      color: '#525252',
-                      fontSize: '1rem',
-                      fontWeight: '600',
-                    }}
-                  >
+                  <label htmlFor="password" className={classes.labelStyle}>
                     비밀번호 입력
                   </label>
                   {errors.password && (
@@ -323,14 +306,7 @@ export const SignUp = () => {
             </div>
             {/* 비밀번호확인 */}
             <div className={classes.labelContainer}>
-              <label
-                htmlFor="passwordconfirm"
-                style={{
-                  color: '#525252',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                }}
-              >
+              <label htmlFor="passwordconfirm" className={classes.labelStyle}>
                 비밀번호 확인
               </label>
               {errors.passwordconfirm && (
@@ -414,18 +390,16 @@ export const SignUp = () => {
               </Stepper>
             </Box>
             <br />
+            {/* 닉네임 적기 */}
             <div className={classes.labelContainer}>
-              <label
-                htmlFor="email"
-                style={{
-                  color: '#525252',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  display: 'flex',
-                }}
-              >
+              <label htmlFor="email" className={classes.labelStyle}>
                 닉네임
               </label>
+              {errors.nickname && (
+                <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
+                  {errors.nickname.message}
+                </small>
+              )}
             </div>
 
             <StyledBasicInput
@@ -433,13 +407,69 @@ export const SignUp = () => {
               placeholder="닉네임을 입력하세요"
               control={control}
               rules={{
-                maxLength: {
+                minLength: {
                   value: 8,
-                  message: '10자리 이상 비밀번호를 사용하세요.',
+                  message: '8자리이하 닉네임을 사용해주세요.',
                 },
                 required: '닉네임은 필수 입력입니다.',
               }}
             />
+
+            <div className={classes.labelContainer}>
+              <div>
+                <label className={classes.labelStyle} htmlFor="nickname">
+                  연령
+                </label>
+                <BasicStringSelect name="age" options={ageList} />
+              </div>
+              <div>
+                <label className={classes.labelStyle} htmlFor="nickname">
+                  성별
+                </label>
+                <div>
+                  <ColorToggleButton />
+                </div>
+              </div>
+            </div>
+            <div className={classes.inputContainer}>
+              <StyledButton
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="#7D7B7B;"
+                fontSize="1.25rem"
+                background="#F9F9F9"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0) {
+                    setProgress((prevProgress) => prevProgress - 1);
+                  }
+                }}
+              >
+                이전
+              </StyledButton>
+              &nbsp;&nbsp;&nbsp;
+              <StyledButton
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="white"
+                fontSize="1.25rem"
+                background="#FE9D3A"
+                radius="10px"
+                onClick={() => {
+                  if (checkEmail === 1 && checkPassword === 1) {
+                    if (progress < 5) {
+                      setProgress((prevProgress) => prevProgress + 1);
+                    }
+                  } else {
+                    alert('이메일인증과 비밀번호를 확인해주세요!');
+                  }
+                }}
+              >
+                다음
+              </StyledButton>
+            </div>
           </div>
         )}
         {progress === 3 && <p>세번째페이지</p>}
