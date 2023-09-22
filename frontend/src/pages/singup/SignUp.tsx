@@ -128,9 +128,11 @@ export const SignUp = () => {
         { sendEmail, code }
       )
       .then((res) => {
-        alert('인증번호를 전송했습니다.');
-
-        console.log(res);
+        if (res.status === 200) {
+          console.log('인증확인');
+        } else {
+          alert('인증번호가 틀립니다.');
+        }
       })
       .catch((err) => {
         alert('인증에 실패했습니다. 인증번호를 확인해주세요');
