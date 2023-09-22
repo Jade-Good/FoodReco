@@ -8,7 +8,7 @@
 .containerNoHeight {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
 }
 
 .inputContainer {
@@ -22,5 +22,5 @@
 
 .labelContainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* 수평으로 양 옆에 정렬 */
 }
