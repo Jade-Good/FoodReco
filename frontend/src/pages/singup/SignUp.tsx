@@ -103,15 +103,16 @@ export const SignUp = () => {
       alert('이메일을 다시 확인해 주십시오');
     } else {
       axios
-        .get(
-          `${process.env.REACT_APP_BASE_URL}/member/sendVerification${sendEmail}`
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/member/sendVerification`,
+          sendEmail
         )
         .then((res) => {
           alert('인증번호를 전송했습니다.');
           console.log(res);
         })
         .catch((err) => {
-          alert('이메일을 다시 확인해 주십시오');
+          alert('이메일 전송오류 입니다. 이메일을 다시 확인해주세요');
           console.log('이메일 전송 오류:', err);
         });
     }
