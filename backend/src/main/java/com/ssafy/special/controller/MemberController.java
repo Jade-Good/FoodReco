@@ -29,8 +29,8 @@ public class MemberController {
         return "jwtTest 요청 성공";
     }
 
-    @GetMapping("/sendVerification/{email}")
-    private ResponseEntity<Map<String,String>> setVerifyCode(@PathVariable String email) {
+    @PostMapping("/sendVerification")
+    private ResponseEntity<Map<String,String>> setVerifyCode(@RequestParam String email) {
         Map<String,String> resultMap = new HashMap<>();
         HttpStatus status = null;
         try {
@@ -44,8 +44,8 @@ public class MemberController {
         return new ResponseEntity<>(resultMap,status);
     }
 
-    @PostMapping("/checkVerification/{email}/{code}")
-    private ResponseEntity<Map<String,String>> checkVerifyCode(@PathVariable String email, @PathVariable String code) {
+    @PostMapping("/checkVerification")
+    private ResponseEntity<Map<String,String>> checkVerifyCode(@RequestParam String email, @RequestParam String code) {
 
         Map<String,String> resultMap = new HashMap<>();
         HttpStatus status = null;
