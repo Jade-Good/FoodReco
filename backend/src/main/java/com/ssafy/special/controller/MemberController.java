@@ -3,6 +3,7 @@ package com.ssafy.special.controller;
 import com.ssafy.special.dto.UserSignUpDto;
 import com.ssafy.special.service.member.MemberService;
 import com.ssafy.special.service.member.VerificationService;
+import com.ssafy.special.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,8 @@ import java.util.Map;
 public class MemberController {
     private final VerificationService verificationService;
     private final MemberService memberService;
+
+    private final RedisUtil redisUtil;
 
     @PostMapping("/sign-up")
     public String signUp(@RequestBody UserSignUpDto userSignUpDto) throws Exception {
@@ -36,6 +39,7 @@ public class MemberController {
         try {
             verificationService.sendVerifyCode(email);
             resultMap.put("message", "인증번호 전송 완료");
+            resultMap.put("code",redisUtil.getData("siwol406@gmail.com"));
             status = HttpStatus.OK;
         } catch(Exception e) {
             resultMap.put("message","인증번호 전송 실패");
