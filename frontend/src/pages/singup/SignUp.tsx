@@ -103,6 +103,7 @@ export const SignUp = () => {
     if (errors.email) {
       alert('이메일을 다시 확인해 주십시오');
     } else {
+      console.log(`${process.env.REACT_APP_BASE_URL}/member/sendVerification`);
       axios
         .post(
           `${process.env.REACT_APP_BASE_URL}/member/sendVerification`,
