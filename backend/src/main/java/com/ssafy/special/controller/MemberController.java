@@ -29,13 +29,14 @@ public class MemberController {
         return "jwtTest 요청 성공";
     }
 
-    @PostMapping("/sendVerification")
-    private ResponseEntity<Map<String,String>> setVerifyCode(@RequestParam String email) {
+    @GetMapping("/sendVerification/{email}")
+    private ResponseEntity<Map<String,String>> setVerifyCode(@PathVariable String email) {
         Map<String,String> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.OK;
+        HttpStatus status = null;
         try {
             verificationService.sendVerifyCode(email);
             resultMap.put("message", "인증번호 전송 완료");
+            status = HttpStatus.OK;
         } catch(Exception e) {
             resultMap.put("message","인증번호 전송 실패");
             status = HttpStatus.BAD_REQUEST;
@@ -43,8 +44,8 @@ public class MemberController {
         return new ResponseEntity<>(resultMap,status);
     }
 
-    @PostMapping("/checkVerification")
-    private ResponseEntity<Map<String,String>> checkVerifyCode(@RequestParam String email, @RequestParam String code) {
+    @PostMapping("/checkVerification/{email}/{code}")
+    private ResponseEntity<Map<String,String>> checkVerifyCode(@PathVariable String email, @PathVariable String code) {
 
         Map<String,String> resultMap = new HashMap<>();
         HttpStatus status = null;
@@ -61,7 +62,7 @@ public class MemberController {
                 break;
             case 2:
                 resultMap.put("message", "인증 실패");
-                status = HttpStatus.BAD_REQUEST;
+                status = HttpStatus.NOT_ACCEPTABLE;
                 break;
         }
 
