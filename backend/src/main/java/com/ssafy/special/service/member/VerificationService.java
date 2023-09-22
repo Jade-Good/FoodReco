@@ -46,7 +46,6 @@ public class VerificationService {
             e.printStackTrace();
         }
 
-
         // 이메일 전송
         try {
             javaMailSender.send(message);

@@ -59,8 +59,8 @@ public class SecurityConfig {
                 .antMatchers(
                         "/api/member/sign-up",
                         "/api/s3/**",
-                        "/api/member/sendVerification",
-                        "/api/member/checkVerification"
+                        "/api/member/sendVerification/{email}",
+                        "/api/member/checkVerification/{email}/{code}"
                 )
                 .permitAll() // 회원가입 접근 가능
                 .anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
