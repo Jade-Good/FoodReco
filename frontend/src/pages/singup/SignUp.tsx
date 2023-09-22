@@ -130,6 +130,7 @@ export const SignUp = () => {
       .then((res) => {
         if (res.status === 200) {
           console.log('인증확인');
+          console.log(res);
         } else {
           alert('인증번호가 틀립니다.');
         }
