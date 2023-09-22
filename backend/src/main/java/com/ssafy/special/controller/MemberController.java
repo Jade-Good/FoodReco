@@ -1,6 +1,8 @@
 package com.ssafy.special.controller;
 
+import com.ssafy.special.dto.CheckEmailDto;
 import com.ssafy.special.dto.UserSignUpDto;
+import com.ssafy.special.dto.EmailDto;
 import com.ssafy.special.service.member.MemberService;
 import com.ssafy.special.service.member.VerificationService;
 import com.ssafy.special.util.RedisUtil;
@@ -33,13 +35,12 @@ public class MemberController {
     }
 
     @PostMapping("/sendVerification")
-    private ResponseEntity<Map<String,String>> setVerifyCode(@RequestParam String email) {
+    private ResponseEntity<Map<String,String>> setVerifyCode(@RequestBody EmailDto emailDto) {
 
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         Map<String,String> resultMap = new HashMap<>();
         HttpStatus status = null;
         try {
-            verificationService.sendVerifyCode(email);
+            verificationService.sendVerifyCode(emailDto.getEmail());
             resultMap.put("message", "인증번호 전송 완료");
             resultMap.put("code",redisUtil.getData("siwol406@gmail.com"));
             status = HttpStatus.OK;
@@ -51,11 +52,11 @@ public class MemberController {
     }
 
     @PostMapping("/checkVerification")
-    private ResponseEntity<Map<String,String>> checkVerifyCode(@RequestParam String email, @RequestParam String code) {
+    private ResponseEntity<Map<String,String>> checkVerifyCode(@RequestBody CheckEmailDto checkEmailDto) {
 
         Map<String,String> resultMap = new HashMap<>();
         HttpStatus status = null;
-        int verified = verificationService.check(email, code);
+        int verified = verificationService.check(checkEmailDto.getEmail(), checkEmailDto.getCode());
 
         switch(verified) {
             case 0:
