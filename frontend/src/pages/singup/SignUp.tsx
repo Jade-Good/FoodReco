@@ -50,7 +50,8 @@ export const SignUp = () => {
   const [checkEmail, setCheckEmail] = useState(0);
   // 패스워드 체크확인
   const [checkPassword, setCheckPassword] = useState(0);
-  const [step, setStep] = useState(0);
+
+  const [code, setCode] = useState(0);
   const [agree1, setAgree1] = useState(0);
   const [agree2, setAgree2] = useState(0);
   const steps = ['약관동의', '회원 정보', '취향 설문'];
@@ -109,6 +110,7 @@ export const SignUp = () => {
         )
         .then((res) => {
           alert('인증번호를 전송했습니다.');
+
           console.log(res);
         })
         .catch((err) => {
@@ -120,7 +122,20 @@ export const SignUp = () => {
 
   //이메일 인증확인
   const handleCheckEmail = () => {
-    // api요청해서 맞으면 setcheckemail
+    axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/member/verification/email/code`,
+        { sendEmail, code }
+      )
+      .then((res) => {
+        alert('인증번호를 전송했습니다.');
+
+        console.log(res);
+      })
+      .catch((err) => {
+        alert('인증에 실패했습니다. 인증번호를 확인해주세요');
+        console.log('이메일 인증 오류:', err);
+      });
   };
 
   return (
@@ -222,7 +237,7 @@ export const SignUp = () => {
                 rules={{
                   pattern: {
                     value:
-                      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+                      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                     message: '이메일 형식에 맞지 않습니다.',
                   },
                   required: '이메일은 필수 입력입니다.',
@@ -247,6 +262,7 @@ export const SignUp = () => {
                     fontSize="0.62rem"
                     radius="15px"
                     background="#C6C5C5"
+                    value={code}
                   >
                     인증확인
                   </StyledButtonProps>
@@ -290,6 +306,10 @@ export const SignUp = () => {
                 placeholder="비밀번호를 입력하세요"
                 control={control}
                 rules={{
+                  pattern: {
+                    value: /^(?=.*[a-z])(?=.*\d)[a-zA-Z\d]{8,}$/,
+                    message: '영어,숫자,특수문자가 포함되어야합니다..',
+                  },
                   minLength: {
                     value: 8,
                     message: '8자리 이상 비밀번호를 사용하세요.',
