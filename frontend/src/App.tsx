@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import './App.css';
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
@@ -22,6 +22,14 @@ import { Test } from './pages/Test';
 const queryClient = new QueryClient();
 
 const App = () => {
+  function setScreenSize() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+  useEffect(() => {
+    setScreenSize();
+  });
+
   return (
     <>
       <QueryClientProvider client={queryClient}>

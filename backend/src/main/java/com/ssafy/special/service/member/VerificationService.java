@@ -45,7 +45,6 @@ public class VerificationService {
             e.printStackTrace();
         }
 
-
         // 이메일 전송
         try {
             javaMailSender.send(message);
@@ -67,6 +66,7 @@ public class VerificationService {
             return 0;
         }
 
+        System.out.println(code + " " + userInput);
         if(userInput.equals(code)) { // 인증 성공
             return 1;
         } else { // 인증 실패
