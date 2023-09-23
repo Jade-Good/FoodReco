@@ -19,7 +19,6 @@ public class VerificationService {
     private final RedisUtil redisUtil;
 
     private final JavaMailSender javaMailSender;
-
     @Value("${spring.mail.username}")
     private String senderEmail;
 

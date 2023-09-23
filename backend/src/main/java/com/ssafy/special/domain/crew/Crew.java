@@ -27,8 +27,18 @@ public class Crew {
 
     //crew_name
     @NotNull
-    @Column(name = "crew_name",length = 30) // 컬럼 정의를 설정
-    private String crewName;
+    @Column(name = "crew_name",length = 30)
+    private String name;
+
+    //img
+    @NotNull
+    @Column(name = "img",length = 50)
+    private String img;
+
+    //status
+    @NotNull
+    @Column(name = "status",length = 9)
+    private String status;
 
     //created_at
     @NotNull
@@ -48,12 +58,13 @@ public class Crew {
     private List<CrewMember> crewMembers = new ArrayList<>();
 
     @Builder
-    public Crew(Long crewSeq, String crewName, LocalDateTime createdAt, LocalDateTime lastModifiedAt, List<CrewMember> crewMembers) {
+    public Crew(Long crewSeq, String name, String img, String status, LocalDateTime createdAt, LocalDateTime lastModifiedAt, List<CrewMember> crewMembers) {
         this.crewSeq = crewSeq;
-        this.crewName = crewName;
+        this.name = name;
+        this.img = img;
+        this.status = status;
         this.createdAt = createdAt;
         this.lastModifiedAt = lastModifiedAt;
         this.crewMembers = crewMembers;
-
     }
 }
