@@ -8,6 +8,8 @@ import com.ssafy.special.service.member.VerificationService;
 import com.ssafy.special.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -26,12 +28,8 @@ public class MemberController {
     @PostMapping("/sign-up")
     public String signUp(@RequestBody UserSignUpDto userSignUpDto) throws Exception {
         memberService.signUp(userSignUpDto);
-        return "회원가입 성공";
-    }
-
-    @GetMapping("/jwt-test")
-    public String jwtTest() {
-        return "jwtTest 요청 성공";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 
     @PostMapping("/sendVerification")
@@ -76,4 +74,9 @@ public class MemberController {
         return new ResponseEntity<>(resultMap,status);
     }
 
+    // 사용자 Email 가져오는 Email
+    public String getEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
 }

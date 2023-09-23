@@ -2,7 +2,6 @@ package com.ssafy.special.domain.member;
 
 
 import com.ssafy.special.domain.crew.CrewMember;
-import com.ssafy.special.domain.etc.FriendList;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,7 +30,7 @@ public class Member {
 
     // email
     @NotNull
-    @Column(name = "email", length = 100)
+    @Column(name = "email", length = 100,unique = true)
     private String email;
 
     // password
@@ -41,7 +40,7 @@ public class Member {
 
     //nickname
     @NotNull
-    @Column(name = "nickname", length = 18)
+    @Column(name = "nickname", length = 18,unique = true)
     private String nickname;
 
     //tendency
@@ -56,10 +55,22 @@ public class Member {
     @Column(name = "weight", columnDefinition = "smallint")
     private int weight;
 
+
+    //activity
+    @Column(name = "activity", columnDefinition = "smallint default 0")
+    private int activity;
+
     //sex
     @Column(name = "sex", length = 3)
     private String sex;
 
+    // img
+    @Column(length = 50, name = "img")
+    private String img;
+
+    // img
+    @Column(length = 512, name = "refresh_token")
+    private String refreshToken;
     //is_deleted
     @Column(name = "is_deleted",columnDefinition = "tinyint default 0") // 컬럼 정의를 설정
     private int isDeleted;
@@ -76,31 +87,22 @@ public class Member {
     @Column(name = "last_modified_at")
     private LocalDateTime lastModifiedAt;
 
-    // img
-    @Column(length = 50, name = "img")
-    private String img;
 
     // 자신이 속한 crew list
     @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
     private List<CrewMember> crewMembers = new ArrayList<>();
 
-    // 친구 리스트
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY) // member 필드와 연관 관계 설정
-    private List<FriendList> friendLists = new ArrayList<>();
-
-    // refreshToken
-    @Column(length = 512, name = "refresh_token")
-    private String refreshToken;
     // 비밀번호 암호화 메소드
     public void passwordEncode(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
     }
 
-    public void updateRefreshToken(String updateRefreshToken) {
-        this.refreshToken = updateRefreshToken;
+    public void updateRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
     }
+
     @Builder
-    public Member(Long memberSeq, String email, String password, String nickname, String tendency, int height, int weight, String sex, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt, String img, List<CrewMember> crewMembers, List<FriendList> friendLists) {
+    public Member(Long memberSeq, String email, String password, String nickname, String tendency, int height, int weight, int activity, String sex, String img, String refreshToken, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt) {
         this.memberSeq = memberSeq;
         this.email = email;
         this.password = password;
@@ -108,12 +110,12 @@ public class Member {
         this.tendency = tendency;
         this.height = height;
         this.weight = weight;
+        this.activity = activity;
         this.sex = sex;
+        this.img = img;
+        this.refreshToken = refreshToken;
         this.isDeleted = isDeleted;
         this.createdAt = createdAt;
         this.lastModifiedAt = lastModifiedAt;
-        this.img = img;
-        this.crewMembers = crewMembers;
-        this.friendLists = friendLists;
     }
 }
