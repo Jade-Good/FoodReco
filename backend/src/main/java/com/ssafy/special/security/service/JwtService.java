@@ -76,7 +76,7 @@ public class JwtService {
     }
 
     /**
-     * AccessToken 헤더에 실어서 보내기
+     * AccessToken 헤더에 추가
      */
     public void sendAccessToken(HttpServletResponse response, String accessToken) {
         response.setStatus(HttpServletResponse.SC_OK);
@@ -86,7 +86,7 @@ public class JwtService {
     }
 
     /**
-     * AccessToken + RefreshToken 헤더에 실어서 보내기
+     * AccessToken + RefreshToken 헤더에 추가
      */
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK);

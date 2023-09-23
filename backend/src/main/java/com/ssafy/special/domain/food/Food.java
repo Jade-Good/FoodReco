@@ -25,27 +25,27 @@ public class Food {
     // food_name
     @NotNull
     @Column(name = "name", length = 30)
-    private String foodName;
+    private String name;
 
     // food_cooking_method
     @NotNull
     @Column(name = "cooking_method", length = 16)
-    private String foodCookingMethod;
+    private String cookingMethod;
 
     // food_type
     @NotNull
     @Column(name = "type", length = 12)
-    private String foodType;
+    private String type;
 
     // food_category
     @NotNull
     @Column(name = "category", length = 12)
-    private String foodCategory;
+    private String category;
 
     // food_association
     @NotNull
     @Column(name = "association",columnDefinition = "tinyint")
-    private int food_type;
+    private int association;
 
     // avg_price
     @NotNull
@@ -57,20 +57,15 @@ public class Food {
     @Column(name = "img", length = 50)
     private String img;
 
-    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<FoodIngredient> foodIngredientList = new ArrayList<>();
-
     @Builder
-    public Food(Long foodSeq, String foodName, String foodCookingMethod, String foodType, String foodCategory, int food_type, int avgPrice, String img, List<FoodIngredient> foodIngredientList) {
+    public Food(Long foodSeq, String name, String cookingMethod, String type, String category, int association, int avgPrice, String img) {
         this.foodSeq = foodSeq;
-        this.foodName = foodName;
-        this.foodCookingMethod = foodCookingMethod;
-        this.foodType = foodType;
-        this.foodCategory = foodCategory;
-        this.food_type = food_type;
+        this.name = name;
+        this.cookingMethod = cookingMethod;
+        this.type = type;
+        this.category = category;
+        this.association = association;
         this.avgPrice = avgPrice;
         this.img = img;
-        this.foodIngredientList = foodIngredientList;
     }
 }

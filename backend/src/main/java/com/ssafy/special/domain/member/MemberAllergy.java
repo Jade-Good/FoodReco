@@ -1,8 +1,7 @@
 package com.ssafy.special.domain.member;
 
 
-import com.ssafy.special.domain.etc.Allergy;
-import com.ssafy.special.domain.food.Food;
+import com.ssafy.special.domain.food.Ingredient;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -29,14 +28,10 @@ public class MemberAllergy {
     @JoinColumn(name="member_seq")
     private Member member;
 
-    // food_seq
+    // ingredient_seq
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="allergy_seq")
-    private Allergy allergy;
-
-    //is_deleted
-    @Column(name = "is_deleted",columnDefinition = "tinyint default 0") // 컬럼 정의를 설정
-    private int isDeleted;
+    @JoinColumn(name="ingredient_seq")
+    private Ingredient ingredient;
 
     //created_at
     @NotNull
@@ -44,18 +39,11 @@ public class MemberAllergy {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // deleted_at
-    @UpdateTimestamp
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
     @Builder
-    public MemberAllergy(Long memberAllergySeq, Member member, Allergy allergy, int isDeleted, LocalDateTime createdAt, LocalDateTime deletedAt) {
+    public MemberAllergy(Long memberAllergySeq, Member member, Ingredient ingredient, LocalDateTime createdAt) {
         this.memberAllergySeq = memberAllergySeq;
         this.member = member;
-        this.allergy = allergy;
-        this.isDeleted = isDeleted;
+        this.ingredient = ingredient;
         this.createdAt = createdAt;
-        this.deletedAt = deletedAt;
     }
 }
