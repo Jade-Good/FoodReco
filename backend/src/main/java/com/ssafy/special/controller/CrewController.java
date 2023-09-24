@@ -33,6 +33,9 @@ public class CrewController {
         }catch (EntityNotFoundException e){
             log.info("Member find 에러");
             return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -48,6 +51,9 @@ public class CrewController {
         }catch (EntityNotFoundException e){
             log.info("Member find 에러");
             return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -62,6 +68,26 @@ public class CrewController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (EntityNotFoundException e){
             log.info("Member find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/detail/{crewSeq}")
+    public ResponseEntity<?> getDetailInfoforCrew(@PathVariable Long crewSeq){
+        log.info("getDetailInfoforCrew() 메소드 시작");
+        try{
+            return ResponseEntity.ok().body(crewService.getDetailInfo(crewSeq,getEmail()));
+        }catch (IllegalArgumentException e){
+            log.info("초대가 되지 않은 사용자 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (EntityNotFoundException e){
+            log.info("Crew find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

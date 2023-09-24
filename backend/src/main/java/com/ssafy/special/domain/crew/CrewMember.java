@@ -30,10 +30,8 @@ public class CrewMember {
     private Crew crew;
 
     //status
-    @NotNull
     @Column(name = "status", columnDefinition = "tinyint default 0")
     private int status;
-
 
     // Builder 클래스 정의
     @Builder

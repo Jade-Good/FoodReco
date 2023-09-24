@@ -4,8 +4,7 @@ import com.ssafy.special.domain.crew.Crew;
 import com.ssafy.special.domain.crew.CrewId;
 import com.ssafy.special.domain.crew.CrewMember;
 import com.ssafy.special.domain.member.Member;
-import com.ssafy.special.dto.CrewDto;
-import com.ssafy.special.dto.CrewSignUpDto;
+import com.ssafy.special.dto.*;
 import com.ssafy.special.repository.crew.CrewMemberRepository;
 import com.ssafy.special.repository.crew.CrewRecommendRepository;
 import com.ssafy.special.repository.crew.CrewRepository;
@@ -35,7 +34,8 @@ public class CrewService {
      * 사용자 Email으로 자신이 속한 crew List을 출력하는 메소드
      * 사용자 정보를 가져온 후 Crew 내용을 제공한다.
      */
-    public List<CrewDto> getCrewListforMemeber(String memberEmail) throws EntityNotFoundException {
+    public List<CrewDto> getCrewListforMemeber(String memberEmail)
+            throws EntityNotFoundException{
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         // 회원이 속한 모든 크루를 가져옵니다.
@@ -45,7 +45,7 @@ public class CrewService {
                     .crewSeq(c.getCrew().getCrewSeq())
                     .name(c.getCrew().getName())
                     .img(c.getCrew().getImg())
-                    .status(c.getStatus()==0?"가입 수락 전":"가입 수락 후")
+                    .status(c.getStatus()==0?"미반응":(c.getStatus()==-1?"거절":"수락"))
                     .build();
             crews.add(crew);
         }
@@ -91,7 +91,8 @@ public class CrewService {
     }
 
     @Transactional
-    public void joinCrewforMember(Long crewSeq, String memberEmail) {
+    public void joinCrewforMember(Long crewSeq, String memberEmail)
+                    throws EntityNotFoundException,IllegalArgumentException{
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         CrewId crewId = CrewId.builder()
@@ -111,5 +112,40 @@ public class CrewService {
                             throw new IllegalArgumentException("해당하는 그룹이 없습니다.");
                         }
                 );
+    }
+
+    public CrewDetailDto getDetailInfo(Long crewSeq, String memberEmail)
+            throws EntityNotFoundException,IllegalArgumentException {
+        Crew crew = crewRepository.findByCrewSeq(crewSeq)
+                .orElseThrow(() -> new EntityNotFoundException("해당 그룹을 찾을 수 없습니다."));
+        List<CrewMembersDto> crewMembers = new ArrayList<>();
+        String memberStatus="";
+        for (CrewMember c : crew.getCrewMembers()) {
+            Member m = c.getMember();
+            if (m.getEmail().equals(memberEmail)) {
+                memberStatus = c.getStatus() == 0 ? "미응답" : (c.getStatus() == -1 ? "거절" : "수락");
+            }else{
+                crewMembers.add(CrewMembersDto.builder()
+                        .memberSeq(m.getMemberSeq())
+                        .memberName(m.getNickname())
+                        .memberStatus(c.getStatus() == 0 ? "미응답" : (c.getStatus() == -1 ? "거절" : "수락"))
+                        .memberImg(m.getImg())
+                        .build()
+                );
+            }
+        }
+        if(memberStatus.equals("")){
+            throw new IllegalArgumentException("그룹 초대가 되지 않은 사용자입니다.");
+        }
+        CrewDetailDto crewDetailDto = CrewDetailDto.builder()
+                .crewSeq(crew.getCrewSeq())
+                .crewName(crew.getName())
+                .crewImg(crew.getImg())
+                .crewStatus(crew.getStatus())
+                .memberStatus(memberStatus)
+                .crewMembers(crewMembers)
+                .build();
+        crewDetailDto.setCrewMembers(crewMembers);
+        return crewDetailDto;
     }
 }
