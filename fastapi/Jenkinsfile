@@ -4,7 +4,7 @@ pipeline {
 stages {
     stage('Dockerimage build') {
         steps {
-            dir('backend'){
+            dir('fastapi'){
                 sh '''
                 echo 'Dockerimage build'
                 docker build -t fastapi:0.1 .
@@ -14,13 +14,13 @@ stages {
     }
     stage('Deploy') {
         steps {
-            dir('backend'){
+            dir('fastapi'){
 
                 sh '''
                 echo 'Deploy'
-                docker stop springboot
-                docker rm springboot
-                docker run -d -p 0.0.0.0:8080:8080 --name fastapi fastapi:0.1
+                docker stop fastapi
+                docker rm fastapi
+                docker run -d -p 0.0.0.0:9999:8000 --name fastapi fastapi:0.1
                 '''
             }
         }
