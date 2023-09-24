@@ -20,7 +20,7 @@ stages {
                 echo 'Deploy'
                 docker stop fastapi
                 docker rm fastapi
-                docker run -d -p 0.0.0.0:9999:8000 --name fastapi fastapi:0.1
+                docker run -d -p 127.0.0.1:7777:7777 --name fastapi fastapi:0.1
                 docker images -f "dangling=true" -q | xargs -r docker rmi
                 '''
             }
