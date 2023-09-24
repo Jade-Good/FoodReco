@@ -55,7 +55,7 @@ public class SecurityConfig {
                 //== URL별 권한 관리 옵션 ==//
                 .authorizeRequests()
                 .antMatchers(
-                        "/api/member/sign-up"
+                        "/api/member/regist"
                 )
                 .permitAll() // 회원가입 접근 가능
                 .anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능

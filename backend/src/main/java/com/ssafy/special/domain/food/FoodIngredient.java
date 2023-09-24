@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Entity(name = "food_ingredient")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@IdClass(FoodIngredient.FoodIngredientId.class)
+@IdClass(FoodId.class)
 public class FoodIngredient {
 
     // food_seq, PK값
@@ -31,13 +31,6 @@ public class FoodIngredient {
     @JsonBackReference
     private Ingredient ingredient;
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class FoodIngredientId implements Serializable {
-        private Long food;
-        private Long ingredient;
-    }
 
     @Builder
     public FoodIngredient(Food food, Ingredient ingredient) {

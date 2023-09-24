@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,11 +20,10 @@ import java.util.Map;
 public class MemberController {
     private final VerificationService verificationService;
     private final MemberService memberService;
-
     /*
      * 회원가입 메소드
      */
-    @PostMapping("/sign-up")
+    @PostMapping("/regist")
     public String signUp(@RequestBody UserSignUpDto userSignUpDto) throws Exception {
         memberService.signUp(userSignUpDto);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -74,4 +74,6 @@ public class MemberController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
+
+
 }

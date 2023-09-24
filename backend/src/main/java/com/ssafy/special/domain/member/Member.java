@@ -35,7 +35,7 @@ public class Member {
 
     // password
     @NotNull
-    @Column(name = "password", length = 60)
+    @Column(name = "password", length = 512)
     private String password;
 
     //nickname
@@ -89,7 +89,7 @@ public class Member {
 
 
     // 자신이 속한 crew list
-    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<CrewMember> crewMembers = new ArrayList<>();
 
     // 비밀번호 암호화 메소드

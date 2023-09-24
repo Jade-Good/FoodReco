@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Getter
 @Entity(name = "crew_member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@IdClass(CrewMember.CrewId.class)
+@IdClass(CrewId.class)
 public class CrewMember {
     // 사용자 seq
     @Id
@@ -33,13 +33,6 @@ public class CrewMember {
     @Column(name = "status", columnDefinition = "tinyint default 0")
     private int status;
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class CrewId implements Serializable {
-        private Long member;
-        private Long crew;
-    }
 
     // Builder 클래스 정의
     @Builder

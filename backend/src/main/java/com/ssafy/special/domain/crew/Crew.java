@@ -53,7 +53,7 @@ public class Crew {
     private LocalDateTime lastModifiedAt;
 
     // 자신이 속한 crew member list
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "crew")
     @Builder.Default
     private List<CrewMember> crewMembers = new ArrayList<>();
 
