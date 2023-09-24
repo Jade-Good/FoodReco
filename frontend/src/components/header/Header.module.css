@@ -1,0 +1,23 @@
+.header {
+  position: fixed;
+  top: 0; /* 상단으로 고정 */
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  /* box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 아래쪽에 그림자 추가 */
+  height: 66px;
+}
+
+.rightContent {
+  width: 25px;
+  height: 25px;
+  margin-right: 12px;
+}
+
+.leftContent {
+  margin-left: 12px;
+  margin-top: 6px;
+}

@@ -1,20 +1,28 @@
-import React from 'react';
-import { MemberFooterHome } from '../../components/MemberFooter/MemberFooterHome';
-import { MemberFooterFriend } from '../../components/MemberFooter/MemberFooterFriend';
-import { MemberRecommendation } from '../memberRecommendation/MemberRecommendation';
-import { MemberFooterRecommendation } from '../../components/MemberFooter/MemberFooterRecommendation';
-import { MemberFooterCrew } from '../../components/MemberFooter/MemberFooterCrew';
-import { MemberFooterMypage } from '../../components/MemberFooter/MemberFooterMypage';
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { MemberFooterHome } from "../../components/MemberFooter/MemberFooterHome";
+import { SignUp } from "../singup/SignUp";
 
-export const Main = () => {
+interface IForm {
+  email: string;
+  password: string;
+}
+
+export const Main: React.FC = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, isSubmitted, errors },
+  } = useForm<IForm>();
+
+  const onSubmit: SubmitHandler<IForm> = (data) => {
+    console.log(data);
+  };
+
   return (
-    <div>
-      <p>d아아아</p>
+    <>
+      <SignUp />
       <MemberFooterHome />
-      <MemberFooterFriend />
-      <MemberFooterRecommendation />
-      <MemberFooterCrew />
-      <MemberFooterMypage />
-    </div>
+    </>
   );
 };
