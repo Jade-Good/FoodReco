@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+
+stages {
+    stage('Dockerimage build') {
+        steps {
+            dir('fastapi'){
+                sh '''
+                echo 'Dockerimage build'
+                docker build -t fastapi:0.1 .
+                '''
+            }
+        }
+    }
+    stage('Deploy') {
+        steps {
+            dir('fastapi'){
+
+                sh '''
+                echo 'Deploy'
+                docker stop fastapi
+                docker rm fastapi
+                docker run -d -p 127.0.0.1:7777:7777 --name fastapi fastapi:0.1
+                docker images -f "dangling=true" -q | xargs -r docker rmi
+                '''
+            }
+        }
+    }
+
+
+
+
+}
+}

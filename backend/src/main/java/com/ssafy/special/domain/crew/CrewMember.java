@@ -6,6 +6,7 @@ import com.ssafy.special.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter
@@ -27,6 +28,11 @@ public class CrewMember {
     @JsonBackReference
     private Crew crew;
 
+    //status
+    @NotNull
+    @Column(name = "status", columnDefinition = "tinyint default 0")
+    private int status;
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -37,8 +43,9 @@ public class CrewMember {
 
     // Builder 클래스 정의
     @Builder
-    public CrewMember(Member member, Crew crew) {
+    public CrewMember(Member member, Crew crew, int status) {
         this.member = member;
         this.crew = crew;
+        this.status = status;
     }
 }
