@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+stages {
+    stage('Dockerimage build') {
+        steps {
+            dir('backend'){
+                sh '''
+                echo 'Dockerimage build'
+                docker build -t fastapi:0.1 .
+                '''
+            }
+        }
+    }
+    stage('Deploy') {
+        steps {
+            dir('backend'){
+
+                sh '''
+                echo 'Deploy'
+                docker stop springboot
+                docker rm springboot
+                docker run -d -p 0.0.0.0:8080:8080 --name fastapi fastapi:0.1
+                '''
+            }
+        }
+    }
+
+
+
+
+}
+}
