@@ -148,4 +148,20 @@ public class CrewService {
         crewDetailDto.setCrewMembers(crewMembers);
         return crewDetailDto;
     }
+
+    @Transactional
+    public void updateCrew(CrewDto crewDto)
+            throws EntityNotFoundException, IllegalArgumentException {
+        crewRepository.findByCrewSeq(crewDto.getCrewSeq())
+                .ifPresentOrElse(
+                        selectCrew->{
+                            if(!selectCrew.getStatus().equals("투표전")){
+                                throw new IllegalArgumentException(selectCrew.getStatus()+ "에는 변경이 불가 합니다.");
+                            }
+                            selectCrew.setName(crewDto.getName());
+                            selectCrew.setImg(crewDto.getImg());
+                        },
+                        () -> new EntityNotFoundException("해당 그룹을 찾을 수 없습니다.")
+                );
+    }
 }
