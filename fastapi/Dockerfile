@@ -1,6 +1,6 @@
 FROM python:latest
 
-WORKDIR /app/
+WORKDIR /app/src
 
 COPY ./main.py /app/
 COPY ./requirements.txt /app/
