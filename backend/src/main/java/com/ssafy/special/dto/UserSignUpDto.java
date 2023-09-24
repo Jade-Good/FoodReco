@@ -1,10 +1,11 @@
 package com.ssafy.special.dto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@Getter
+@Data
 public class UserSignUpDto {
     private String email;
     private String password;
