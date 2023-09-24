@@ -5,7 +5,7 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-@app.get("/")
+@app.get("/fastapi")
 def read_root():
     return {"fastapi 배포 성공!"}
 
