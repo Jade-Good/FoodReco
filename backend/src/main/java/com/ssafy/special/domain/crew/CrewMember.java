@@ -9,7 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-@Getter
+
+@Data
 @Entity(name = "crew_member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @IdClass(CrewId.class)

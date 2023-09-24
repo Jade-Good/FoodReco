@@ -41,7 +41,7 @@ public class CrewController {
         log.info("registCrew() 메소드 시작");
         try{
             crewService.registCrewforMember(registCrewDto,getEmail());
-            return ResponseEntity.ok().body("그룹에 가입되었습니다.");
+            return ResponseEntity.ok().body("그룹이 등록되었습니다.");
         }catch (IllegalArgumentException e){
             log.info("최소 인원 부족 에러");
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -51,6 +51,20 @@ public class CrewController {
         }
     }
 
+    @GetMapping("/join/{crewSeq}")
+    public ResponseEntity<?> joinCrew(@PathVariable Long crewSeq){
+        log.info("joinCrew() 메소드 시작");
+        try{
+            crewService.joinCrewforMember(crewSeq,getEmail());
+            return ResponseEntity.ok().body("그룹에 가입되었습니다.");
+        }catch (IllegalArgumentException e){
+            log.info("그룹 가입 간 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (EntityNotFoundException e){
+            log.info("Member find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     //@RequestBody SaveAttentionRateDto saveAttentionRateDto
     //@PathVariable Long userNo

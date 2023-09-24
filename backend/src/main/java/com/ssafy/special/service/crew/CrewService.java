@@ -1,6 +1,7 @@
 package com.ssafy.special.service.crew;
 
 import com.ssafy.special.domain.crew.Crew;
+import com.ssafy.special.domain.crew.CrewId;
 import com.ssafy.special.domain.crew.CrewMember;
 import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.dto.CrewDto;
@@ -72,7 +73,11 @@ public class CrewService {
         for (Long memberSeq:crewSignUpDto.getCrewMembers()) {
             CrewMember crewMember = CrewMember.builder()
                     .crew(crew)
-                    .member(Member.builder().memberSeq(memberSeq).build())
+                    .member(
+                            Member.builder()
+                                    .memberSeq(memberSeq)
+                                    .build()
+                    )
                     .build();
             crewMemberRepository.save(crewMember);
         }
@@ -83,5 +88,28 @@ public class CrewService {
                 .build();
         crewMemberRepository.save(crewMember);
         log.info("crew 생성 완료");
+    }
+
+    @Transactional
+    public void joinCrewforMember(Long crewSeq, String memberEmail) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+        CrewId crewId = CrewId.builder()
+                        .crew(crewSeq)
+                        .member(member.getMemberSeq())
+                        .build();
+        crewMemberRepository.findById(crewId)
+                .ifPresentOrElse(
+                        crewJoin ->{
+                            if(crewJoin.getStatus() == 1){
+                                throw new IllegalArgumentException("이미 가입한 그룹입니다.");
+                            }
+                            crewJoin.setStatus(1);
+                            crewMemberRepository.save(crewJoin);
+                        } ,
+                        ()->{
+                            throw new IllegalArgumentException("해당하는 그룹이 없습니다.");
+                        }
+                );
     }
 }
