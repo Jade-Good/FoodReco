@@ -6,15 +6,16 @@ import com.ssafy.special.dto.UserSignUpDto;
 import com.ssafy.special.repository.member.FriendListRepository;
 import com.ssafy.special.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -52,6 +53,7 @@ public class MemberService {
                               .lastModifiedAt(LocalDateTime.now())
                               .build();
         member.passwordEncode(passwordEncoder);
+        log.info(member.getPassword());
         memberRepository.save(member);
     }
 
