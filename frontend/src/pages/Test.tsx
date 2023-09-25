@@ -3,10 +3,20 @@ import StyledBasicInput from '../components/inputs/StyledBasicInput';
 import StyledButton from '../styles/StyledButton';
 import { useNavigate } from 'react-router-dom';
 import BasicSelect from '../components/option/BasicSelect';
+import StyledFoodSelect from '../components/option/StyledFoodSelect';
+import { useFieldArray, useForm } from 'react-hook-form';
 
 export const Test = () => {
-  const ageList = ['10대', '20대', '30대', '40대', '50대', '60대', '70대이상'];
+  const foodList = ['aaa', 'bbb', 'ccc', 'ddd', 'eee', 'fff', 'ggg'];
+  const { control, register } = useForm();
 
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // FormContext를 사용한다면 생략가능
+      name: 'test', // 배열 필드의 이름을 입력
+      // keyName: "id", 기본값은 "id" 이고 변경 가능하다
+    }
+  );
   return (
     <div className="check">
       <StyledButton
@@ -17,7 +27,7 @@ export const Test = () => {
       >
         구글인증
       </StyledButton>
-      {/* <MSelect selectList={ageList} placeholder="나이대" name="age" /> */}
+      <StyledFoodSelect />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import StyledIdInputIcon from '../../components/inputs/StyledIdInputIcon';
 import StyledPwInputIcon from '../../components/inputs/StyledPwInputIcon';
 import StyledButton from '../../styles/StyledButton';
 import classes from './SignUp.module.css';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { BsSquare } from 'react-icons/bs';
 import { BsFillCheckSquareFill } from 'react-icons/bs';
 import StyledBasicInput from '../../components/inputs/StyledBasicInput';
