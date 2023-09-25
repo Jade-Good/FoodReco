@@ -2,12 +2,12 @@ import React from 'react';
 import StyledBasicInput from '../components/inputs/StyledBasicInput';
 import StyledButton from '../styles/StyledButton';
 import { useNavigate } from 'react-router-dom';
+import MSelect from '../components/option/MSelect';
+import BasicSelect from '../components/option/BasicSelect';
 
 export const Test = () => {
-  const navigate = useNavigate();
-  const testclick = () => {
-    console.log('test입니다');
-  };
+  const ageList = ['10대', '20대', '30대', '40대', '50대', '60대', '70대이상'];
+
   return (
     <div className="check">
       <StyledButton
@@ -18,6 +18,7 @@ export const Test = () => {
       >
         구글인증
       </StyledButton>
+      {/* <MSelect selectList={ageList} placeholder="나이대" name="age" /> */}
     </div>
   );
 };
