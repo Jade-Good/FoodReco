@@ -1,8 +1,8 @@
 package com.ssafy.special.controller;
 
-import com.ssafy.special.dto.CrewDto;
-import com.ssafy.special.dto.CrewJoinDto;
-import com.ssafy.special.dto.CrewSignUpDto;
+import com.ssafy.special.dto.request.CrewDto;
+import com.ssafy.special.dto.request.CrewJoinDto;
+import com.ssafy.special.dto.request.CrewSignUpDto;
 import com.ssafy.special.service.crew.CrewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

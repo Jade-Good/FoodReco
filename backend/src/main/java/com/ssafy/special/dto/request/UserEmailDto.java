@@ -1,4 +1,4 @@
-package com.ssafy.special.dto;
+package com.ssafy.special.dto.request;
 
 import lombok.Data;
 import lombok.Getter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class EmailDto {
+public class UserEmailDto {
     private String email;
 }

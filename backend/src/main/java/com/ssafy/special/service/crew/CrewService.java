@@ -5,6 +5,9 @@ import com.ssafy.special.domain.crew.CrewId;
 import com.ssafy.special.domain.crew.CrewMember;
 import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.dto.*;
+import com.ssafy.special.dto.request.CrewDto;
+import com.ssafy.special.dto.request.CrewJoinDto;
+import com.ssafy.special.dto.request.CrewSignUpDto;
 import com.ssafy.special.repository.crew.CrewMemberRepository;
 import com.ssafy.special.repository.crew.CrewRecommendRepository;
 import com.ssafy.special.repository.crew.CrewRepository;
@@ -13,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;

@@ -1,8 +1,12 @@
 package com.ssafy.special.controller;
 
-import com.ssafy.special.dto.CheckEmailDto;
-import com.ssafy.special.dto.UserSignUpDto;
-import com.ssafy.special.dto.EmailDto;
+
+
+import com.ssafy.special.dto.request.UserCodeDto;
+import com.ssafy.special.dto.request.UserEmailDto;
+import com.ssafy.special.dto.request.UserNicknameDto;
+import com.ssafy.special.dto.request.UserSignUpDto;
+
 import com.ssafy.special.service.member.MemberService;
 import com.ssafy.special.service.member.VerificationService;
 import com.ssafy.special.util.RedisUtil;
@@ -13,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,58 +28,56 @@ public class MemberController {
     private final MemberService memberService;
     private final RedisUtil redisUtil;
 
-    /*
-     * 회원가입 메소드
-     */
+    // 회원가입 API
     @PostMapping("/regist")
-    public ResponseEntity<Map<String,String>> signUp(@RequestBody UserSignUpDto userSignUpDto) {
+    public ResponseEntity<Map<String, String>> signUp(@RequestBody UserSignUpDto userSignUpDto) {
 
-        Map<String,String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new HashMap<>();
         HttpStatus status = null;
 
         try {
-            String message = memberService.signUp(userSignUpDto);
+            memberService.signUp(userSignUpDto);
 
-            resultMap.put("message", message);
+            resultMap.put("message", "회원가입 성공");
             status = HttpStatus.OK;
 
-        }catch (Exception e) {
-
-            resultMap.put("message", "회원가입 실패");
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
-
         }
 
         return new ResponseEntity<>(resultMap, status);
     }
 
-    @PostMapping("/sendVerification")
-    private ResponseEntity<Map<String,String>> setVerifyCode(@RequestBody EmailDto emailDto) {
+    // 이메일 인증번호 발송
+    @PostMapping("/verification/email")
+    private ResponseEntity<Map<String, String>> setVerifyCode(@RequestBody UserEmailDto userEmailDto) {
 
-        Map<String,String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new HashMap<>();
         HttpStatus status = null;
         try {
-            verificationService.sendVerifyCode(emailDto.getEmail());
+            verificationService.sendVerifyCode(userEmailDto.getEmail());
             resultMap.put("message", "인증번호 전송 완료");
-            resultMap.put("code",redisUtil.getData("siwol406@gmail.com"));
+            resultMap.put("code", redisUtil.getData(userEmailDto.getEmail()));
             status = HttpStatus.OK;
-        } catch(Exception e) {
-            resultMap.put("message","인증번호 전송 실패");
+        } catch (Exception e) {
+            resultMap.put("message", "인증번호 전송 실패");
             status = HttpStatus.BAD_REQUEST;
         }
-        return new ResponseEntity<>(resultMap,status);
+        return new ResponseEntity<>(resultMap, status);
     }
 
-    @PostMapping("/checkVerification")
-    private ResponseEntity<Map<String,String>> checkVerifyCode(@RequestBody CheckEmailDto checkEmailDto) {
+    // 이메일 인증번호 체크
+    @PostMapping("/verification/email/code")
+    private ResponseEntity<Map<String, String>> checkVerifyCode(@RequestBody UserCodeDto userCodeDto) {
 
-        Map<String,String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new HashMap<>();
         HttpStatus status = null;
-        int verified = verificationService.check(checkEmailDto.getEmail(), checkEmailDto.getCode());
+        int verified = verificationService.check(userCodeDto.getEmail(), userCodeDto.getCode());
 
-        switch(verified) {
+        switch (verified) {
             case 0:
-                resultMap.put("message","인증 기간 만료");
+                resultMap.put("message", "인증 기간 만료");
                 status = HttpStatus.BAD_REQUEST;
                 break;
             case 1:
@@ -89,7 +90,43 @@ public class MemberController {
                 break;
         }
 
-        return new ResponseEntity<>(resultMap,status);
+        return new ResponseEntity<>(resultMap, status);
+    }
+
+    // 이메일 중복 검사
+    @PostMapping("/checkEmail")
+    public ResponseEntity<Map<String, String>> checkEmail(@RequestBody UserEmailDto userEmailDto) {
+        Map<String, String> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try {
+            memberService.checkEmail(userEmailDto.getEmail());
+            resultMap.put("message", "이메일 사용 가능");
+            status = HttpStatus.ACCEPTED;
+
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(resultMap, status);
+    }
+
+    // 닉네임 중복 검사
+    @PostMapping("/checkNickname")
+    public ResponseEntity<Map<String, String>> checkNickname(@RequestBody UserNicknameDto userNicknameDto) {
+        Map<String, String> resultMap = new HashMap<>();
+        HttpStatus status = null;
+        try {
+            memberService.checkNickname(userNicknameDto.getNickName());
+            resultMap.put("message", "닉네임 사용 가능");
+            status = HttpStatus.ACCEPTED;
+
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(resultMap, status);
     }
 
     // 사용자 Email 가져오는 Email
