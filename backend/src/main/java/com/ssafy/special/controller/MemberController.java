@@ -29,10 +29,25 @@ public class MemberController {
      * 회원가입 메소드
      */
     @PostMapping("/regist")
-    public String signUp(@RequestBody UserSignUpDto userSignUpDto) throws Exception {
-        memberService.signUp(userSignUpDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
+    public ResponseEntity<Map<String,String>> signUp(@RequestBody UserSignUpDto userSignUpDto) {
+
+        Map<String,String> resultMap = new HashMap<>();
+        HttpStatus status = null;
+
+        try {
+            String message = memberService.signUp(userSignUpDto);
+
+            resultMap.put("message", message);
+            status = HttpStatus.OK;
+
+        }catch (Exception e) {
+
+            resultMap.put("message", "회원가입 실패");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        }
+
+        return new ResponseEntity<>(resultMap, status);
     }
 
     @PostMapping("/sendVerification")

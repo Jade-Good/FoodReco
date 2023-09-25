@@ -10,5 +10,11 @@ public class UserSignUpDto {
     private String email;
     private String password;
     private String nickname;
-    private String img;
+    private String tendency;
+    private int height;
+    private int weight;
+    private int activity;
+    private String sex;
+    private int[] goodFoodSeq;
+    private int[] badFoodSeq;
 }
