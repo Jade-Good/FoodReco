@@ -2,7 +2,6 @@ import React from 'react';
 import StyledBasicInput from '../components/inputs/StyledBasicInput';
 import StyledButton from '../styles/StyledButton';
 import { useNavigate } from 'react-router-dom';
-import MSelect from '../components/option/MSelect';
 import BasicSelect from '../components/option/BasicSelect';
 
 export const Test = () => {

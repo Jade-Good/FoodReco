@@ -26,6 +26,7 @@ import BasicSelect from '../../components/option/BasicSelect';
 import RadioButtonsGroup from '../../components/option/ColorToggleButton';
 import ColorToggleButton from '../../components/option/ColorToggleButton';
 import { useNavigate } from 'react-router-dom';
+import StyledBasicInputUnit from '../../components/inputs/StyledBasicInputUnit';
 
 interface IForm {
   email: string;
@@ -60,8 +61,11 @@ export const SignUp = () => {
   const [agree1, setAgree1] = useState(0);
   // 개인정보 동의 2
   const [agree2, setAgree2] = useState(0);
+
   const steps = ['약관동의', '회원 정보', '취향 설문'];
   const ageList = ['10대', '20대', '30대', '40대', '50대', '60대', '70대이상'];
+  const sexList = ['남자', '여자'];
+  const activityList = ['주 1회 유산소', '주2회 유산소', '주 3회 웨이트'];
 
   const {
     register,
@@ -79,8 +83,8 @@ export const SignUp = () => {
       nickname: '',
       age: 0,
       sex: '',
-      height: 0,
-      weight: 0,
+      height: undefined,
+      weight: undefined,
       activity: 0,
       passwordconfirm: '',
     },
@@ -257,6 +261,7 @@ export const SignUp = () => {
             <br />
             <div className={classes.inputContainer}>
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -265,13 +270,14 @@ export const SignUp = () => {
                 background="#F9F9F9"
                 radius="10px"
                 onClick={() => {
-                  navigate('/signup');
+                  navigate('/');
                 }}
               >
                 취소
               </StyledButton>
               &nbsp;&nbsp;&nbsp;
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -285,7 +291,7 @@ export const SignUp = () => {
                       setProgress((prevProgress) => prevProgress + 1);
                     }
                   } else {
-                    alert('이메일인증과 비밀번호를 확인해주세요!');
+                    alert('개인정보 동의를 모두 동의해주셔야 이용가능합니다.');
                   }
                 }}
               >
@@ -417,9 +423,6 @@ export const SignUp = () => {
                     setCheckPassword(0);
                   },
                 }}
-                aria-invalid={
-                  isSubmitted ? (errors.password ? 'true' : 'false') : undefined
-                }
               />
             </div>
             {/* 비밀번호확인 */}
@@ -436,7 +439,7 @@ export const SignUp = () => {
             <InputContainer>
               <StyledInput
                 id="passwordconfirm"
-                type="password"
+                type="passwordconfirm"
                 {...register('passwordconfirm', {
                   required: true,
                   validate: {
@@ -457,6 +460,7 @@ export const SignUp = () => {
             <br />
             <div className={classes.inputContainer}>
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -474,6 +478,7 @@ export const SignUp = () => {
               </StyledButton>
               &nbsp;&nbsp;&nbsp;
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -509,55 +514,113 @@ export const SignUp = () => {
             </Box>
             <br />
             {/* 닉네임 적기 */}
-            <div className={classes.labelContainer}>
-              <label htmlFor="email" className={classes.labelStyle}>
-                닉네임
-              </label>
-              {errors.nickname && (
-                <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
-                  {errors.nickname.message}
-                </small>
-              )}
+            <div className={classes.mB}>
+              <div className={classes.labelContainer}>
+                <label htmlFor="email" className={classes.labelStyle}>
+                  닉네임
+                </label>
+                {errors.nickname && (
+                  <small
+                    role="alert"
+                    style={{ color: 'red', fontSize: '10px' }}
+                  >
+                    {errors.nickname.message}
+                  </small>
+                )}
+              </div>
+
+              <StyledBasicInput
+                maxLength={8}
+                name="nickname"
+                placeholder="닉네임을 입력하세요"
+                control={control}
+                rules={{
+                  maxLength: {
+                    value: 8,
+                    message: '8자리 이하 닉네임을 사용해주세요.',
+                  },
+                  minLength: {
+                    value: 2,
+                    message: '2자리 이상 닉네임을 사용해주세요',
+                  },
+                  required: '닉네임은 필수 입력입니다.',
+                }}
+              />
             </div>
 
-            <StyledBasicInput
-              name="nickname"
-              placeholder="닉네임을 입력하세요"
-              control={control}
-              rules={{
-                minLength: {
-                  value: 8,
-                  message: '8자리이하 닉네임을 사용해주세요.',
-                },
-                required: '닉네임은 필수 입력입니다.',
-              }}
-            />
+            <div className={classes.mB}>
+              <div className={classes.labelContainer}>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="age">
+                    연령
+                  </label>
 
-            <div className={classes.labelContainer}>
-              <div>
-                <label className={classes.labelStyle} htmlFor="nickname">
-                  연령
-                </label>
+                  <BasicSelect
+                    control={control}
+                    {...register('age')}
+                    name="age"
+                    label="age"
+                    options={ageList}
+                  />
+                </div>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="gender">
+                    성별
+                  </label>
 
-                <BasicSelect
-                  control={control}
-                  {...register('age')}
-                  name="age"
-                  label="age"
-                  options={ageList}
-                />
+                  <BasicSelect
+                    control={control}
+                    {...register('sex')}
+                    name="sex"
+                    label="sex"
+                    options={sexList}
+                  />
+                </div>
+              </div>
+              <div className={classes.labelContainer}>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="height">
+                    신장
+                  </label>
+
+                  <StyledBasicInputUnit
+                    type="height"
+                    unit="CM"
+                    name="height"
+                    control={control}
+                    // styleContainer={{ borderColor: '#c3c7c9' }}
+                  />
+                </div>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="weight">
+                    체중
+                  </label>
+
+                  <StyledBasicInputUnit
+                    type="weight"
+                    unit="kg"
+                    name="weight"
+                    control={control}
+                    // styleContainer={{ borderColor: '#c3c7c9' }}
+                  />
+                </div>
               </div>
               <div>
-                <label className={classes.labelStyle} htmlFor="nickname">
-                  성별
+                <label className={classes.labelStyle} htmlFor="activity">
+                  운동량
                 </label>
-                <div>
-                  <ColorToggleButton />
-                </div>
+                <BasicSelect
+                  control={control}
+                  {...register('activity')}
+                  name="activity"
+                  label="activity"
+                  options={activityList}
+                />
               </div>
             </div>
             <div className={classes.inputContainer}>
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -575,6 +638,7 @@ export const SignUp = () => {
               </StyledButton>
               &nbsp;&nbsp;&nbsp;
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -583,12 +647,12 @@ export const SignUp = () => {
                 background="#FE9D3A"
                 radius="10px"
                 onClick={() => {
-                  if (checkEmail === 1 && checkPassword === 1) {
+                  if (errors.nickname) {
+                    alert('닉네임을 확인해주세요');
+                  } else {
                     if (progress < 5) {
                       setProgress((prevProgress) => prevProgress + 1);
                     }
-                  } else {
-                    alert('이메일인증과 비밀번호를 확인해주세요!');
                   }
                 }}
               >

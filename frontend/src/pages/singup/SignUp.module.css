@@ -23,6 +23,7 @@
 .labelContainer {
   display: flex;
   justify-content: space-between; /* 수평으로 양 옆에 정렬 */
+  margin-bottom: 10px;
 }
 
 .labelStyle {
@@ -35,4 +36,8 @@
 .rowContainer {
   display: flex;
   justify-content: space-between; /* 수평으로 양 옆에 정렬 */
+}
+
+.mB {
+  margin-bottom: 15px;
 }

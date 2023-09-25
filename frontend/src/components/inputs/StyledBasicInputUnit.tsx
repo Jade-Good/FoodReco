@@ -12,14 +12,12 @@ import {
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 18.4rem;
-  height: 2.625rem;
+  width: 7.4rem;
+  height: 3rem;
   color: #c6c5c5;
   border: 1px solid #fe9d3a;
   border-radius: 5px;
-  &:focus-within {
-    border-color: orange; /* 포커스가 입력란 또는 하위 요소에 있을 때 테두리 색상 변경 */
-  }
+  justify-content: space-between; /* 수평으로 양 옆에 정렬 */
 `;
 
 const StyledInput = styled.input`
@@ -28,7 +26,15 @@ const StyledInput = styled.input`
   border: none;
   outline: none;
   color: #525252;
-  font-weight: bold;
+  // font-weight: bold;
+  width: 3rem;
+  height: 1.23956rem;
+  font-size: 1rem;
+`;
+const UnitContainer = styled.span`
+  flex-shrink: 0;
+  padding-right: 0.5rem; /* CM와의 간격을 조절할 수 있음 */
+  color: #525252;
 `;
 
 // useController을 사용하는 컴포넌트를 위한 type 지정
@@ -36,7 +42,6 @@ export type TControl<T extends FieldValues> = {
   type?: string;
   placeholder?: string;
   styleInput?: React.CSSProperties;
-  styleContainer?: React.CSSProperties;
   className?: string;
   control?: Control<T>;
   name: FieldPath<T>;
@@ -44,19 +49,20 @@ export type TControl<T extends FieldValues> = {
     RegisterOptions<T>,
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
   >;
-  maxLength?: number;
+  unit?: string | number;
+  styleContainer?: React.CSSProperties;
 };
 
-const StyledBasicInput: React.FC<TControl<any>> = ({
+const StyledBasicInputUnit: React.FC<TControl<any>> = ({
   className,
   placeholder,
-  styleInput,
   name,
   rules,
   control,
   type,
-  maxLength,
+  unit,
   styleContainer,
+  styleInput,
 }) => {
   const {
     field: { value, onChange },
@@ -65,7 +71,6 @@ const StyledBasicInput: React.FC<TControl<any>> = ({
   return (
     <InputContainer style={styleContainer}>
       <StyledInput
-        maxLength={maxLength}
         className={className}
         placeholder={placeholder}
         value={value}
@@ -73,8 +78,9 @@ const StyledBasicInput: React.FC<TControl<any>> = ({
         style={styleInput}
         type={type}
       />
+      {unit && <UnitContainer>{unit}</UnitContainer>}
     </InputContainer>
   );
 };
 
-export default StyledBasicInput;
+export default StyledBasicInputUnit;

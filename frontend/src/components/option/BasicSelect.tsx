@@ -4,6 +4,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import './BasicSelect.css';
 import {
   Control,
   FieldPath,
@@ -50,6 +51,7 @@ const BasicSelect: React.FC<TControl<any>> = ({
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label"></InputLabel>
         <Select
+          sx={{ borderColor: 'orange !important' }} // 여기에서 borderColor를 주황색(orange)으로 설정
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={value}
