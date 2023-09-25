@@ -3,13 +3,13 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 
 # 파일 경로를 변경해야 할 수도 있습니다.
-filename = './preprocessed_data/reordered_data.xlsx'  # 여러분의 파일 경로로 변경해 주세요
+filename = './preprocessed_data/menu_ingredient/reordered_data.xlsx'  # 여러분의 파일 경로로 변경해 주세요
 
 # 데이터 로드
 data = pd.read_excel(filename)
 
 # 선택된 열을 사용하여 조합된 문자열을 만듭니다.
-selected_columns = ['음식명', '조리방식'] + list(data.columns[data.columns.get_loc("카레"):]) + ['음식분류2', '음식분류1']
+selected_columns = ['음식명', '조리방식'] + list(data.columns[data.columns.get_loc("채소"):]) + ['음식분류2', '음식분류1']
 data_selected = data[selected_columns].fillna('')
 data_selected['combined'] = data_selected.apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
 
@@ -17,6 +17,13 @@ data_selected['combined'] = data_selected.apply(lambda row: ' '.join(row.values.
 replacement_dict = {
 
     '커리': '카레',
+    '콘': '채소',
+    '옥수수': '채소',
+    '초장': '양념',
+    '들기름': '양념',
+    '참기름':'양념',
+    '쌈장': '양념',
+    '마늘': '채소',
     '카레': '카레',
     '된장': '된장',
     '간장': '간장',
@@ -25,9 +32,9 @@ replacement_dict = {
     '케첩': '케찹',
     '케찹': '케찹',
     '케쳡': '케찹',
-    '오리': '육류',
-    '한우': '육류',
-    '아롱사태': '육류',
+    '오리': '오리고기',
+    '한우': '소고기',
+    '아롱사태': '소고기',
     '어묵': '어묵',
     '오뎅': '어묵',
     '오이': '오이',
@@ -36,9 +43,9 @@ replacement_dict = {
     '피망': '채소',
     '버섯': '버섯',
     '고추': '고추',
-    '닭': '육류',
-    '소고기': '육류',
-    '돼지고기': '육류',
+    '닭': '닭고기',
+    '소고기': '소고기',
+    '돼지고기': '돼지고기',
     '생선': '생선',
     '조개': '조개',
     '고등어': '생선',
@@ -84,7 +91,7 @@ replacement_dict = {
     '홍어': '생선',
     '아구': '생선',
     '문어': '오징어류',
-    '쭈꾸미': '오징어류',
+    '쭈꾸미':'오징어류',
     '도다리': '생선',
     '농어': '생선',
     '서대': '생선',
@@ -92,30 +99,30 @@ replacement_dict = {
     '볼락': '생선',
     '청어': '생선',
     '노가리': '생선',
-    '돼지': '육류',
-    '소갈비': '육류',
-    '쇠고기': '육류',
-    '제육': '육류',
-    '양갈비': '육류',
-    '소불고기': '육류',
+    '돼지': '돼지고기',
+    '소갈비': '소고기',
+    '쇠고기': '소고기',
+    '제육': '돼지고기',
+    '양갈비': '양고기',
+    '소불고기': '소고기',
     '가오리': '생선',
     '메기': '생선',
     '임연수': '생선',
     '과메기': '생선',
     '안심': '육류',
     '목살': '육류',
-    '삼겹살': '육류',
-    '항정살': '육류',
-    '오리고기': '육류',
-    '양지머리': '육류',
+    '삼겹살': '돼지고기',
+    '항정살': '돼지고기',
+    '오리고기': '오리고기',
+    '양지머리': '소고기',
     '가지': '채소',
     '고구마': '채소',
     '감자': '채소',
     '콜리플라워': '채소',
     '파프리카': '채소',
-    '황태': '생선',
-    '홍합': '조개류',
-    '치킨': '육류',
+    '황태':'생선',
+    '홍합':'조개류',
+    '치킨': '닭고기',
     '가자미': '생선'
 
 }
@@ -171,32 +178,33 @@ allergy_ingredient_category_dict = {
     '우렁': '갑각류'
 }
 category_dict = {
-    '닭고기': '육류',
-    '돼지고기': '육류',
+    '닭고기': '닭고기',
+    '돼지고기': '돼지고기',
     '밀가루': '밀가루',
     '육류': '육류',
-    '소고기': '육류'
+    '소고기': '소고기'
 }
 
 ingredient_list = list(replacement_dict.values()) + list(allergy_ingredient_category_dict.values()) + list(category_dict.values())
 
 
-ingredient_weight_dict = {ingredient: 5 for ingredient in ingredient_list}
+# ingredient_weight_dict = {ingredient: 1 for ingredient in ingredient_list}
+#
+#
+# # 리스트에 가중치를 어떻게 부여
+# weights = {
+#     '음식명': 1,  # 음식명에 높은 가중치 부여
+#     '조리방식': 1,  # 조리방식에 높은 가중치 부여
+#     # 다른 열에 대한 가중치도 설정할 수 있습니다.
+#     '음식분류2': 1,
+#     '음식분류1':1
+# }
 
-# 리스트에 가중치를 어떻게 부여
-weights = {
-    '음식명': 2,  # 음식명에 높은 가중치 부여
-    '조리방식': 1,  # 조리방식에 높은 가중치 부여
-    # 다른 열에 대한 가중치도 설정할 수 있습니다.
-    '음식분류2': 3,
-    '음식분류1':4
-}
-
-combined_dict = {**ingredient_weight_dict, **weights}
+# combined_dict = {**ingredient_weight_dict, **weights}
 
 # 가중치 적용
-for column, weight in combined_dict.items():
-    data_selected[column] = data_selected[column].apply(lambda x: (str(x) + ' ') * weight)
+# for column, weight in combined_dict.items():
+#     data_selected[column] = data_selected[column].apply(lambda x: (str(x) + ' ') * weight)
 
 
 # TF-IDF 벡터화
@@ -204,9 +212,8 @@ vectorizer = TfidfVectorizer()
 X = vectorizer.fit_transform(data_selected['combined'])
 
 
-
 # K-means 군집화
-k = 599  # 군집의 수
+k = 799  # 군집의 수
 model = KMeans(n_clusters=k, init='k-means++', random_state=42)
 model.fit(X)
 
@@ -214,6 +221,7 @@ model.fit(X)
 data['cluster_labels'] = model.labels_
 
 # 결과를 새로운 엑셀 파일로 저장
-output_filename = './preprocessed_data/menu_ingredient/weighted_clustered_new_ingredient_599_clusters.xlsx'  # 원하는 파일명으로 변경 가능
+output_filename = './preprocessed_data/menu_ingredient/clustered_new_ingredient_' + str(
+    k) + '_clusters.xlsx'  # 원하는 파일명으로 변경 가능
 data.to_excel(output_filename, index=False)
 
