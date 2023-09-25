@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 
 # 파일 경로를 변경해야 할 수도 있습니다.
-filename = 'reordered_data.xlsx'  # 여러분의 파일 경로로 변경해 주세요
+filename = './preprocessed_data/reordered_data.xlsx'  # 여러분의 파일 경로로 변경해 주세요
 
 # 데이터 로드
 data = pd.read_excel(filename)
@@ -214,7 +214,6 @@ model.fit(X)
 data['cluster_labels'] = model.labels_
 
 # 결과를 새로운 엑셀 파일로 저장
-output_filename = 'weighted_clustered_new_ingredient_599_clusters.xlsx'  # 원하는 파일명으로 변경 가능
+output_filename = './preprocessed_data/menu_ingredient/weighted_clustered_new_ingredient_599_clusters.xlsx'  # 원하는 파일명으로 변경 가능
 data.to_excel(output_filename, index=False)
 
-# print(f"Clustering completed! The result is saved to {output_filename}")

@@ -38,7 +38,7 @@ def main():
     excel_data = pd.read_excel(excel_filepath)
 
     # Load the JSON file
-    json_filepath = './updated_new_clustered.json'
+    json_filepath = './preprocessed_data/updated_new_clustered.json'
     with open(json_filepath, 'r', encoding='utf-8') as f:
         json_data = json.load(f)
 
@@ -48,7 +48,7 @@ def main():
     excel_data['avgPrice'] = parallel_get_avg_price(excel_data['음식명'], menus)
 
     # Save the modified Excel data to a new file.
-    output_filepath = 'clustered_with_avg_price.xlsx'
+    output_filepath = './preprocessed_data/menu_price/clustered_with_avg_price.xlsx'
     excel_data.to_excel(output_filepath, index=False)
 
 

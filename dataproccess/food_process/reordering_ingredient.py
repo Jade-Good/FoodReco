@@ -3,7 +3,7 @@ import copy
 import pandas as pd
 
 # Load the Excel file
-file_path = 'new_ingredient.xlsx'  # 실제 파일 경로로 변경해 주세요.
+file_path = './preprocessed_data/menu_ingredient/new_ingredient.xlsx'  # 실제 파일 경로로 변경해 주세요.
 data = pd.read_excel(file_path)
 
 
@@ -192,4 +192,4 @@ for index, row in data.iterrows():
 
 
 # Save the reordered DataFrame if needed
-ordered_data.to_excel('reordered_data.xlsx', index=False)
+ordered_data.to_excel('./preprocessed_data/menu_ingredient/reordered_data.xlsx', index=False)

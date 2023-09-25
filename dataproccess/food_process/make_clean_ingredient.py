@@ -1,7 +1,7 @@
 import pandas as pd
 
 # 데이터 불러오기
-data_path = "cleaned_inde.xlsx"  # 여기에 실제 파일 경로를 입력해주세요.
+data_path = "./preprocessed_data/menu_ingredient/cleaned_inde.xlsx"  # 여기에 실제 파일 경로를 입력해주세요.
 data = pd.read_excel(data_path)
 
 replacement_dict = {
@@ -202,5 +202,5 @@ for index, row in data.iterrows():
 
 
 # 변경된 데이터 저장
-output_path = "fine_data.xlsx"  # 여기에 저장할 파일 경로를 입력해주세요.
+output_path = "./preprocessed_data/menu_ingredient/fine_data.xlsx"  # 여기에 저장할 파일 경로를 입력해주세요.
 data.to_excel(output_path, index=False)
