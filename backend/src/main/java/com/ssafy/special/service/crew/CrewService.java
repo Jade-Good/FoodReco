@@ -91,21 +91,27 @@ public class CrewService {
     }
 
     @Transactional
-    public void joinCrewforMember(Long crewSeq, String memberEmail)
+    public void joinCrewforMember(CrewJoinDto joinDto, String memberEmail)
                     throws EntityNotFoundException,IllegalArgumentException{
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         CrewId crewId = CrewId.builder()
-                        .crew(crewSeq)
+                        .crew(joinDto.getCrewSeq())
                         .member(member.getMemberSeq())
                         .build();
         crewMemberRepository.findById(crewId)
                 .ifPresentOrElse(
                         crewJoin ->{
-                            if(crewJoin.getStatus() == 1){
+                            if(crewJoin.getStatus() == 1 && joinDto.getCrewJoinType() == crewJoin.getStatus()){
                                 throw new IllegalArgumentException("이미 가입한 그룹입니다.");
                             }
-                            crewJoin.setStatus(1);
+                            if(crewJoin.getStatus() == -1 && joinDto.getCrewJoinType() == crewJoin.getStatus()){
+                                throw new IllegalArgumentException("이미 거절한 그룹입니다.");
+                            }
+                            if(crewJoin.getStatus() == 0){
+                                throw new IllegalArgumentException("잘못된 요청입니다.");
+                            }
+                            crewJoin.setStatus(joinDto.getCrewJoinType());
                             crewMemberRepository.save(crewJoin);
                         } ,
                         ()->{
