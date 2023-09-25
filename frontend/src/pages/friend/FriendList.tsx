@@ -3,6 +3,7 @@ import { MemberFooterFriend } from "../../components/MemberFooter/MemberFooterFr
 import HeaderFriendAdd from "../../components/header/HeaderFriendAdd";
 import { Friend } from "../../components/friend/Friend";
 import { FriendInviteModal } from "../../components/friend/FriendInviteModal";
+import "../../components/friend/Friend.module.css";
 
 export const FriendList = () => {
   let arr = [
@@ -36,6 +37,7 @@ export const FriendList = () => {
 
   const updateParentState = (newState: boolean) => {
     setModal(newState);
+    document.body.style.overflow = "scroll";
   };
 
   return (

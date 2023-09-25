@@ -13,6 +13,7 @@ const HeaderFriendAdd = ({ onClick, exitModal }: HeaderFriendAddProps) => {
 
   const exitButtonClick = () => {
     exitModal(true);
+    document.body.style.overflow = "hidden";
   };
 
   return (
