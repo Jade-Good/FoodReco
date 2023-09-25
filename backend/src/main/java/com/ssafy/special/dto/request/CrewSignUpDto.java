@@ -1,4 +1,4 @@
-package com.ssafy.special.dto;
+package com.ssafy.special.dto.request;
 
 import com.ssafy.special.domain.member.Member;
 import lombok.Builder;
