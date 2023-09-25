@@ -23,6 +23,8 @@ import java.util.Map;
 public class MemberController {
     private final VerificationService verificationService;
     private final MemberService memberService;
+    private final RedisUtil redisUtil;
+
     /*
      * 회원가입 메소드
      */
