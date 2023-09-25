@@ -1,6 +1,7 @@
 package com.ssafy.special.controller;
 
 import com.ssafy.special.dto.CrewDto;
+import com.ssafy.special.dto.CrewJoinDto;
 import com.ssafy.special.dto.CrewSignUpDto;
 import com.ssafy.special.service.crew.CrewService;
 import lombok.RequiredArgsConstructor;
@@ -57,12 +58,12 @@ public class CrewController {
         }
     }
 
-    @GetMapping("/join/{crewSeq}")
-    public ResponseEntity<?> joinCrew(@PathVariable Long crewSeq){
+    @PostMapping("/join")
+    public ResponseEntity<?> joinCrew(@RequestBody CrewJoinDto joinDto){
         log.info("joinCrew() 메소드 시작");
         try{
-            crewService.joinCrewforMember(crewSeq,getEmail());
-            return ResponseEntity.ok().body("그룹에 가입되었습니다.");
+            crewService.joinCrewforMember(joinDto,getEmail());
+            return ResponseEntity.ok().body("처리되었습니다.");
         }catch (IllegalArgumentException e){
             log.info("그룹 가입 간 에러 발생 : "+ e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
