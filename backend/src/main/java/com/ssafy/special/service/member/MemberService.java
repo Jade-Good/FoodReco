@@ -3,6 +3,7 @@ package com.ssafy.special.service.member;
 import com.ssafy.special.domain.member.FriendList;
 import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.dto.request.UserSignUpDto;
+import com.ssafy.special.dto.response.MemberDetailDto;
 import com.ssafy.special.exception.DuplicateEmailException;
 import com.ssafy.special.exception.DuplicateNicknameException;
 import com.ssafy.special.exception.SignupFailedException;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -95,5 +97,27 @@ public class MemberService {
             }
         }
         return friends;
+    }
+
+    public MemberDetailDto getUserInfo(String email) throws NullPointerException {
+
+
+            Optional<Member> member = memberRepository.findByEmail(email);
+
+            if (member.isPresent()) {
+                MemberDetailDto memberDetailDto = MemberDetailDto.builder()
+//                    .profileUrl(member.get().getProfileUrl())
+                        .nickName(member.get().getNickname())
+                        .height(member.get().getHeight())
+                        .weight(member.get().getWeight())
+                        .activity(member.get().getActivity())
+                        .build();
+
+                return memberDetailDto;
+            } else {
+                throw new NullPointerException("멤버 정보가 없습니다.");
+            }
+
+
     }
 }
