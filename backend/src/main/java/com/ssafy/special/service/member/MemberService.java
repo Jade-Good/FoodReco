@@ -36,25 +36,32 @@ public class MemberService {
     /*
      * sign up 유효성 체크 후 DB에 저장
      */
-    public void signUp(UserSignUpDto userSignUpDto) throws Exception  {
-        if (memberRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
-            throw new Exception("이미 존재하는 이메일입니다.");
-        }
-        if (memberRepository.findByNickname(userSignUpDto.getNickname()).isPresent()) {
-            throw new Exception("이미 존재하는 닉네임입니다.");
-        }
+    public String signUp(UserSignUpDto userSignUpDto) throws Exception {
+        try {
+            if (memberRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
+                return "이미 존재하는 이메일입니다.";
+            }
+            if (memberRepository.findByNickname(userSignUpDto.getNickname()).isPresent()) {
+                return "이미 존재하는 닉네임입니다.";
+            }
 
-        Member member = Member.builder()
-                              .email(userSignUpDto.getEmail())
-                              .password(userSignUpDto.getPassword())
-                              .nickname(userSignUpDto.getNickname())
-                              .img(userSignUpDto.getImg())
-                              .createdAt(LocalDateTime.now())
-                              .lastModifiedAt(LocalDateTime.now())
-                              .build();
-        member.passwordEncode(passwordEncoder);
-        log.info(member.getPassword());
-        memberRepository.save(member);
+            Member member = Member.builder()
+                    .email(userSignUpDto.getEmail())
+                    .password(userSignUpDto.getPassword())
+                    .nickname(userSignUpDto.getNickname())
+//                    .activity(userSignUpDto.getActivity())
+                    .sex(userSignUpDto.getSex())
+                    .isDeleted(0)
+                    .createdAt(LocalDateTime.now())
+                    .lastModifiedAt(LocalDateTime.now())
+                    .build();
+            member.passwordEncode(passwordEncoder);
+            log.info(member.getPassword());
+            memberRepository.save(member);
+        } catch(Exception e) {
+            throw new Exception("회원가입 실패");
+        }
+        return "회원 가입 성공";
     }
 
     public List<Member> getFriendList(Long memberSeq) {
