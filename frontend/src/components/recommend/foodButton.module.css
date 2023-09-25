@@ -1,0 +1,23 @@
+.circleLarge{
+    display: inline-block;
+    width : 5rem;
+    height : 5rem;
+    border : #E7E7E7 1rem solid;
+    border-radius: 100%;
+    text-align: center;
+    line-height : 7.5rem;
+}
+
+.circleTall{
+    display: inline-block;
+    width : 3rem;
+    height : 3rem;
+    border : #E7E7E7 0.5rem solid;
+    border-radius: 100%;
+    text-align: center;
+    line-height : 4.2rem;
+}
+
+.buttons {
+    text-align: center;
+}

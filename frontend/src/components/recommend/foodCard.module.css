@@ -1,0 +1,15 @@
+.foodImg {
+  width : 20rem;
+  height : 20rem;
+  border-radius: 100%;
+  border : solid orange 1px;
+}
+
+.cardBox {
+  text-align: center;
+  width : 21rem;
+  height : 25rem;
+  padding: 2rem 0;
+  border-radius: 1rem;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
+}
