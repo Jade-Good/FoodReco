@@ -49,6 +49,7 @@ public class MemberService {
                     .email(userSignUpDto.getEmail())
                     .password(userSignUpDto.getPassword())
                     .nickname(userSignUpDto.getNickname())
+//                    .tendency(userSignUpDto.getTendency())
 //                    .activity(userSignUpDto.getActivity())
                     .sex(userSignUpDto.getSex())
                     .isDeleted(0)
