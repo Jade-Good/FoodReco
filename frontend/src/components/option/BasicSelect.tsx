@@ -28,7 +28,7 @@ export type TControl<T extends FieldValues> = {
     RegisterOptions<T>,
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
   >;
-  options: string[];
+  options: string[] | number[];
   label: string;
 };
 
