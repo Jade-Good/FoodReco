@@ -27,6 +27,8 @@ import RadioButtonsGroup from '../../components/option/ColorToggleButton';
 import ColorToggleButton from '../../components/option/ColorToggleButton';
 import { useNavigate } from 'react-router-dom';
 import StyledBasicInputUnit from '../../components/inputs/StyledBasicInputUnit';
+import { ChooseLikeFood } from './ChooseLikeFood';
+import ToggleButton from '@mui/material/ToggleButton';
 
 interface IForm {
   email: string;
@@ -44,6 +46,20 @@ interface IForm {
 interface EmailCheck {
   email: string;
 }
+
+const ToggleButtonContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap; /* Allow ToggleButtons to wrap to the next line */
+`;
+
+const CustomToggleButton = styled(ToggleButton)`
+  && {
+    border-radius: 1rem; /* Increase border-radius for a more rounded appearance */
+    margin: 0.2rem; /* Add margin to create spacing between ToggleButtons */
+    // border: 1px solid orange;
+    // color: orange;
+  }
+`;
 
 export const SignUp = () => {
   const navigate = useNavigate();
@@ -66,6 +82,41 @@ export const SignUp = () => {
   const ageList = ['10대', '20대', '30대', '40대', '50대', '60대', '70대이상'];
   const sexList = ['남자', '여자'];
   const activityList = ['주 1회 유산소', '주2회 유산소', '주 3회 웨이트'];
+
+  const [likefood, setLikeFood] = useState<string[]>([]);
+  const [unlikeFood, setUnlikeFood] = useState<string[]>([]);
+  const foodList = [
+    '시과',
+    '자장면',
+    '소고기',
+    '돼지고기',
+    '피자',
+    '파스타',
+    '된찌',
+    '김찌',
+  ];
+
+  //좋아하는 음식 선택
+  const toggleLikeFood = (food: string) => {
+    if (likefood.includes(food)) {
+      // 음식이 이미 좋아요 목록에 있는 경우, 제거합니다.
+      setLikeFood(likefood.filter((item) => item !== food));
+    } else {
+      // 음식이 좋아요 목록에 없는 경우, 추가합니다.
+      setLikeFood([...likefood, food]);
+    }
+  };
+
+  //싫어하는 음식선택
+  const toggleUnlikeFood = (food: string) => {
+    if (unlikeFood.includes(food)) {
+      // 음식이 이미 좋아요 목록에 있는 경우, 제거합니다.
+      setUnlikeFood(unlikeFood.filter((item) => item !== food));
+    } else {
+      // 음식이 좋아요 목록에 없는 경우, 추가합니다.
+      setUnlikeFood([...unlikeFood, food]);
+    }
+  };
 
   const {
     register,
@@ -200,13 +251,15 @@ export const SignUp = () => {
   return (
     <div className={classes.container}>
       <br />
-      <HeaderLogo />
+      {progress !== 5 && <HeaderLogo />}
       <br />
       <br />
       <br />
-      <p style={{ color: '#525252', fontSize: '1.5rem', fontWeight: 'bold' }}>
-        회원가입
-      </p>
+      {progress !== 5 && (
+        <p style={{ color: '#525252', fontSize: '1.5rem', fontWeight: 'bold' }}>
+          회원가입
+        </p>
+      )}
       <br />
 
       <form onSubmit={handleSubmit(handleSignUp)}>
@@ -661,23 +714,181 @@ export const SignUp = () => {
             </div>
           </div>
         )}
-        {progress === 3 && <p>세번째페이지</p>}
-        {progress === 4 && <p>네번째페이지</p>}
-        {progress === 5 && <p>다섯번째페이지</p>}
+        {/* 좋아하는 음식 선택하기 */}
+        {progress === 3 && (
+          <div>
+            <Box sx={{ width: '100%' }}>
+              <Stepper activeStep={1} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+            <br />
+            <label>좋아하는 음식을 선택해 주세요!</label>
+            <ToggleButtonContainer>
+              {foodList.map((food, index) => (
+                <CustomToggleButton
+                  value="check"
+                  selected={likefood.includes(food)} // 버튼 선택 상태는 좋아요 목록에 음식이 있는지 여부에 따라 결정됩니다.
+                  onClick={() => toggleLikeFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
+                  key={index}
+                >
+                  # {food}
+                </CustomToggleButton>
+              ))}
+            </ToggleButtonContainer>
+            <div className={classes.inputContainer}>
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="#7D7B7B;"
+                fontSize="1.25rem"
+                background="#F9F9F9"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0) {
+                    setProgress((prevProgress) => prevProgress - 1);
+                  }
+                }}
+              >
+                이전
+              </StyledButton>
+              &nbsp;&nbsp;&nbsp;
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="white"
+                fontSize="1.25rem"
+                background="#FE9D3A"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0 && likefood.length >= 5) {
+                    setProgress((prevProgress) => prevProgress + 1);
+                  } else {
+                    alert('최소 5개 이상 좋아하는 음식을 선택해주세요');
+                  }
+                }}
+              >
+                다음
+              </StyledButton>
+            </div>
+          </div>
+        )}
+        {/* 싫어하는 음식 선택하기 */}
+        {progress === 4 && (
+          <div>
+            <Box sx={{ width: '100%' }}>
+              <Stepper activeStep={1} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+            <br />
+            <label>싫어하는 음식을 선택해 주세요!</label>
+            <ToggleButtonContainer>
+              {foodList.map((food, index) => (
+                <CustomToggleButton
+                  value="check"
+                  selected={unlikeFood.includes(food)} // 버튼 선택 상태는 좋아요 목록에 음식이 있는지 여부에 따라 결정됩니다.
+                  onClick={() => toggleUnlikeFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
+                  key={index}
+                >
+                  # {food}
+                </CustomToggleButton>
+              ))}
+            </ToggleButtonContainer>
+            <div className={classes.inputContainer}>
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="#7D7B7B;"
+                fontSize="1.25rem"
+                background="#F9F9F9"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0) {
+                    setProgress((prevProgress) => prevProgress - 1);
+                  }
+                }}
+              >
+                이전
+              </StyledButton>
+              &nbsp;&nbsp;&nbsp;
+              <StyledButton
+                type="submit"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="white"
+                fontSize="1.25rem"
+                background="#FE9D3A"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0 && unlikeFood.length >= 5) {
+                    setProgress((prevProgress) => prevProgress + 1);
+                  } else {
+                    alert('최소 5개 이상 싫어하느 음식을 선택해주세요');
+                  }
+                }}
+              >
+                완료
+              </StyledButton>
+            </div>
+          </div>
+        )}
         {progress === 6 && <p>여섯번째페이지</p>}
-        <StyledButton
+        <br />
+        {/* 나중에 삭제해야함 */}
+        {/* <StyledButton
           type="submit"
           disabled={isSubmitting}
           width="9.0rem"
-          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" 
           color="white"
           fontSize="1.25rem"
           background="#FE9D3A"
           radius="10px"
         >
           제출
-        </StyledButton>
+        </StyledButton> */}
       </form>
+      {progress === 5 && (
+        <div>
+          <img
+            src="/images/foodreco.png"
+            alt="dsf"
+            style={{ width: '18.8125rem', height: '9.9375rem' }}
+          />
+
+          <div>
+            <p>회원가입 완료</p>
+            <p>
+              푸드레코에 오신것을 환영합니다. 자신에게 맞는 메뉴를
+              추천받아보세요
+            </p>
+          </div>
+          <StyledButton
+            width="18.8125rem"
+            height="2.8125rem"
+            onClick={() => navigate('/login')}
+          >
+            로그인
+          </StyledButton>
+        </div>
+      )}
+
       <div className={classes.inputContainer}>
         <StyledButton
           disabled={isSubmitting}
