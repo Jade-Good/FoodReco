@@ -11,6 +11,7 @@ public class UserSignUpDto {
     private String password;
     private String nickname;
     private String tendency;
+    private int age;
     private int height;
     private int weight;
     private int activity;

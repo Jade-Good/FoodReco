@@ -38,6 +38,9 @@ public class Member {
     @Column(name = "password", length = 512)
     private String password;
 
+    @Column(name = "age", columnDefinition = "tinyint")
+    private int age;
+
     //nickname
     @NotNull
     @Column(name = "nickname", length = 18,unique = true)
@@ -102,10 +105,11 @@ public class Member {
     }
 
     @Builder
-    public Member(Long memberSeq, String email, String password, String nickname, String tendency, int height, int weight, int activity, String sex, String img, String refreshToken, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt) {
+    public Member(Long memberSeq, String email, String password, int age, String nickname, String tendency, int height, int weight, int activity, String sex, String img, String refreshToken, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt, List<CrewMember> crewMembers) {
         this.memberSeq = memberSeq;
         this.email = email;
         this.password = password;
+        this.age = age;
         this.nickname = nickname;
         this.tendency = tendency;
         this.height = height;
@@ -117,5 +121,6 @@ public class Member {
         this.isDeleted = isDeleted;
         this.createdAt = createdAt;
         this.lastModifiedAt = lastModifiedAt;
+        this.crewMembers = crewMembers;
     }
 }
