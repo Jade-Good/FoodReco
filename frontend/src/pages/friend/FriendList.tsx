@@ -43,7 +43,7 @@ export const FriendList = () => {
   return (
     <>
       <HeaderFriendAdd exitModal={setModal} />
-      <div style={{ marginTop: "5.5rem", overflow: "hidden" }}>
+      <div style={{ marginTop: "5.5rem" }}>
         {arr.map((name, i) => {
           return <Friend name={name} key={i} />;
         })}
