@@ -29,4 +29,8 @@
   display: flex;
   justify-content: center;
   padding: 0 10vw;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 12vh;
 }
