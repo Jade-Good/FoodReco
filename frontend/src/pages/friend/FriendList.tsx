@@ -35,23 +35,26 @@ export const FriendList = () => {
 
   let [modal, setModal] = useState(false);
 
-  const updateParentState = (newState: boolean) => {
+  const modalOn = (newState: boolean) => {
+    setModal(newState);
+    document.body.style.overflow = "hidden";
+  };
+
+  const modalOff = (newState: boolean) => {
     setModal(newState);
     document.body.style.overflow = "scroll";
   };
 
   return (
     <>
-      <HeaderFriendAdd exitModal={setModal} />
-      <div style={{ marginTop: "5.5rem" }}>
+      <HeaderFriendAdd exitModal={modalOn} />
+      <div style={{ margin: "5.5rem 0", overflow: "hidden" }}>
         {arr.map((name, i) => {
           return <Friend name={name} key={i} />;
         })}
       </div>
       <MemberFooterFriend />
-      {modal === true ? (
-        <FriendInviteModal exitModal={updateParentState} />
-      ) : null}
+      {modal === true ? <FriendInviteModal exitModal={modalOff} /> : null}
     </>
   );
 };
