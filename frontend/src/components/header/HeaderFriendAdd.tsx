@@ -42,9 +42,4 @@ const HeaderFriendAdd = ({ onClick, exitModal }: HeaderFriendAddProps) => {
   );
 };
 
-const iconStyle = {
-  width: "40px", // 단위를 추가합니다.
-  height: "40px",
-  marginRight: "12px",
-};
 export default HeaderFriendAdd;
