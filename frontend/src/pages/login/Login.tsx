@@ -8,6 +8,8 @@ import { BsSquare } from 'react-icons/bs';
 import { BsFillCheckSquareFill } from 'react-icons/bs';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 interface IForm {
   email: string;
@@ -18,6 +20,8 @@ export const Login = () => {
   const [isAutoLogin, setIsAutoLogin] = useState(0);
   const [isRememberId, setIsRememberId] = useState(0);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  // const count = useSelector((state) => state.counter.value);
 
   const {
     register,
