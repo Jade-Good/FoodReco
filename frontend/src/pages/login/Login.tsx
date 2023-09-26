@@ -6,6 +6,8 @@ import classes from './Login.module.css';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { BsSquare } from 'react-icons/bs';
 import { BsFillCheckSquareFill } from 'react-icons/bs';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface IForm {
   email: string;
@@ -15,6 +17,7 @@ interface IForm {
 export const Login = () => {
   const [isAutoLogin, setIsAutoLogin] = useState(0);
   const [isRememberId, setIsRememberId] = useState(0);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -30,9 +33,36 @@ export const Login = () => {
   });
 
   const handleLogin: SubmitHandler<IForm> = (data) => {
-    // const { email, password } = data;
-    console.log(data);
-    console.log(errors);
+    const { email, password } = data;
+    if (errors.email) {
+      console.log(errors.email);
+      alert('이메일을 다시 확인해 주십시오');
+    } else {
+      axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/member/login`,
+
+          { email: email, password: password }
+          // {
+          //   headers: { 'Content-Type': `application/json` },
+          // }
+        )
+        .then((res) => {
+          const accessToken = res.headers.authorization;
+          // const refreshToken = res.headers.authorization - refresh;
+
+          axios.defaults.headers.common[
+            'Authorization'
+          ] = `Bearer ${accessToken}`;
+          localStorage.setItem('accesstoken', accessToken);
+          // console.log('로그인', res);
+          navigate('/');
+        })
+        .catch((err) => {
+          alert('로그인 실패입니다. 비밀번호와 아이디를 확인해주세요');
+          // console.log('이메일 전송 오류:', err);
+        });
+    }
   };
 
   return (
