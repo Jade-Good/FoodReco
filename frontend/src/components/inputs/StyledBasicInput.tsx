@@ -17,6 +17,9 @@ const InputContainer = styled.div`
   color: #c6c5c5;
   border: 1px solid #fe9d3a;
   border-radius: 5px;
+  &:focus-within {
+    border-color: orange; /* 포커스가 입력란 또는 하위 요소에 있을 때 테두리 색상 변경 */
+  }
 `;
 
 const StyledInput = styled.input`
@@ -32,7 +35,8 @@ const StyledInput = styled.input`
 export type TControl<T extends FieldValues> = {
   type?: string;
   placeholder?: string;
-  style?: React.CSSProperties;
+  styleInput?: React.CSSProperties;
+  styleContainer?: React.CSSProperties;
   className?: string;
   control?: Control<T>;
   name: FieldPath<T>;
@@ -40,29 +44,33 @@ export type TControl<T extends FieldValues> = {
     RegisterOptions<T>,
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
   >;
+  maxLength?: number;
 };
 
 const StyledBasicInput: React.FC<TControl<any>> = ({
   className,
   placeholder,
-  style,
+  styleInput,
   name,
   rules,
   control,
   type,
+  maxLength,
+  styleContainer,
 }) => {
   const {
     field: { value, onChange },
   } = useController({ name, rules, control });
 
   return (
-    <InputContainer>
+    <InputContainer style={styleContainer}>
       <StyledInput
+        maxLength={maxLength}
         className={className}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        style={style}
+        style={styleInput}
         type={type}
       />
     </InputContainer>
