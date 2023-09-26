@@ -7,13 +7,11 @@ import com.ssafy.special.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @Getter
 @Entity(name = "crew_recommend_vote")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@IdClass(CrewRecommendVote.VoteId.class)
+@IdClass(VoteId.class)
 public class CrewRecommendVote {
     // 사용자 seq
     @Id
@@ -35,15 +33,6 @@ public class CrewRecommendVote {
     @JoinColumn(name= "member_seq")
     @JsonBackReference
     private Member member;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class VoteId implements Serializable {
-        private Long crewRecommendSeq;
-        private Long member;
-        private Long food;
-    }
 
     @Builder
     public CrewRecommendVote(CrewRecommend crewRecommendSeq, Food food, Member member) {

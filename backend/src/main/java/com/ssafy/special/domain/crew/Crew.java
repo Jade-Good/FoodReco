@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+@Data
 @Builder
 @Entity(name = "crew")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -53,8 +53,7 @@ public class Crew {
     private LocalDateTime lastModifiedAt;
 
     // 자신이 속한 crew member list
-    @OneToMany(mappedBy = "member")
-    @Builder.Default
+    @OneToMany(mappedBy = "crew")
     private List<CrewMember> crewMembers = new ArrayList<>();
 
     @Builder
