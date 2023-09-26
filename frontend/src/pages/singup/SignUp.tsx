@@ -35,14 +35,19 @@ interface IForm {
   emailValidation: number;
   password: string;
   nickname: string;
-  age: number;
+  age: string;
   sex: string;
   height: number;
   weight: number;
   activity: number;
   passwordconfirm: string;
+  time: number;
 }
-
+interface ExerciseRates {
+  [exercise: string]: {
+    [time: number]: number;
+  };
+}
 interface EmailCheck {
   email: string;
 }
@@ -81,8 +86,9 @@ export const SignUp = () => {
   const steps = ["약관동의", "회원 정보", "취향 설문"];
   const ageList = ["10대", "20대", "30대", "40대", "50대", "60대", "70대이상"];
   const sexList = ["남자", "여자"];
-  const activityList = ["주 1회 유산소", "주2회 유산소", "주 3회 웨이트"];
-
+  const activityList = ["운동안함", "걷기", "헬스", "수영", "자전거"];
+  const timeList = [0.5, 1, 1.5, 2, 2.5, 3];
+  // 걷기 1시간 6750 , 헬스 1시간 14700, 수영: 12850, 자전거:11050
   const [likefood, setLikeFood] = useState<string[]>([]);
   const [unlikeFood, setUnlikeFood] = useState<string[]>([]);
   const foodList = [
@@ -95,6 +101,40 @@ export const SignUp = () => {
     "된찌",
     "김찌",
   ];
+  const exerciseRates: ExerciseRates = {
+    걷기: {
+      0.5: 6750,
+      1: 13500,
+      1.5: 20250,
+      2: 27000,
+      2.5: 33750,
+      3: 40500,
+    },
+    헬스: {
+      0.5: 14700,
+      1: 29400,
+      1.5: 44100,
+      2: 58800,
+      2.5: 73500,
+      3: 88200,
+    },
+    수영: {
+      0.5: 12850,
+      1: 25700,
+      1.5: 38550,
+      2: 51400,
+      2.5: 64250,
+      3: 77100,
+    },
+    자전거: {
+      0.5: 11050,
+      1: 22100,
+      1.5: 33150,
+      2: 44200,
+      2.5: 55250,
+      3: 66300,
+    },
+  };
 
   //좋아하는 음식 선택
   const toggleLikeFood = (food: string) => {
@@ -132,12 +172,13 @@ export const SignUp = () => {
       emailValidation: undefined,
       password: "",
       nickname: "",
-      age: 0,
+      age: "",
       sex: "",
       height: undefined,
       weight: undefined,
-      activity: 0,
+      activity: undefined,
       passwordconfirm: "",
+      time: undefined,
     },
   });
   // watch 함수를 사용하여 email 값을 실시간으로 관찰합니다.
@@ -159,43 +200,54 @@ export const SignUp = () => {
       weight,
       activity,
       passwordconfirm,
+      time,
     } = data;
-    if (errors) {
+    const ages = parseInt(age.slice(0, 2));
+    const walkingRate = exerciseRates[activity][time];
+    const datas = {
+      email: email,
+      password: password,
+      nickname: nickname,
+      sex: sex,
+      activity: walkingRate,
+      age: ages,
+      weight: weight,
+      height: height,
+    };
+    console.log(datas);
+    if (errors.email || errors.nickname || errors.password) {
+      console.log(errors);
       alert("정보를 다시 확인해주세요!");
     } else {
       axios
         .post(`${process.env.REACT_APP_BASE_URL}/member/regist`, {
-          email,
-          password,
-          nickname,
-          sex,
-          // activity,
-          // age,
-          weight,
-          height,
+          email: email,
+          password: password,
+          nickname: nickname,
+          sex: sex,
+          activity: walkingRate,
+          age: ages,
+          weight: weight,
+          height: height,
         })
         .then((res) => {
           console.log(res);
-          console.log(res.data.message);
           navigate("/signup/complete");
           // alert("회원가입이 완료되었습니다!")
         })
         .catch((error) => {
-          console.dir(error);
+          console.log(error);
         });
     }
   };
 
   //이메일 인증 요청
   const handleSendEmail = () => {
+    setCheckEmail(0);
     console.log(sendEmail);
 
     // const formData = new FormData();
     // formData.append("email", sendEmail);
-
-    let data = {
-      email: sendEmail,
-    };
 
     if (errors.email) {
       console.log(errors.email);
@@ -231,17 +283,9 @@ export const SignUp = () => {
     // formData.append("email", sendEmail);
     // formData.append("code", code);
 
-    let data = {
-      email: sendEmail,
-      // code: String(code),
-      code: "06305",
-    };
-
-    console.log(data);
-
     axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/member/checkVerification`,
+        `${process.env.REACT_APP_BASE_URL}/member/verification/email/code`,
         {
           email: sendEmail,
           // code: String(code),
@@ -255,11 +299,13 @@ export const SignUp = () => {
         console.log(res);
         if (res.status === 202) {
           console.log("인증확인");
+          setCheckEmail(1);
         } else {
           alert("인증번호가 틀립니다.");
         }
       })
       .catch((err) => {
+        console.log(code);
         alert("인증에 실패했습니다. 인증번호를 확인해주세요");
         console.log("이메일 인증 오류:", err);
       });
@@ -435,7 +481,7 @@ export const SignUp = () => {
                     },
                   }}
                   onClick={handleCheckEmail}
-                  color="#C6C5C5"
+                  background="gray"
                 />
               ) : (
                 <StyledEmailInput
@@ -676,17 +722,33 @@ export const SignUp = () => {
                   />
                 </div>
               </div>
-              <div>
-                <label className={classes.labelStyle} htmlFor="activity">
-                  운동량
-                </label>
-                <BasicSelect
-                  control={control}
-                  {...register("activity")}
-                  name="activity"
-                  label="activity"
-                  options={activityList}
-                />
+              <div className={classes.labelContainer}>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="activity">
+                    운동종류
+                  </label>
+
+                  <BasicSelect
+                    control={control}
+                    {...register("activity")}
+                    name="activity"
+                    label="activity"
+                    options={activityList}
+                  />
+                </div>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="time">
+                    운동시간
+                  </label>
+
+                  <BasicSelect
+                    control={control}
+                    {...register("time")}
+                    name="time"
+                    label="time"
+                    options={timeList}
+                  />
+                </div>
               </div>
             </div>
             <div className={classes.inputContainer}>
@@ -861,7 +923,7 @@ export const SignUp = () => {
         )}
         <br />
         {/* 나중에 삭제해야함 */}
-        <StyledButton
+        {/* <StyledButton
           type="submit"
           disabled={isSubmitting}
           width="9.0rem"
@@ -872,15 +934,15 @@ export const SignUp = () => {
           radius="10px"
         >
           제출
-        </StyledButton>
+        </StyledButton> */}
       </form>
 
-      <div className={classes.inputContainer}>
-        <StyledButton
+      {/* <div className={classes.inputContainer}> */}
+      {/* <StyledButton
           disabled={isSubmitting}
           type="submit"
           width="9.0rem"
-          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
           color="#7D7B7B;"
           fontSize="1.25rem"
           background="#F9F9F9"
@@ -898,7 +960,7 @@ export const SignUp = () => {
           disabled={isSubmitting}
           type="submit"
           width="9.0rem"
-          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
           color="white"
           fontSize="1.25rem"
           background="#FE9D3A"
@@ -910,8 +972,8 @@ export const SignUp = () => {
           }}
         >
           다음
-        </StyledButton>
-      </div>
+        </StyledButton> */}
+      {/* </div> */}
     </div>
   );
 };

@@ -7,6 +7,7 @@ import StyledFoodSelect from '../components/option/StyledFoodSelect';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { ChooseLikeFood } from './singup/ChooseLikeFood';
 import { ChooseUnlikeFood } from './singup/ChooseUnlikeFood';
+import { MemberInfo } from '../components/membercomponents/MemberInfo';
 
 export const Test = () => {
   const foodList = ['aaa', 'bbb', 'ccc', 'ddd', 'eee', 'fff', 'ggg'];
@@ -29,19 +30,9 @@ export const Test = () => {
       >
         구글인증
       </StyledButton>
-      <StyledFoodSelect />
-      <ChooseUnlikeFood
-        foodList={[
-          '시과',
-          '자장면',
-          '소고기',
-          '돼지고기',
-          '피자',
-          '파스타',
-          '된찌',
-          '김찌',
-        ]}
-      />
+      <br />
+      <br />
+      <MemberInfo leftValue="키" rightValue="190" unit="CM" />
     </div>
   );
 };
