@@ -129,7 +129,7 @@ export const SignUp = () => {
     mode: 'onSubmit',
     defaultValues: {
       email: '',
-      emailValidation: 0,
+      emailValidation: undefined,
       password: '',
       nickname: '',
       age: 0,
@@ -160,15 +160,30 @@ export const SignUp = () => {
       activity,
       passwordconfirm,
     } = data;
-    console.log(data);
-    // axios
-    //   .post(`${process.env.REACT_APP_BASE_URL}signup/email`, {
-    //     email,
-    //     password,
-    //   })
-    //   .catch((error) => {
-    //     console.dir(error);
-    //   });
+    if (errors) {
+      alert('정보를 다시 확인해주세요!');
+    } else {
+      axios
+        .post(`${process.env.REACT_APP_BASE_URL}/member/regist`, {
+          email,
+          password,
+          nickname,
+          sex,
+          // activity,
+          // age,
+          weight,
+          height,
+        })
+        .then((res) => {
+          console.log(res);
+          console.log(res.data.message);
+          navigate('/signup/complete');
+          // alert("회원가입이 완료되었습니다!")
+        })
+        .catch((error) => {
+          console.dir(error);
+        });
+    }
   };
 
   //이메일 인증 요청
@@ -186,11 +201,13 @@ export const SignUp = () => {
       console.log(errors.email);
       alert('이메일을 다시 확인해 주십시오');
     } else {
-      console.log(`${process.env.REACT_APP_BASE_URL}/member/sendVerification`);
+      console.log(
+        `${process.env.REACT_APP_BASE_URL}/member/verification/email`
+      );
 
       axios
         .post(
-          `${process.env.REACT_APP_BASE_URL}/member/sendVerification`,
+          `${process.env.REACT_APP_BASE_URL}/member/verification/email`,
           { email: sendEmail }
           // {
           //   headers: { 'Content-Type': `application/json` },
@@ -381,6 +398,7 @@ export const SignUp = () => {
                 )}
               </div>
               <StyledEmailInput
+                // type="button"
                 children="인증요청"
                 name="email" // 필드의 이름
                 placeholder="이메일을 입력하세요"
@@ -492,7 +510,7 @@ export const SignUp = () => {
             <InputContainer>
               <StyledInput
                 id="passwordconfirm"
-                type="passwordconfirm"
+                type="password"
                 {...register('passwordconfirm', {
                   required: true,
                   validate: {
@@ -830,64 +848,32 @@ export const SignUp = () => {
                 type="submit"
                 disabled={isSubmitting}
                 width="9.0rem"
-                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
                 color="white"
                 fontSize="1.25rem"
                 background="#FE9D3A"
                 radius="10px"
-                onClick={() => {
-                  if (progress > 0 && unlikeFood.length >= 5) {
-                    setProgress((prevProgress) => prevProgress + 1);
-                  } else {
-                    alert('최소 5개 이상 싫어하느 음식을 선택해주세요');
-                  }
-                }}
               >
                 완료
               </StyledButton>
             </div>
           </div>
         )}
-        {progress === 6 && <p>여섯번째페이지</p>}
         <br />
         {/* 나중에 삭제해야함 */}
-        {/* <StyledButton
+        <StyledButton
           type="submit"
           disabled={isSubmitting}
           width="9.0rem"
-          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" 
+          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
           color="white"
           fontSize="1.25rem"
           background="#FE9D3A"
           radius="10px"
         >
           제출
-        </StyledButton> */}
+        </StyledButton>
       </form>
-      {progress === 5 && (
-        <div>
-          <img
-            src="/images/foodreco.png"
-            alt="dsf"
-            style={{ width: '18.8125rem', height: '9.9375rem' }}
-          />
-
-          <div>
-            <p>회원가입 완료</p>
-            <p>
-              푸드레코에 오신것을 환영합니다. 자신에게 맞는 메뉴를
-              추천받아보세요
-            </p>
-          </div>
-          <StyledButton
-            width="18.8125rem"
-            height="2.8125rem"
-            onClick={() => navigate('/login')}
-          >
-            로그인
-          </StyledButton>
-        </div>
-      )}
 
       <div className={classes.inputContainer}>
         <StyledButton

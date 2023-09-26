@@ -44,6 +44,7 @@ export type TControl<T extends FieldValues> = {
   children?: string;
   onClick: () => void;
   color?: string;
+  type?: any;
 };
 
 const StyledEmailInput: React.FC<TControl<any>> = ({
@@ -56,6 +57,7 @@ const StyledEmailInput: React.FC<TControl<any>> = ({
   children,
   onClick,
   color,
+  type,
 }) => {
   const {
     field: { value, onChange },
@@ -71,6 +73,7 @@ const StyledEmailInput: React.FC<TControl<any>> = ({
         style={style}
       />
       <StyledButton
+        type={type}
         width="4rem
       "
         height="1srem"
