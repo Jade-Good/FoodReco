@@ -3,7 +3,7 @@ import StyledIdInputIcon from '../../components/inputs/StyledIdInputIcon';
 import StyledPwInputIcon from '../../components/inputs/StyledPwInputIcon';
 import StyledButton from '../../styles/StyledButton';
 import classes from './SignUp.module.css';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { BsSquare } from 'react-icons/bs';
 import { BsFillCheckSquareFill } from 'react-icons/bs';
 import StyledBasicInput from '../../components/inputs/StyledBasicInput';
@@ -22,12 +22,17 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import styled from 'styled-components';
 import { Agree } from '../../components/option/Agree';
-import BasicStringSelect from '../../components/option/BasicStringSelect';
+import BasicSelect from '../../components/option/BasicSelect';
 import RadioButtonsGroup from '../../components/option/ColorToggleButton';
 import ColorToggleButton from '../../components/option/ColorToggleButton';
+import { useNavigate } from 'react-router-dom';
+import StyledBasicInputUnit from '../../components/inputs/StyledBasicInputUnit';
+import { ChooseLikeFood } from './ChooseLikeFood';
+import ToggleButton from '@mui/material/ToggleButton';
 
 interface IForm {
   email: string;
+  emailValidation: number;
   password: string;
   nickname: string;
   age: number;
@@ -42,20 +47,76 @@ interface EmailCheck {
   email: string;
 }
 
+const ToggleButtonContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap; /* Allow ToggleButtons to wrap to the next line */
+`;
+
+const CustomToggleButton = styled(ToggleButton)`
+  && {
+    border-radius: 1rem; /* Increase border-radius for a more rounded appearance */
+    margin: 0.2rem; /* Add margin to create spacing between ToggleButtons */
+    // border: 1px solid orange;
+    // color: orange;
+  }
+`;
+
 export const SignUp = () => {
+  const navigate = useNavigate();
   const [isAutoLogin, setIsAutoLogin] = useState(0);
   const [isRememberId, setIsRememberId] = useState(0);
+  // 회원가입 페이지 체크
   const [progress, setProgress] = useState(0);
   // 이메일 인증체크
   const [checkEmail, setCheckEmail] = useState(0);
   // 패스워드 체크확인
   const [checkPassword, setCheckPassword] = useState(0);
 
-  const [code, setCode] = useState(0);
+  const [code, setCode] = useState('0');
+  //개인정보 동의 1
   const [agree1, setAgree1] = useState(0);
+  // 개인정보 동의 2
   const [agree2, setAgree2] = useState(0);
+
   const steps = ['약관동의', '회원 정보', '취향 설문'];
   const ageList = ['10대', '20대', '30대', '40대', '50대', '60대', '70대이상'];
+  const sexList = ['남자', '여자'];
+  const activityList = ['주 1회 유산소', '주2회 유산소', '주 3회 웨이트'];
+
+  const [likefood, setLikeFood] = useState<string[]>([]);
+  const [unlikeFood, setUnlikeFood] = useState<string[]>([]);
+  const foodList = [
+    '시과',
+    '자장면',
+    '소고기',
+    '돼지고기',
+    '피자',
+    '파스타',
+    '된찌',
+    '김찌',
+  ];
+
+  //좋아하는 음식 선택
+  const toggleLikeFood = (food: string) => {
+    if (likefood.includes(food)) {
+      // 음식이 이미 좋아요 목록에 있는 경우, 제거합니다.
+      setLikeFood(likefood.filter((item) => item !== food));
+    } else {
+      // 음식이 좋아요 목록에 없는 경우, 추가합니다.
+      setLikeFood([...likefood, food]);
+    }
+  };
+
+  //싫어하는 음식선택
+  const toggleUnlikeFood = (food: string) => {
+    if (unlikeFood.includes(food)) {
+      // 음식이 이미 좋아요 목록에 있는 경우, 제거합니다.
+      setUnlikeFood(unlikeFood.filter((item) => item !== food));
+    } else {
+      // 음식이 좋아요 목록에 없는 경우, 추가합니다.
+      setUnlikeFood([...unlikeFood, food]);
+    }
+  };
 
   const {
     register,
@@ -68,12 +129,13 @@ export const SignUp = () => {
     mode: 'onSubmit',
     defaultValues: {
       email: '',
+      emailValidation: undefined,
       password: '',
       nickname: '',
       age: 0,
       sex: '',
-      height: 0,
-      weight: 0,
+      height: undefined,
+      weight: undefined,
       activity: 0,
       passwordconfirm: '',
     },
@@ -84,29 +146,72 @@ export const SignUp = () => {
 
   // 회원가입 로직
   const handleSignUp: SubmitHandler<IForm> = (data) => {
-    const { email, password, nickname, age, sex, height, weight, activity } =
-      data;
-    // axios
-    //   .post(`${process.env.REACT_APP_BASE_URL}signup/email`, {
-    //     email,
-    //     password,
-    //   })
-    //   .catch((error) => {
-    //     console.dir(error);
-    //   });
+    console.log(data);
+
+    const {
+      email,
+      emailValidation,
+      password,
+      nickname,
+      age,
+      sex,
+      height,
+      weight,
+      activity,
+      passwordconfirm,
+    } = data;
+    if (errors) {
+      alert('정보를 다시 확인해주세요!');
+    } else {
+      axios
+        .post(`${process.env.REACT_APP_BASE_URL}/member/regist`, {
+          email,
+          password,
+          nickname,
+          sex,
+          // activity,
+          // age,
+          weight,
+          height,
+        })
+        .then((res) => {
+          console.log(res);
+          console.log(res.data.message);
+          navigate('/signup/complete');
+          // alert("회원가입이 완료되었습니다!")
+        })
+        .catch((error) => {
+          console.dir(error);
+        });
+    }
   };
 
   //이메일 인증 요청
   const handleSendEmail = () => {
     console.log(sendEmail);
 
+    // const formData = new FormData();
+    // formData.append("email", sendEmail);
+
+    let data = {
+      email: sendEmail,
+    };
+
     if (errors.email) {
+      console.log(errors.email);
       alert('이메일을 다시 확인해 주십시오');
     } else {
+      console.log(
+        `${process.env.REACT_APP_BASE_URL}/member/verification/email`
+      );
+
       axios
         .post(
-          `${process.env.REACT_APP_BASE_URL}/member/sendVerification`,
-          sendEmail
+          `${process.env.REACT_APP_BASE_URL}/member/verification/email`,
+          { email: sendEmail }
+          // {
+          //   headers: { 'Content-Type': `application/json` },
+          // }
         )
         .then((res) => {
           alert('인증번호를 전송했습니다.');
@@ -122,13 +227,33 @@ export const SignUp = () => {
 
   //이메일 인증확인
   const handleCheckEmail = () => {
+    // const formData = new FormData();
+    // formData.append("email", sendEmail);
+    // formData.append("code", code);
+
+    let data = {
+      email: sendEmail,
+      // code: String(code),
+      code: '06305',
+    };
+
+    console.log(data);
+
     axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}/member/verification/email/code`,
-        { sendEmail, code }
+        `${process.env.REACT_APP_BASE_URL}/member/checkVerification`,
+        {
+          email: sendEmail,
+          // code: String(code),
+          code: code,
+        }
+        // {
+        //   headers: { 'Content-Type': `application/json` },
+        // }
       )
       .then((res) => {
-        if (res.status === 200) {
+        console.log(res);
+        if (res.status === 202) {
           console.log('인증확인');
         } else {
           alert('인증번호가 틀립니다.');
@@ -143,13 +268,15 @@ export const SignUp = () => {
   return (
     <div className={classes.container}>
       <br />
-      <HeaderLogo />
+      {progress !== 5 && <HeaderLogo />}
       <br />
       <br />
       <br />
-      <p style={{ color: '#525252', fontSize: '1.5rem', fontWeight: 'bold' }}>
-        회원가입
-      </p>
+      {progress !== 5 && (
+        <p style={{ color: '#525252', fontSize: '1.5rem', fontWeight: 'bold' }}>
+          회원가입
+        </p>
+      )}
       <br />
 
       <form onSubmit={handleSubmit(handleSignUp)}>
@@ -202,9 +329,48 @@ export const SignUp = () => {
             <Agree />
             <br />
             <br />
+            <div className={classes.inputContainer}>
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="#7D7B7B;"
+                fontSize="1.25rem"
+                background="#F9F9F9"
+                radius="10px"
+                onClick={() => {
+                  navigate('/');
+                }}
+              >
+                취소
+              </StyledButton>
+              &nbsp;&nbsp;&nbsp;
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="white"
+                fontSize="1.25rem"
+                background="#FE9D3A"
+                radius="10px"
+                onClick={() => {
+                  if (agree1 === 1 && agree2 === 1) {
+                    if (progress < 5) {
+                      setProgress((prevProgress) => prevProgress + 1);
+                    }
+                  } else {
+                    alert('개인정보 동의를 모두 동의해주셔야 이용가능합니다.');
+                  }
+                }}
+              >
+                다음
+              </StyledButton>
+            </div>
           </div>
         )}
-
+        {/* 회원가입 두번째페이지 */}
         {progress === 1 && (
           <div className={classes.containerNoHeight}>
             <Box sx={{ width: '100%' }}>
@@ -232,6 +398,7 @@ export const SignUp = () => {
                 )}
               </div>
               <StyledEmailInput
+                // type="button"
                 children="인증요청"
                 name="email" // 필드의 이름
                 placeholder="이메일을 입력하세요"
@@ -243,45 +410,49 @@ export const SignUp = () => {
                     message: '이메일 형식에 맞지 않습니다.',
                   },
                   required: '이메일은 필수 입력입니다.',
-                  onChange(event) {
+                  onChange() {
                     setCheckEmail(0);
                   },
                 }}
                 onClick={handleSendEmail}
               />
 
+              {/* 인증번호 확인 */}
               <label htmlFor="emailcheck" className={classes.labelStyle}>
                 이메일 인증번호
               </label>
 
-              {/* 인증번호 확인 */}
               {checkEmail ? (
-                <InputContainer>
-                  <StyledInput placeholder="인증번호를 입력하세요" />
-                  <StyledButtonProps
-                    width="4rem"
-                    height="1srem"
-                    fontSize="0.62rem"
-                    radius="15px"
-                    background="#C6C5C5"
-                    value={code}
-                  >
-                    인증확인
-                  </StyledButtonProps>
-                </InputContainer>
+                <StyledEmailInput
+                  children="인증확인"
+                  name="emailValidation"
+                  placeholder="인증번호를 입력하세요"
+                  control={control}
+                  rules={{
+                    onChange(e: any) {
+                      setCode(e.target.value);
+                      console.log('codeChange 적용');
+                    },
+                  }}
+                  onClick={handleCheckEmail}
+                  color="#C6C5C5"
+                />
               ) : (
-                <InputContainer>
-                  <StyledInput placeholder="인증번호를 입력하세요" />
-                  <StyledButtonProps
-                    width="4rem"
-                    height="1srem"
-                    fontSize="0.62rem"
-                    radius="15px"
-                    onClick={handleCheckEmail}
-                  >
-                    인증확인
-                  </StyledButtonProps>
-                </InputContainer>
+                <StyledEmailInput
+                  children="인증확인"
+                  name="emailValidation"
+                  placeholder="인증번호를 입력하세요"
+                  control={control}
+                  rules={{
+                    onChange(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) {
+                      setCode(e.target.value);
+                      console.log('codeChange 적용');
+                    },
+                  }}
+                  onClick={handleCheckEmail}
+                />
               )}
 
               {/* 비밀번호 입력창 */}
@@ -309,7 +480,8 @@ export const SignUp = () => {
                 control={control}
                 rules={{
                   pattern: {
-                    value: /^(?=.*[a-z])(?=.*\d)[a-zA-Z\d]{8,}$/,
+                    value:
+                      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
                     message: '영어,숫자,특수문자가 포함되어야합니다..',
                   },
                   minLength: {
@@ -318,13 +490,10 @@ export const SignUp = () => {
                   },
                   required: '비밀번호는 필수 입력입니다.',
 
-                  onChange(event) {
+                  onChange() {
                     setCheckPassword(0);
                   },
                 }}
-                aria-invalid={
-                  isSubmitted ? (errors.password ? 'true' : 'false') : undefined
-                }
               />
             </div>
             {/* 비밀번호확인 */}
@@ -345,7 +514,7 @@ export const SignUp = () => {
                 {...register('passwordconfirm', {
                   required: true,
                   validate: {
-                    check: (val) => {
+                    check: (val: string) => {
                       const originalPassword = getValues('password');
                       if (originalPassword && originalPassword !== val) {
                         return '비밀번호가 일치하지 않습니다.';
@@ -362,6 +531,7 @@ export const SignUp = () => {
             <br />
             <div className={classes.inputContainer}>
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -379,6 +549,7 @@ export const SignUp = () => {
               </StyledButton>
               &nbsp;&nbsp;&nbsp;
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -414,48 +585,113 @@ export const SignUp = () => {
             </Box>
             <br />
             {/* 닉네임 적기 */}
-            <div className={classes.labelContainer}>
-              <label htmlFor="email" className={classes.labelStyle}>
-                닉네임
-              </label>
-              {errors.nickname && (
-                <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
-                  {errors.nickname.message}
-                </small>
-              )}
+            <div className={classes.mB}>
+              <div className={classes.labelContainer}>
+                <label htmlFor="email" className={classes.labelStyle}>
+                  닉네임
+                </label>
+                {errors.nickname && (
+                  <small
+                    role="alert"
+                    style={{ color: 'red', fontSize: '10px' }}
+                  >
+                    {errors.nickname.message}
+                  </small>
+                )}
+              </div>
+
+              <StyledBasicInput
+                maxLength={8}
+                name="nickname"
+                placeholder="닉네임을 입력하세요"
+                control={control}
+                rules={{
+                  maxLength: {
+                    value: 8,
+                    message: '8자리 이하 닉네임을 사용해주세요.',
+                  },
+                  minLength: {
+                    value: 2,
+                    message: '2자리 이상 닉네임을 사용해주세요',
+                  },
+                  required: '닉네임은 필수 입력입니다.',
+                }}
+              />
             </div>
 
-            <StyledBasicInput
-              name="nickname"
-              placeholder="닉네임을 입력하세요"
-              control={control}
-              rules={{
-                minLength: {
-                  value: 8,
-                  message: '8자리이하 닉네임을 사용해주세요.',
-                },
-                required: '닉네임은 필수 입력입니다.',
-              }}
-            />
+            <div className={classes.mB}>
+              <div className={classes.labelContainer}>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="age">
+                    연령
+                  </label>
 
-            <div className={classes.labelContainer}>
-              <div>
-                <label className={classes.labelStyle} htmlFor="nickname">
-                  연령
-                </label>
-                <BasicStringSelect name="age" options={ageList} />
+                  <BasicSelect
+                    control={control}
+                    {...register('age')}
+                    name="age"
+                    label="age"
+                    options={ageList}
+                  />
+                </div>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="gender">
+                    성별
+                  </label>
+
+                  <BasicSelect
+                    control={control}
+                    {...register('sex')}
+                    name="sex"
+                    label="sex"
+                    options={sexList}
+                  />
+                </div>
+              </div>
+              <div className={classes.labelContainer}>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="height">
+                    신장
+                  </label>
+
+                  <StyledBasicInputUnit
+                    type="height"
+                    unit="CM"
+                    name="height"
+                    control={control}
+                    // styleContainer={{ borderColor: '#c3c7c9' }}
+                  />
+                </div>
+                <div>
+                  <label className={classes.labelStyle} htmlFor="weight">
+                    체중
+                  </label>
+
+                  <StyledBasicInputUnit
+                    type="weight"
+                    unit="kg"
+                    name="weight"
+                    control={control}
+                    // styleContainer={{ borderColor: '#c3c7c9' }}
+                  />
+                </div>
               </div>
               <div>
-                <label className={classes.labelStyle} htmlFor="nickname">
-                  성별
+                <label className={classes.labelStyle} htmlFor="activity">
+                  운동량
                 </label>
-                <div>
-                  <ColorToggleButton />
-                </div>
+                <BasicSelect
+                  control={control}
+                  {...register('activity')}
+                  name="activity"
+                  label="activity"
+                  options={activityList}
+                />
               </div>
             </div>
             <div className={classes.inputContainer}>
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -473,6 +709,7 @@ export const SignUp = () => {
               </StyledButton>
               &nbsp;&nbsp;&nbsp;
               <StyledButton
+                type="button"
                 disabled={isSubmitting}
                 width="9.0rem"
                 boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
@@ -481,12 +718,12 @@ export const SignUp = () => {
                 background="#FE9D3A"
                 radius="10px"
                 onClick={() => {
-                  if (checkEmail === 1 && checkPassword === 1) {
+                  if (errors.nickname) {
+                    alert('닉네임을 확인해주세요');
+                  } else {
                     if (progress < 5) {
                       setProgress((prevProgress) => prevProgress + 1);
                     }
-                  } else {
-                    alert('이메일인증과 비밀번호를 확인해주세요!');
                   }
                 }}
               >
@@ -495,11 +732,149 @@ export const SignUp = () => {
             </div>
           </div>
         )}
-        {progress === 3 && <p>세번째페이지</p>}
-        {progress === 4 && <p>네번째페이지</p>}
-        {progress === 5 && <p>다섯번째페이지</p>}
-        {progress === 6 && <p>여섯번째페이지</p>}
+        {/* 좋아하는 음식 선택하기 */}
+        {progress === 3 && (
+          <div>
+            <Box sx={{ width: '100%' }}>
+              <Stepper activeStep={1} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+            <br />
+            <label>좋아하는 음식을 선택해 주세요!</label>
+            <ToggleButtonContainer>
+              {foodList.map((food, index) => (
+                <CustomToggleButton
+                  value="check"
+                  selected={likefood.includes(food)} // 버튼 선택 상태는 좋아요 목록에 음식이 있는지 여부에 따라 결정됩니다.
+                  onClick={() => toggleLikeFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
+                  key={index}
+                >
+                  # {food}
+                </CustomToggleButton>
+              ))}
+            </ToggleButtonContainer>
+            <div className={classes.inputContainer}>
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="#7D7B7B;"
+                fontSize="1.25rem"
+                background="#F9F9F9"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0) {
+                    setProgress((prevProgress) => prevProgress - 1);
+                  }
+                }}
+              >
+                이전
+              </StyledButton>
+              &nbsp;&nbsp;&nbsp;
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="white"
+                fontSize="1.25rem"
+                background="#FE9D3A"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0 && likefood.length >= 5) {
+                    setProgress((prevProgress) => prevProgress + 1);
+                  } else {
+                    alert('최소 5개 이상 좋아하는 음식을 선택해주세요');
+                  }
+                }}
+              >
+                다음
+              </StyledButton>
+            </div>
+          </div>
+        )}
+        {/* 싫어하는 음식 선택하기 */}
+        {progress === 4 && (
+          <div>
+            <Box sx={{ width: '100%' }}>
+              <Stepper activeStep={1} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+            <br />
+            <label>싫어하는 음식을 선택해 주세요!</label>
+            <ToggleButtonContainer>
+              {foodList.map((food, index) => (
+                <CustomToggleButton
+                  value="check"
+                  selected={unlikeFood.includes(food)} // 버튼 선택 상태는 좋아요 목록에 음식이 있는지 여부에 따라 결정됩니다.
+                  onClick={() => toggleUnlikeFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
+                  key={index}
+                >
+                  # {food}
+                </CustomToggleButton>
+              ))}
+            </ToggleButtonContainer>
+            <div className={classes.inputContainer}>
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="#7D7B7B;"
+                fontSize="1.25rem"
+                background="#F9F9F9"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0) {
+                    setProgress((prevProgress) => prevProgress - 1);
+                  }
+                }}
+              >
+                이전
+              </StyledButton>
+              &nbsp;&nbsp;&nbsp;
+              <StyledButton
+                type="submit"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
+                color="white"
+                fontSize="1.25rem"
+                background="#FE9D3A"
+                radius="10px"
+              >
+                완료
+              </StyledButton>
+            </div>
+          </div>
+        )}
+        <br />
+        {/* 나중에 삭제해야함 */}
+        <StyledButton
+          type="submit"
+          disabled={isSubmitting}
+          width="9.0rem"
+          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
+          color="white"
+          fontSize="1.25rem"
+          background="#FE9D3A"
+          radius="10px"
+        >
+          제출
+        </StyledButton>
       </form>
+
       <div className={classes.inputContainer}>
         <StyledButton
           disabled={isSubmitting}

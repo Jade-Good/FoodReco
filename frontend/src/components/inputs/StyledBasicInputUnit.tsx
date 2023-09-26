@@ -1,4 +1,4 @@
-import React, { Children } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import {
@@ -8,17 +8,16 @@ import {
   RegisterOptions,
   useController,
 } from 'react-hook-form';
-import StyledButton from '../../styles/StyledButton';
-import StyledButtonProps from '../../styles/StyledButtonProps';
 
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 18.4rem;
-  height: 2.625rem;
+  width: 7.4rem;
+  height: 3rem;
   color: #c6c5c5;
   border: 1px solid #fe9d3a;
   border-radius: 5px;
+  justify-content: space-between; /* 수평으로 양 옆에 정렬 */
 `;
 
 const StyledInput = styled.input`
@@ -27,13 +26,22 @@ const StyledInput = styled.input`
   border: none;
   outline: none;
   color: #525252;
-  font-weight: bold;
+  // font-weight: bold;
+  width: 3rem;
+  height: 1.23956rem;
+  font-size: 1rem;
+`;
+const UnitContainer = styled.span`
+  flex-shrink: 0;
+  padding-right: 0.5rem; /* CM와의 간격을 조절할 수 있음 */
+  color: #525252;
 `;
 
 // useController을 사용하는 컴포넌트를 위한 type 지정
 export type TControl<T extends FieldValues> = {
+  type?: string;
   placeholder?: string;
-  style?: React.CSSProperties;
+  styleInput?: React.CSSProperties;
   className?: string;
   control?: Control<T>;
   name: FieldPath<T>;
@@ -41,51 +49,38 @@ export type TControl<T extends FieldValues> = {
     RegisterOptions<T>,
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
   >;
-  children?: string;
-  onClick: () => void;
-  color?: string;
-  type?: any;
+  unit?: string | number;
+  styleContainer?: React.CSSProperties;
 };
 
-const StyledEmailInput: React.FC<TControl<any>> = ({
+const StyledBasicInputUnit: React.FC<TControl<any>> = ({
   className,
   placeholder,
-  style,
   name,
   rules,
   control,
-  children,
-  onClick,
-  color,
   type,
+  unit,
+  styleContainer,
+  styleInput,
 }) => {
   const {
     field: { value, onChange },
   } = useController({ name, rules, control });
 
   return (
-    <InputContainer>
+    <InputContainer style={styleContainer}>
       <StyledInput
         className={className}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        style={style}
-      />
-      <StyledButton
+        style={styleInput}
         type={type}
-        width="4rem
-      "
-        height="1srem"
-        fontSize="0.62rem"
-        radius="15px"
-        background={color}
-        onClick={onClick}
-      >
-        {children}
-      </StyledButton>
+      />
+      {unit && <UnitContainer>{unit}</UnitContainer>}
     </InputContainer>
   );
 };
 
-export default StyledEmailInput;
+export default StyledBasicInputUnit;

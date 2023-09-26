@@ -16,6 +16,8 @@ import { MemberRecommendation } from "./pages/memberRecommendation/MemberRecomme
 import { CrewRecommendation } from "./pages/crewRecomendation/CrewRecommendation";
 import NotFound from "./pages/notfound/NotFound";
 import MediaQueryProvider from "react-responsive";
+import { SignUpComplete } from "./pages/singup/SignUpComplete";
+
 import { Test } from "./pages/Test";
 
 const queryClient = new QueryClient();
@@ -40,6 +42,8 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             {/* 회원가입페이지 */}
             <Route path="/signup" element={<SignUp />} />
+            {/* 회원가입완료페이지 */}
+            <Route path="/signup/complete" element={<SignUpComplete />} />
             {/* 마이페이지 */}
             <Route path="/mypage/:memberId" element={<MyPage />} />
             {/* 마이페이지 수정페이지 */}

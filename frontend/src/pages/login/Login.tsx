@@ -30,6 +30,7 @@ export const Login = () => {
   });
 
   const handleLogin: SubmitHandler<IForm> = (data) => {
+    // const { email, password } = data;
     console.log(data);
     console.log(errors);
   };

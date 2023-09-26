@@ -2,12 +2,23 @@ import React from 'react';
 import StyledBasicInput from '../components/inputs/StyledBasicInput';
 import StyledButton from '../styles/StyledButton';
 import { useNavigate } from 'react-router-dom';
+import BasicSelect from '../components/option/BasicSelect';
+import StyledFoodSelect from '../components/option/StyledFoodSelect';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { ChooseLikeFood } from './singup/ChooseLikeFood';
+import { ChooseUnlikeFood } from './singup/ChooseUnlikeFood';
 
 export const Test = () => {
-  const navigate = useNavigate();
-  const testclick = () => {
-    console.log('test입니다');
-  };
+  const foodList = ['aaa', 'bbb', 'ccc', 'ddd', 'eee', 'fff', 'ggg'];
+  const { control, register } = useForm();
+
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // FormContext를 사용한다면 생략가능
+      name: 'test', // 배열 필드의 이름을 입력
+      // keyName: "id", 기본값은 "id" 이고 변경 가능하다
+    }
+  );
   return (
     <div className="check">
       <StyledButton
@@ -18,6 +29,19 @@ export const Test = () => {
       >
         구글인증
       </StyledButton>
+      <StyledFoodSelect />
+      <ChooseUnlikeFood
+        foodList={[
+          '시과',
+          '자장면',
+          '소고기',
+          '돼지고기',
+          '피자',
+          '파스타',
+          '된찌',
+          '김찌',
+        ]}
+      />
     </div>
   );
 };
