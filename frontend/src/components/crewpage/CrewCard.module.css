@@ -1,11 +1,12 @@
 .crewCardBox {
   flex: 0; /* Flex-grow property to make items fill to the right */
   min-width: 7.5rem;
+  min-height: 9.5rem;
   margin: 0.55rem;
 
   display: flex;
-  /* width: 8rem;
-  height: 10rem;*/
+  /* width: 8rem; */
+  /* height: 9.5rem; */
   padding: 0.5rem;
   flex-direction: column;
   justify-content: center;
