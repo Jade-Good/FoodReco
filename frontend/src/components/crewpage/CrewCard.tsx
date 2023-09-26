@@ -21,7 +21,7 @@ const CrewCard = ({ name, key }: CrewCardProps) => {
             />
           </div>
           <p className={classes.crewName}>{name}</p>
-          <div className={classes.creaCardBtns}>
+          <div className={classes.crewCardBtns}>
             <div className={classes.memberCnt}>4명</div>
             <div className={classes.crewLastTime}>3일전</div>
           </div>

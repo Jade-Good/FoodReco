@@ -20,10 +20,11 @@ export const CrewList = () => {
       <HeaderCrew />
       <div
         style={{
-          margin: "5rem 0",
-          padding: "1.5rem",
-          display: "flex",
-          flexWrap: "wrap",
+          margin: "5.5rem 0",
+          padding: "5vmin",
+          display: "grid",
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gridGap: "5vmin",
         }}
       >
         {crewNames.map((name, i) => {
