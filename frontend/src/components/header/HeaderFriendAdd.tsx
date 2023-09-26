@@ -11,11 +11,6 @@ interface HeaderFriendAddProps {
 const HeaderFriendAdd = ({ onClick, exitModal }: HeaderFriendAddProps) => {
   const navigate = useNavigate();
 
-  const exitButtonClick = () => {
-    exitModal(true);
-    document.body.style.overflow = "hidden";
-  };
-
   return (
     <div className={classes.header}>
       <div className={classes.leftContent}>
@@ -35,7 +30,7 @@ const HeaderFriendAdd = ({ onClick, exitModal }: HeaderFriendAddProps) => {
             marginTop: "1rem",
             marginRight: "0.8rem",
           }}
-          onClick={exitButtonClick}
+          onClick={() => exitModal(true)}
         />
       </div>
     </div>

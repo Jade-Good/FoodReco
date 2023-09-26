@@ -18,13 +18,12 @@ export const FriendInviteModal = ({ exitModal }: ModalProps) => {
     }
   };
 
-  const exitButtonClick = () => {
-    exitModal(false);
-  };
-
   return (
     <>
-      <div className={classes.modalBackground} onClick={exitButtonClick}></div>
+      <div
+        className={classes.modalBackground}
+        onClick={() => exitModal(false)}
+      ></div>
       <div className={classes.modal}>
         <h3>QR 초대장을 만들었습니다.</h3>
         <p>아래 QR을 보여주거나</p>
