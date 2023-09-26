@@ -1,15 +1,22 @@
 .foodImg {
-  width : 20rem;
-  height : 20rem;
+  width: 38vmax;
+  height: 38vmax;
+  max-width: 85vmin;
+  max-height: 85vmin;
   border-radius: 100%;
-  border : solid orange 1px;
+  border: solid orange 1px;
+  margin-bottom: 2vh;
 }
 
 .cardBox {
   text-align: center;
-  width : 21rem;
-  height : 25rem;
-  padding: 2rem 0;
+  width: 90vw;
+  height: 50vh;
+  padding-top: 4vh;
   border-radius: 1rem;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
+}
+
+h1 {
+  margin: 0;
 }

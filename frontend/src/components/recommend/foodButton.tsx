@@ -9,16 +9,16 @@ export const FoodButton = () => {
   return (
     <div className={classes.buttons}>
       <div className={classes.circleTall}>
-        <ImBlocked style={{ color: "#7D7B7B", fontSize: "2rem" }} />
+        <ImBlocked style={{ color: "#7D7B7B", fontSize: "4vh" }} />
       </div>
       <div className={classes.circleLarge}>
-        <IoArrowRedoSharp style={{ color: "#4D7EFF", fontSize: "3.5rem" }} />
+        <IoArrowRedoSharp style={{ color: "#4D7EFF", fontSize: "7vh" }} />
       </div>
       <div className={classes.circleLarge}>
-        <MdFavorite style={{ color: "#FF4747", fontSize: "3.5rem" }} />
+        <MdFavorite style={{ color: "#FF4747", fontSize: "7vh" }} />
       </div>
       <div className={classes.circleTall}>
-        <RiTimerFill style={{ color: "#C6C5C5", fontSize: "2rem" }} />
+        <RiTimerFill style={{ color: "#C6C5C5", fontSize: "4vh" }} />
       </div>
     </div>
   );

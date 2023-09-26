@@ -1,7 +1,8 @@
 .foodCard {
-    display: flex;
+  display: flex;
 
-    justify-content: center;
+  justify-content: center;
 
-    align-items: center;
+  margin-top: 6rem;
+  margin-bottom: 6vh;
 }
