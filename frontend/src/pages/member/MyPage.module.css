@@ -1,0 +1,7 @@
+.imgCss {
+  display: flex;
+  padding: 6.25rem;
+  align-items: flex-start;
+  align-content: flex-start;
+  border-radius: 50%;
+}
