@@ -5,36 +5,53 @@ import { BsPersonCircle } from "react-icons/bs";
 import { AiOutlineStar } from "react-icons/ai";
 import { BiWindows } from "react-icons/bi";
 import { Navigate, useNavigate } from "react-router-dom";
-import "./Footer.css";
+import classes from "./Footer.module.css";
 
 export const FooterHome = () => {
   const navigate = useNavigate();
   let memberId = 1;
 
   return (
-    <div className="footer">
-      <AiOutlineHome
-        onClick={() => navigate("/")}
-        style={{ color: "#FE9D3A", fontSize: "2em" }}
-      />
-      <BiGroup
-        onClick={() => navigate(`/friend/${memberId}`)}
-        style={iconStyle}
-      />
+    <div className={classes.footer}>
       <div
-        style={circleStyle}
+        className={`${classes.iconBtn} ${classes.iconBtnAtive}`}
+        onClick={() => navigate("/")}
+      >
+        <AiOutlineHome className={classes.iconStyle} />
+        <p className={classes.iconText}>홈</p>
+      </div>
+      <div
+        className={classes.iconBtn}
+        onClick={() => navigate(`/friend/${memberId}`)}
+      >
+        <BiGroup className={classes.iconStyle} />
+        <p className={classes.iconText}>친구</p>
+      </div>
+      <div
+        className={classes.iconBtn}
         onClick={() => navigate(`/recommendation/${memberId}`)}
       >
-        <AiOutlineStar style={starIconStyle} />
+        <div className={classes.circleStyle}>
+          <AiOutlineStar className={classes.starIconStyle} />
+        </div>
+        <p className={classes.iconText} style={{ marginTop: "10vmin" }}>
+          추천
+        </p>
       </div>
-      <BiWindows
+      <div
+        className={classes.iconBtn}
         onClick={() => navigate(`/crew/${memberId}`)}
-        style={iconStyle}
-      />
-      <BsPersonCircle
+      >
+        <BiWindows className={classes.iconStyle} />
+        <p className={classes.iconText}>그룹</p>
+      </div>
+      <div
+        className={classes.iconBtn}
         onClick={() => navigate(`/mypage/${memberId}`)}
-        style={iconStyle}
-      />
+      >
+        <BsPersonCircle className={classes.iconStyle} />
+        <p className={classes.iconText}>마이페이지</p>
+      </div>
     </div>
   );
 };

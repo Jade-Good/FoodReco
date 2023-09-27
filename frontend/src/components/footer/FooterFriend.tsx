@@ -5,45 +5,54 @@ import { BsPersonCircle } from "react-icons/bs";
 import { AiOutlineStar } from "react-icons/ai";
 import { BiWindows } from "react-icons/bi";
 import { Navigate, useNavigate } from "react-router-dom";
-import "./Footer.css";
+import classes from "./Footer.module.css";
 
 export const FooterFriend = () => {
   const navigate = useNavigate();
   let memberId = 1;
 
   return (
-    <div className="footer">
-      <AiOutlineHome onClick={() => navigate("/")} style={iconStyle} />
-      <BiGroup
-        onClick={() => navigate(`/friend/${memberId}`)}
-        style={{ color: "#FE9D3A", fontSize: "2em" }}
-      />
+    <div className={classes.footer}>
+      <div className={classes.iconBtn} onClick={() => navigate("/")}>
+        <AiOutlineHome className={classes.iconStyle} />
+        <p className={classes.iconText}>홈</p>
+      </div>
       <div
-        style={circleStyle}
+        className={`${classes.iconBtn} ${classes.iconBtnAtive}`}
+        onClick={() => navigate(`/friend/${memberId}`)}
+      >
+        <BiGroup className={classes.iconStyle} />
+        <p className={classes.iconText}>친구</p>
+      </div>
+      <div
+        className={classes.iconBtn}
         onClick={() => navigate(`/recommendation/${memberId}`)}
       >
-        <AiOutlineStar style={starIconStyle} />
+        <div className={classes.circleStyle}>
+          <AiOutlineStar className={classes.starIconStyle} />
+        </div>
+        <p className={classes.iconText} style={{ marginTop: "10vmin" }}>
+          추천
+        </p>
       </div>
-      <BiWindows
+      <div
+        className={classes.iconBtn}
         onClick={() => navigate(`/crew/${memberId}`)}
-        style={iconStyle}
-      />
-      <BsPersonCircle
+      >
+        <BiWindows className={classes.iconStyle} />
+        <p className={classes.iconText}>그룹</p>
+      </div>
+      <div
+        className={classes.iconBtn}
         onClick={() => navigate(`/mypage/${memberId}`)}
-        style={iconStyle}
-      />
+      >
+        <BsPersonCircle className={classes.iconStyle} />
+        <p className={classes.iconText}>마이페이지</p>
+      </div>
     </div>
   );
 };
 
-// 스타일링
-const footerStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "10px",
-  boxShadow: "0px -4px 6px rgba(0, 0, 0, 0.1)", // 위쪽에 그림자 효과를 줌 (y-offset을 음수로 설정)
-};
 const iconStyle = {
   cursor: "pointer", // 아이콘에 커서 스타일 지정
   fontSize: "2em", // 아이콘 크기 조정
