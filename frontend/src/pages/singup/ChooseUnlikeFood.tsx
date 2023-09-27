@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import ToggleButton from '@mui/material/ToggleButton';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import ToggleButton from "@mui/material/ToggleButton";
 
 const TagDiv = styled.div`
   display: flex;
@@ -44,7 +44,7 @@ export const ChooseUnlikeFood: React.FC<ChooseFoodProps> = ({ foodList }) => {
   };
 
   useEffect(() => {
-    console.log('likefood 변경됨:', unlikeFood);
+    console.log("likefood 변경됨:", unlikeFood);
   }, [unlikeFood]);
 
   return (

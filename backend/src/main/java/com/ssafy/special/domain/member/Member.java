@@ -71,9 +71,15 @@ public class Member {
     @Column(length = 50, name = "img")
     private String img;
 
-    // img
+    // fcm_token
+    @NotNull
+    @Column(length = 180, name = "fcm_token")
+    private String fcmToken;
+
+    // refresh_token
     @Column(length = 512, name = "refresh_token")
     private String refreshToken;
+
     //is_deleted
     @Column(name = "is_deleted",columnDefinition = "tinyint default 0") // 컬럼 정의를 설정
     private int isDeleted;
@@ -103,9 +109,9 @@ public class Member {
     public void updateRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     }
-
     @Builder
-    public Member(Long memberSeq, String email, String password, int age, String nickname, String tendency, int height, int weight, int activity, String sex, String img, String refreshToken, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt, List<CrewMember> crewMembers) {
+
+    public Member(Long memberSeq, String email, String password, int age, String nickname, String tendency, int height, int weight, int activity, String sex, String img, String fcmToken, String refreshToken, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt, List<CrewMember> crewMembers) {
         this.memberSeq = memberSeq;
         this.email = email;
         this.password = password;
@@ -117,6 +123,7 @@ public class Member {
         this.activity = activity;
         this.sex = sex;
         this.img = img;
+        this.fcmToken = fcmToken;
         this.refreshToken = refreshToken;
         this.isDeleted = isDeleted;
         this.createdAt = createdAt;
