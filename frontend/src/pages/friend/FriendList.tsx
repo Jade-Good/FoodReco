@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MemberFooterFriend } from "../../components/MemberFooter/MemberFooterFriend";
+import { FooterFriend } from "../../components/footer/FooterFriend";
 import HeaderFriendAdd from "../../components/header/HeaderFriendAdd";
 import { Friend } from "../../components/friend/Friend";
 import { FriendInviteModal } from "../../components/friend/FriendInviteModal";
@@ -53,7 +53,7 @@ export const FriendList = () => {
           return <Friend name={name} key={i} />;
         })}
       </div>
-      <MemberFooterFriend />
+      <FooterFriend />
       {modal === true ? <FriendInviteModal exitModal={modalOff} /> : null}
     </>
   );

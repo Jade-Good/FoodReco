@@ -1,7 +1,7 @@
-import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { MemberFooterHome } from '../../components/MemberFooter/MemberFooterHome';
-import { SignUp } from '../singup/SignUp';
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { FooterHome } from "../../components/footer/FooterHome";
+import { SignUp } from "../singup/SignUp";
 
 interface IForm {
   email: string;
@@ -22,7 +22,7 @@ export const Main: React.FC = () => {
   return (
     <>
       <SignUp />
-      <MemberFooterHome />
+      <FooterHome />
     </>
   );
 };
