@@ -1,23 +1,36 @@
-.circleLarge{
-    display: inline-block;
-    width : 5rem;
-    height : 5rem;
-    border : #E7E7E7 1rem solid;
-    border-radius: 100%;
-    text-align: center;
-    line-height : 7.5rem;
+.circleLarge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 7vmax;
+  height: 7vmax;
+  border: #e7e7e7 0.5rem solid;
+  border-radius: 100%;
+  text-align: center;
+
+  padding: 1.5vmax;
 }
 
-.circleTall{
-    display: inline-block;
-    width : 3rem;
-    height : 3rem;
-    border : #E7E7E7 0.5rem solid;
-    border-radius: 100%;
-    text-align: center;
-    line-height : 4.2rem;
+.circleTall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 4vmax;
+  height: 4vmax;
+  border: #e7e7e7 0.5rem solid;
+  border-radius: 100%;
+  text-align: center;
+  line-height: 4.2rem;
+
+  padding: 1vmax;
 }
 
 .buttons {
-    text-align: center;
+  display: flex;
+  justify-content: center;
+  padding: 0 10vw;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 12vh;
 }

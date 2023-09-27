@@ -9,15 +9,10 @@ export const MemberRecommendation = () => {
   return (
     <>
       <HeaderLogo />
-      <br />
-      <br />
-      <br />
       <div className={classes.foodCard}>
         <FoodCard />
       </div>
-      <br />
       <FoodButton />
-      <br />
       <MemberFooterRecommendation />
     </>
   );
