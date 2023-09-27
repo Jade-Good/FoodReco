@@ -7,7 +7,7 @@ import time
 file_path = './preprocessed_data/menu_ingredient/reordered_data.xlsx'
 
 # 파일 읽기
-df = pd.read_excel(file_path, index_col=0)
+df = pd.read_excel(file_path)
 
 
 # 음식명을 제외한 열을 선택하여 각 행을 하나의 문자열로 만듭니다.
