@@ -1,5 +1,5 @@
 import React from "react";
-import { MemberFooterCrew } from "../../components/MemberFooter/MemberFooterCrew";
+import { FooterCrew } from "../../components/footer/FooterCrew";
 import HeaderCrew from "../../components/header/HeaderCrew";
 import CrewCard from "../../components/crewpage/CrewCard";
 
@@ -32,7 +32,7 @@ export const CrewList = () => {
         })}
         <CrewCard key={-1} />
       </div>
-      <MemberFooterCrew />
+      <FooterCrew />
     </>
   );
 };
