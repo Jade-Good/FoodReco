@@ -5,12 +5,18 @@ import App from "./App";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { store } from "./redux/store/store";
+import { RecoilRoot } from "recoil";
+import axios from "axios";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <Provider store={store}>
-    <App />
-  </Provider>
+  <RecoilRoot>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </RecoilRoot>
 );
+
+axios.defaults.withCredentials = true;

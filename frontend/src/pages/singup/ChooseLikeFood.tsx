@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import ToggleButton from '@mui/material/ToggleButton';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import ToggleButton from "@mui/material/ToggleButton";
 
 const TagDiv = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ export const ChooseLikeFood: React.FC<ChooseLikeFoodProps> = ({ foodList }) => {
 
   useEffect(() => {
     // useEffect 내에서 likefood 배열이 변경될 때마다 콘솔에 로그를 출력합니다.
-    console.log('likefood 변경됨:', likefood);
+    console.log("likefood 변경됨:", likefood);
   }, [likefood]); // likefood 배열이 변경될 때만 useEffect가 실행됩니다.
 
   return (

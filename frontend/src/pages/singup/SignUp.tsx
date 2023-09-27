@@ -444,7 +444,7 @@ export const SignUp = () => {
                 )}
               </div>
               <StyledEmailInput
-                // type="button"
+                type="button"
                 children="인증요청"
                 name="email" // 필드의 이름
                 placeholder="이메일을 입력하세요"
