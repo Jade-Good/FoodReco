@@ -11,23 +11,16 @@ import {
 
 import StyledBasicInput from '../../components/inputs/StyledBasicInput';
 
-import StyledEmailInput from '../../components/inputs/StyledEmailInput';
-import {
-  InputContainer,
-  StyledInput,
-} from './../../components/inputs/StyledInputs';
 import axios from 'axios';
-import StyledButtonProps from '../../styles/StyledButtonProps';
 import HeaderLogo from '../../components/header/HeaderLogo';
 
 import styled from 'styled-components';
 import BasicSelect from '../../components/option/BasicSelect';
 import { useNavigate } from 'react-router-dom';
 import StyledBasicInputUnit from '../../components/inputs/StyledBasicInputUnit';
-import { profile } from 'console';
 
 interface IForm {
-  image: File[] | null;
+  image: FileList | null;
   nickname: string;
   age: string;
   sex: string;
@@ -53,12 +46,15 @@ export const MyPageEdit = () => {
   const timeList = [0.5, 1, 1.5, 2, 2.5, 3];
   // 걷기 1시간 6750 , 헬스 1시간 14700, 수영: 12850, 자전거:11050
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-  let imageURL: string;
-  if (profileImageFile) {
-    imageURL = URL.createObjectURL(profileImageFile);
-  } else {
-    imageURL = '/image/foodreco.png';
-  }
+  const [imageURL, setImageURL] = useState<string | undefined>();
+
+  // let imageURL: string;
+
+  // if (profileImageFile) {
+  //   imageURL = URL.createObjectURL(profileImageFile);
+  // } else {
+  //   imageURL = '/image/foodreco.png';
+  // }
   // const handleEditProfileImageClick = () => {
   //   console.log('Edit button clicked!');
 
@@ -122,12 +118,21 @@ export const MyPageEdit = () => {
     },
   });
   const profileImage = watch('image');
-
-  const handleFileChange = () => {
-    if (profileImage && profileImage[0]) {
-      setProfileImageFile(profileImage[0]);
+  const avatar = watch('image');
+  useEffect(() => {
+    if (profileImage && profileImage.length > 0) {
+      const file = profileImage[0];
+      setImageURL(URL.createObjectURL(file));
+    } else {
+      setImageURL('/image/foodreco.png'); // 기본 이미지 경로
     }
-  };
+  }, [avatar]);
+
+  // const handleFileChange = () => {
+  //   if (profileImage && profileImage[0]) {
+  //     setProfileImageFile(profileImage[0]);
+  //   }
+  // };
   // 회원가입 로직
   const handleEdit: SubmitHandler<IForm> = (data) => {
     console.log(data);
@@ -186,7 +191,22 @@ export const MyPageEdit = () => {
 
       <form onSubmit={handleSubmit(handleEdit)}>
         <div className={classes.containerNoHeight}>
-          {profileImageFile && <img src={imageURL} alt="Profile Preview" />}
+          <div
+            style={{
+              width: '10vw',
+              height: '10vh',
+              borderRadius: '50%',
+              // overflow: 'hidden',
+            }}
+          >
+            {imageURL && (
+              <img
+                src={imageURL}
+                alt="Profile Preview"
+                style={{ width: '10vw', height: '10vh' }}
+              />
+            )}
+          </div>
 
           <input
             id="picture"
@@ -194,7 +214,7 @@ export const MyPageEdit = () => {
             className="hidden"
             accept="image/*"
             {...register('image')}
-            onChange={handleFileChange}
+            // onChange={handleFileChange}
           />
           <br />
           {/* 닉네임 적기 */}

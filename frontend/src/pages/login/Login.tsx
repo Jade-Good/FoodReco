@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import StyledIdInputIcon from '../../components/inputs/StyledIdInputIcon';
 import StyledPwInputIcon from '../../components/inputs/StyledPwInputIcon';
 import StyledButton from '../../styles/StyledButton';
@@ -8,8 +8,9 @@ import { BsSquare } from 'react-icons/bs';
 import { BsFillCheckSquareFill } from 'react-icons/bs';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
+
+import { useRecoilState } from 'recoil';
+import { userState } from '../../recoil/atoms/userState';
 
 interface IForm {
   email: string;
@@ -20,8 +21,9 @@ export const Login = () => {
   const [isAutoLogin, setIsAutoLogin] = useState(0);
   const [isRememberId, setIsRememberId] = useState(0);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  // const count = useSelector((state) => state.counter.value);
+  // const dispatch = useDispatch();
+  const [user, setUser] = useRecoilState(userState);
+  const JWT_EXPIRY_TIME = 3600 * 1000; // 만료 시간 (24시간 밀리 초로 표현)
 
   const {
     register,
@@ -52,21 +54,69 @@ export const Login = () => {
           // }
         )
         .then((res) => {
+          console.log(data);
+          console.log('로그인중', res);
+          const nickcname = res.data.nickname;
           const accessToken = res.headers.authorization;
-          // const refreshToken = res.headers.authorization - refresh;
+          const email = res.data.email;
+          const refreshToken = res.headers.authorizationRefresh;
 
           axios.defaults.headers.common[
             'Authorization'
           ] = `Bearer ${accessToken}`;
-          localStorage.setItem('accesstoken', accessToken);
-          // console.log('로그인', res);
+          // localStorage.setItem('accesstoken', accessToken);
+
+          setUser((prevUser) => ({
+            ...prevUser,
+            refreshToken: refreshToken,
+            accessToken: accessToken,
+            nickname: nickcname,
+            email: email,
+          }));
+
+          // accessToken 만료하기 1분 전에 로그인 연장
+          setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
+
           navigate('/');
         })
         .catch((err) => {
-          alert('로그인 실패입니다. 비밀번호와 아이디를 확인해주세요');
-          // console.log('이메일 전송 오류:', err);
+          handleSilentRefresh(data);
+          console.log('이메일 전송 오류:', err);
         });
     }
+  };
+  const handleSilentRefresh: SubmitHandler<IForm> = (data) => {
+    console.log('refreshtoken axois', data);
+    axios
+      .post('/silent-refresh', data)
+      .then((res) => {
+        const nickcname = res.data.nickname;
+        const accessToken = res.headers.authorization;
+        const email = res.data.email;
+        const refreshToken = res.headers.authorizationRefresh;
+
+        axios.defaults.headers.common[
+          'Authorization'
+        ] = `Bearer ${accessToken}`;
+        // localStorage.setItem('accesstoken', accessToken);
+
+        setUser((prevUser) => ({
+          ...prevUser,
+          refreshToken: refreshToken,
+          accessToken: accessToken,
+          nickname: nickcname,
+          email: email,
+        }));
+
+        // accessToken 만료하기 1분 전에 로그인 연장
+        setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
+
+        navigate('/');
+      })
+      .catch((error) => {
+        console.log(error);
+        alert('이메일과 비밀번호를 확인해주세요');
+      });
   };
 
   return (
@@ -187,7 +237,12 @@ export const Login = () => {
         </StyledButton>
       </form>
       <div>
-        <p style={{ color: '#918C8C', fontWeight: 700 }}>회원가입</p>
+        <p
+          style={{ color: '#918C8C', fontWeight: 700 }}
+          onClick={() => navigate('/signup')}
+        >
+          회원가입
+        </p>
       </div>
     </div>
   );
