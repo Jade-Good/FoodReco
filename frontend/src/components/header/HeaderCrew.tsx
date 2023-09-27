@@ -12,26 +12,16 @@ const HeaderCrew: React.FC<HeaderCrewProps> = ({ onClick }) => {
 
   return (
     <div className={classes.header}>
-      <div className={classes.leftContent}>
-        <img
-          src="/images/foodreco.png"
-          alt="sds"
-          width={"90rem"} // 단위를 제거하고 숫자만 넣습니다.
-          height={"50rem"}
-          onClick={() => navigate("/")}
-        />
-      </div>
-      <div>
-        <MdOutlineGroupAdd
-          style={{
-            color: "#525252",
-            fontSize: "2.5rem",
-            marginTop: "1rem",
-            marginRight: "0.8rem",
-          }}
-          // onClick={null}
-        />
-      </div>
+      <img
+        className={`${classes.leftContent} ${classes.logo}`}
+        src="/images/foodreco.png"
+        alt="logo"
+        onClick={() => navigate("/")}
+      />
+      <MdOutlineGroupAdd
+        className={`${classes.rightContent} ${classes.friendAddBtn}`}
+        onClick={onClick}
+      />
     </div>
   );
 };
