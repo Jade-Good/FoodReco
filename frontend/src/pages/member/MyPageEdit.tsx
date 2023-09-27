@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import StyledButton from '../../styles/StyledButton';
-import classes from './MyPageEdit.module.css';
+import StyledButton from "../../styles/StyledButton";
+import classes from "./MyPageEdit.module.css";
 import {
   SubmitHandler,
   useFieldArray,
   useForm,
   Controller,
-} from 'react-hook-form';
+} from "react-hook-form";
 
-import StyledBasicInput from '../../components/inputs/StyledBasicInput';
+import StyledBasicInput from "../../components/inputs/StyledBasicInput";
 
-import axios from 'axios';
-import HeaderLogo from '../../components/header/HeaderLogo';
+import axios from "axios";
+import HeaderLogo from "../../components/header/HeaderLogo";
 
-import styled from 'styled-components';
-import BasicSelect from '../../components/option/BasicSelect';
-import { useNavigate } from 'react-router-dom';
-import StyledBasicInputUnit from '../../components/inputs/StyledBasicInputUnit';
+import styled from "styled-components";
+import BasicSelect from "../../components/option/BasicSelect";
+import { useNavigate } from "react-router-dom";
+import StyledBasicInputUnit from "../../components/inputs/StyledBasicInputUnit";
 
 interface IForm {
   image: FileList | null;
@@ -39,10 +39,10 @@ interface ExerciseRates {
 export const MyPageEdit = () => {
   const navigate = useNavigate();
 
-  const steps = ['약관동의', '회원 정보', '취향 설문'];
-  const ageList = ['10대', '20대', '30대', '40대', '50대', '60대', '70대이상'];
-  const sexList = ['남자', '여자'];
-  const activityList = ['운동안함', '걷기', '헬스', '수영', '자전거'];
+  const steps = ["약관동의", "회원 정보", "취향 설문"];
+  const ageList = ["10대", "20대", "30대", "40대", "50대", "60대", "70대이상"];
+  const sexList = ["남자", "여자"];
+  const activityList = ["운동안함", "걷기", "헬스", "수영", "자전거"];
   const timeList = [0.5, 1, 1.5, 2, 2.5, 3];
   // 걷기 1시간 6750 , 헬스 1시간 14700, 수영: 12850, 자전거:11050
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
@@ -105,26 +105,26 @@ export const MyPageEdit = () => {
     getValues,
     watch,
   } = useForm<IForm>({
-    mode: 'onSubmit',
+    mode: "onSubmit",
     defaultValues: {
       image: null,
-      nickname: '',
-      age: '',
-      sex: '',
+      nickname: "",
+      age: "",
+      sex: "",
       height: undefined,
       weight: undefined,
-      activity: '',
+      activity: "",
       time: undefined,
     },
   });
-  const profileImage = watch('image');
-  const avatar = watch('image');
+  const profileImage = watch("image");
+  const avatar = watch("image");
   useEffect(() => {
     if (profileImage && profileImage.length > 0) {
       const file = profileImage[0];
       setImageURL(URL.createObjectURL(file));
     } else {
-      setImageURL('/image/foodreco.png'); // 기본 이미지 경로
+      setImageURL("/image/foodreco.png"); // 기본 이미지 경로
     }
   }, [avatar]);
 
@@ -152,7 +152,7 @@ export const MyPageEdit = () => {
     console.log(datas);
     if (errors.nickname) {
       console.log(errors);
-      alert('정보를 다시 확인해주세요!');
+      alert("정보를 다시 확인해주세요!");
     } else {
       axios
         .post(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
@@ -166,7 +166,7 @@ export const MyPageEdit = () => {
         })
         .then((res) => {
           console.log(res);
-          navigate('/signup/complete');
+          navigate("/signup/complete");
           // alert("회원가입이 완료되었습니다!")
         })
         .catch((error) => {
@@ -183,7 +183,7 @@ export const MyPageEdit = () => {
       <br />
       <br />
 
-      <p style={{ color: '#525252', fontSize: '1.5rem', fontWeight: 'bold' }}>
+      <p style={{ color: "#525252", fontSize: "1.5rem", fontWeight: "bold" }}>
         프로필 수정하기
       </p>
 
@@ -193,9 +193,9 @@ export const MyPageEdit = () => {
         <div className={classes.containerNoHeight}>
           <div
             style={{
-              width: '10vw',
-              height: '10vh',
-              borderRadius: '50%',
+              width: "10vw",
+              height: "10vh",
+              borderRadius: "50%",
               // overflow: 'hidden',
             }}
           >
@@ -203,7 +203,7 @@ export const MyPageEdit = () => {
               <img
                 src={imageURL}
                 alt="Profile Preview"
-                style={{ width: '10vw', height: '10vh' }}
+                style={{ width: "10vw", height: "10vh" }}
               />
             )}
           </div>
@@ -213,7 +213,7 @@ export const MyPageEdit = () => {
             type="file"
             className="hidden"
             accept="image/*"
-            {...register('image')}
+            {...register("image")}
             // onChange={handleFileChange}
           />
           <br />
@@ -224,7 +224,7 @@ export const MyPageEdit = () => {
                 닉네임
               </label>
               {errors.nickname && (
-                <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
+                <small role="alert" style={{ color: "red", fontSize: "10px" }}>
                   {errors.nickname.message}
                 </small>
               )}
@@ -238,13 +238,13 @@ export const MyPageEdit = () => {
               rules={{
                 maxLength: {
                   value: 8,
-                  message: '8자리 이하 닉네임을 사용해주세요.',
+                  message: "8자리 이하 닉네임을 사용해주세요.",
                 },
                 minLength: {
                   value: 2,
-                  message: '2자리 이상 닉네임을 사용해주세요',
+                  message: "2자리 이상 닉네임을 사용해주세요",
                 },
-                required: '닉네임은 필수 입력입니다.',
+                required: "닉네임은 필수 입력입니다.",
               }}
             />
           </div>
@@ -258,7 +258,7 @@ export const MyPageEdit = () => {
 
                 <BasicSelect
                   control={control}
-                  {...register('age')}
+                  {...register("age")}
                   name="age"
                   label="age"
                   options={ageList}
@@ -271,7 +271,7 @@ export const MyPageEdit = () => {
 
                 <BasicSelect
                   control={control}
-                  {...register('sex')}
+                  {...register("sex")}
                   name="sex"
                   label="sex"
                   options={sexList}
@@ -314,7 +314,7 @@ export const MyPageEdit = () => {
 
                 <BasicSelect
                   control={control}
-                  {...register('activity')}
+                  {...register("activity")}
                   name="activity"
                   label="activity"
                   options={activityList}
@@ -327,7 +327,7 @@ export const MyPageEdit = () => {
 
                 <BasicSelect
                   control={control}
-                  {...register('time')}
+                  {...register("time")}
                   name="time"
                   label="time"
                   options={timeList.map(String)}

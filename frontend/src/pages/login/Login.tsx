@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import StyledIdInputIcon from '../../components/inputs/StyledIdInputIcon';
-import StyledPwInputIcon from '../../components/inputs/StyledPwInputIcon';
-import StyledButton from '../../styles/StyledButton';
-import classes from './Login.module.css';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { BsSquare } from 'react-icons/bs';
-import { BsFillCheckSquareFill } from 'react-icons/bs';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import StyledIdInputIcon from "../../components/inputs/StyledIdInputIcon";
+import StyledPwInputIcon from "../../components/inputs/StyledPwInputIcon";
+import StyledButton from "../../styles/StyledButton";
+import classes from "./Login.module.css";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { BsSquare } from "react-icons/bs";
+import { BsFillCheckSquareFill } from "react-icons/bs";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-import { useRecoilState } from 'recoil';
-import { userState } from '../../recoil/atoms/userState';
+import { useRecoilState } from "recoil";
+import { userState } from "../../recoil/atoms/userState";
 
 interface IForm {
   email: string;
@@ -31,10 +31,10 @@ export const Login = () => {
     handleSubmit,
     control,
   } = useForm<IForm>({
-    mode: 'onSubmit',
+    mode: "onSubmit",
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
@@ -42,7 +42,7 @@ export const Login = () => {
     const { email, password } = data;
     if (errors.email) {
       console.log(errors.email);
-      alert('이메일을 다시 확인해 주십시오');
+      alert("이메일을 다시 확인해 주십시오");
     } else {
       axios
         .post(
@@ -55,14 +55,14 @@ export const Login = () => {
         )
         .then((res) => {
           console.log(data);
-          console.log('로그인중', res);
+          console.log("로그인중", res);
           const nickcname = res.data.nickname;
           const accessToken = res.headers.authorization;
           const email = res.data.email;
           const refreshToken = res.headers.authorizationRefresh;
 
           axios.defaults.headers.common[
-            'Authorization'
+            "Authorization"
           ] = `Bearer ${accessToken}`;
           // localStorage.setItem('accesstoken', accessToken);
 
@@ -77,18 +77,18 @@ export const Login = () => {
           // accessToken 만료하기 1분 전에 로그인 연장
           setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
 
-          navigate('/');
+          navigate("/");
         })
         .catch((err) => {
           handleSilentRefresh(data);
-          console.log('이메일 전송 오류:', err);
+          console.log("이메일 전송 오류:", err);
         });
     }
   };
   const handleSilentRefresh: SubmitHandler<IForm> = (data) => {
-    console.log('refreshtoken axois', data);
+    console.log("refreshtoken axois", data);
     axios
-      .post('/silent-refresh', data)
+      .post("/silent-refresh", data)
       .then((res) => {
         const nickcname = res.data.nickname;
         const accessToken = res.headers.authorization;
@@ -96,7 +96,7 @@ export const Login = () => {
         const refreshToken = res.headers.authorizationRefresh;
 
         axios.defaults.headers.common[
-          'Authorization'
+          "Authorization"
         ] = `Bearer ${accessToken}`;
         // localStorage.setItem('accesstoken', accessToken);
 
@@ -111,11 +111,11 @@ export const Login = () => {
         // accessToken 만료하기 1분 전에 로그인 연장
         setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
 
-        navigate('/');
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);
-        alert('이메일과 비밀번호를 확인해주세요');
+        alert("이메일과 비밀번호를 확인해주세요");
       });
   };
 
@@ -126,8 +126,8 @@ export const Login = () => {
         <img
           src="images/foodreco.png"
           alt="sdsd"
-          width={'200rem'}
-          height={'100rem'}
+          width={"200rem"}
+          height={"100rem"}
         />
       </div>
       <br />
@@ -135,7 +135,7 @@ export const Login = () => {
       <form onSubmit={handleSubmit(handleLogin)}>
         <div className={classes.inputContainer}>
           {errors.email && (
-            <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
+            <small role="alert" style={{ color: "red", fontSize: "10px" }}>
               {errors.email.message}
             </small>
           )}
@@ -148,13 +148,13 @@ export const Login = () => {
               pattern: {
                 value:
                   /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
-                message: '이메일 형식에 맞지 않습니다.',
+                message: "이메일 형식에 맞지 않습니다.",
               },
             }}
           />
 
           {errors.password && (
-            <small role="alert" style={{ color: 'red', fontSize: '10px' }}>
+            <small role="alert" style={{ color: "red", fontSize: "10px" }}>
               {errors.password.message}
             </small>
           )}
@@ -168,11 +168,11 @@ export const Login = () => {
             rules={{
               minLength: {
                 value: 8,
-                message: '8자리 이상 비밀번호를 사용하세요.',
+                message: "8자리 이상 비밀번호를 사용하세요.",
               },
             }}
             aria-invalid={
-              isSubmitted ? (errors.password ? 'true' : 'false') : undefined
+              isSubmitted ? (errors.password ? "true" : "false") : undefined
             }
           />
         </div>
@@ -181,10 +181,10 @@ export const Login = () => {
           {isAutoLogin ? (
             <BsFillCheckSquareFill
               style={{
-                height: '17px',
-                width: '17px',
-                marginLeft: '8px',
-                color: '#FE9D3A',
+                height: "17px",
+                width: "17px",
+                marginLeft: "8px",
+                color: "#FE9D3A",
               }}
               onClick={() => {
                 setIsAutoLogin(0);
@@ -193,24 +193,24 @@ export const Login = () => {
           ) : (
             <BsSquare
               color="#C6C5C5"
-              style={{ height: '17px', width: '17px', marginLeft: '8px' }}
+              style={{ height: "17px", width: "17px", marginLeft: "8px" }}
               onClick={() => {
                 setIsAutoLogin(1);
               }}
             />
           )}
           &nbsp;
-          <span style={{ fontSize: '13px', color: '#C6C5C5' }}>
+          <span style={{ fontSize: "13px", color: "#C6C5C5" }}>
             자동 로그인
           </span>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           {isRememberId ? (
             <BsFillCheckSquareFill
               style={{
-                height: '17px',
-                width: '17px',
-                marginLeft: '5px',
-                color: '#FE9D3A',
+                height: "17px",
+                width: "17px",
+                marginLeft: "5px",
+                color: "#FE9D3A",
               }}
               onClick={() => {
                 setIsRememberId(0);
@@ -219,14 +219,14 @@ export const Login = () => {
           ) : (
             <BsSquare
               color="#C6C5C5"
-              style={{ height: '17px', width: '17px', marginLeft: '5px' }}
+              style={{ height: "17px", width: "17px", marginLeft: "5px" }}
               onClick={() => {
                 setIsRememberId(1);
               }}
             />
           )}
           &nbsp;
-          <span style={{ fontSize: '13px', color: '#C6C5C5' }}>
+          <span style={{ fontSize: "13px", color: "#C6C5C5" }}>
             아이디 저장
           </span>
         </div>
@@ -238,8 +238,8 @@ export const Login = () => {
       </form>
       <div>
         <p
-          style={{ color: '#918C8C', fontWeight: 700 }}
-          onClick={() => navigate('/signup')}
+          style={{ color: "#918C8C", fontWeight: 700 }}
+          onClick={() => navigate("/signup")}
         >
           회원가입
         </p>

@@ -1,33 +1,33 @@
-import React, { useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import './App.css';
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
-import { Main } from './pages/main/Main';
-import { Login } from './pages/login/Login';
-import { SignUp } from './pages/singup/SignUp';
-import { MyPage } from './pages/member/MyPage';
-import { MyPageEdit } from './pages/member/MyPageEdit';
-import { FriendList } from './pages/friend/FriendList';
-import { CrewList } from './pages/crew/CrewList';
-import { CrewDetail } from './pages/crew/CrewDetail';
-import { CrewMake } from './pages/crew/CrewMake';
-import { CrewInvite } from './pages/crew/CrewInvite';
-import { MemberRecommendation } from './pages/memberRecommendation/MemberRecommendation';
-import { CrewRecommendation } from './pages/crewRecomendation/CrewRecommendation';
-import NotFound from './pages/notfound/NotFound';
-import MediaQueryProvider from 'react-responsive';
-import { SignUpComplete } from './pages/singup/SignUpComplete';
+import React, { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import "./App.css";
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
+import { Main } from "./pages/main/Main";
+import { Login } from "./pages/login/Login";
+import { SignUp } from "./pages/singup/SignUp";
+import { MyPage } from "./pages/member/MyPage";
+import { MyPageEdit } from "./pages/member/MyPageEdit";
+import { FriendList } from "./pages/friend/FriendList";
+import { CrewList } from "./pages/crew/CrewList";
+import { CrewDetail } from "./pages/crew/CrewDetail";
+import { CrewMake } from "./pages/crew/CrewMake";
+import { CrewInvite } from "./pages/crew/CrewInvite";
+import { MemberRecommendation } from "./pages/memberRecommendation/MemberRecommendation";
+import { CrewRecommendation } from "./pages/crewRecomendation/CrewRecommendation";
+import NotFound from "./pages/notfound/NotFound";
+import MediaQueryProvider from "react-responsive";
+import { SignUpComplete } from "./pages/singup/SignUpComplete";
 
-import { Test } from './pages/Test';
-import { Provider } from 'react-redux';
-import { store } from './redux/store/store';
+import { Test } from "./pages/Test";
+import { Provider } from "react-redux";
+import { store } from "./redux/store/store";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   function setScreenSize() {
     let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
   }
   useEffect(() => {
     setScreenSize();

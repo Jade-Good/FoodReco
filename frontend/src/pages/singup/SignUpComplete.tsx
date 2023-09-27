@@ -1,6 +1,6 @@
-import React from 'react';
-import StyledButton from '../../styles/StyledButton';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import StyledButton from "../../styles/StyledButton";
+import { useNavigate } from "react-router-dom";
 
 export const SignUpComplete = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ export const SignUpComplete = () => {
         <img
           src="/images/foodreco.png"
           alt="dsf"
-          style={{ width: '18.8125rem', height: '9.9375rem' }}
+          style={{ width: "18.8125rem", height: "9.9375rem" }}
         />
 
         <div>
@@ -22,7 +22,7 @@ export const SignUpComplete = () => {
         <StyledButton
           width="18.8125rem"
           height="2.8125rem"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate("/login")}
         >
           로그인
         </StyledButton>
