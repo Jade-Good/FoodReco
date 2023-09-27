@@ -8,7 +8,8 @@ import { BsSquare } from "react-icons/bs";
 import { BsFillCheckSquareFill } from "react-icons/bs";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atoms/userState";
 
@@ -118,6 +119,7 @@ export const Login = () => {
         alert("이메일과 비밀번호를 확인해주세요");
       });
   };
+  const notify = () => toast("This is a toast notification !");
 
   return (
     <div className={classes.container}>
@@ -132,6 +134,9 @@ export const Login = () => {
       </div>
       <br />
       <br />
+
+      <button onClick={notify}>Notify !</button>
+      <ToastContainer />
       <form onSubmit={handleSubmit(handleLogin)}>
         <div className={classes.inputContainer}>
           {errors.email && (
