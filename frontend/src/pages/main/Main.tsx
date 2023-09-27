@@ -2,6 +2,7 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FooterHome } from "../../components/footer/FooterHome";
 import { SignUp } from "../singup/SignUp";
+import { Login } from "../login/Login";
 
 interface IForm {
   email: string;
@@ -21,7 +22,7 @@ export const Main: React.FC = () => {
 
   return (
     <>
-      <SignUp />
+      <Login />
       <FooterHome />
     </>
   );
