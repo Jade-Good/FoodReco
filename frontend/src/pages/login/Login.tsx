@@ -8,10 +8,10 @@ import { BsSquare } from "react-icons/bs";
 import { BsFillCheckSquareFill } from "react-icons/bs";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atoms/userState";
+import { ToastContainer, toast } from "react-toastify";
 
 interface IForm {
   email: string;
@@ -43,7 +43,16 @@ export const Login = () => {
     const { email, password } = data;
     if (errors.email) {
       console.log(errors.email);
-      alert("이메일을 다시 확인해 주십시오");
+      toast.error("이메일을 다시 확인해주세요!", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     } else {
       axios
         .post(
@@ -116,10 +125,18 @@ export const Login = () => {
       })
       .catch((error) => {
         console.log(error);
-        alert("이메일과 비밀번호를 확인해주세요");
+        toast.error("이메일과 비밀번호를 다시 확인해주세요", {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       });
   };
-  const notify = () => toast("This is a toast notification !");
 
   return (
     <div className={classes.container}>
@@ -135,8 +152,6 @@ export const Login = () => {
       <br />
       <br />
 
-      <button onClick={notify}>Notify !</button>
-      <ToastContainer />
       <form onSubmit={handleSubmit(handleLogin)}>
         <div className={classes.inputContainer}>
           {errors.email && (
@@ -249,6 +264,7 @@ export const Login = () => {
           회원가입
         </p>
       </div>
+      <ToastContainer />
     </div>
   );
 };

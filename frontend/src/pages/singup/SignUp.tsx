@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import StyledBasicInputUnit from "../../components/inputs/StyledBasicInputUnit";
 import { ChooseLikeFood } from "./ChooseLikeFood";
 import ToggleButton from "@mui/material/ToggleButton";
+import { ToastContainer, toast } from "react-toastify";
 
 interface IForm {
   email: string;
@@ -217,7 +218,6 @@ export const SignUp = () => {
     console.log(datas);
     if (errors.email || errors.nickname || errors.password) {
       console.log(errors);
-      alert("정보를 다시 확인해주세요!");
     } else {
       axios
         .post(`${process.env.REACT_APP_BASE_URL}/member/regist`, {
@@ -233,7 +233,16 @@ export const SignUp = () => {
         .then((res) => {
           console.log(res);
           navigate("/signup/complete");
-          // alert("회원가입이 완료되었습니다!")
+          toast.success("🦄 Wow so easy!", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
         })
         .catch((error) => {
           console.log(error);
@@ -244,19 +253,23 @@ export const SignUp = () => {
   //이메일 인증 요청
   const handleSendEmail = () => {
     setCheckEmail(0);
-    console.log(sendEmail);
 
     // const formData = new FormData();
     // formData.append("email", sendEmail);
 
     if (errors.email) {
       console.log(errors.email);
-      alert("이메일을 다시 확인해 주십시오");
+      toast.error("🦄 이메일을 다시 확인해주세요!", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     } else {
-      console.log(
-        `${process.env.REACT_APP_BASE_URL}/member/verification/email`
-      );
-
       axios
         .post(
           `${process.env.REACT_APP_BASE_URL}/member/verification/email`,
@@ -266,13 +279,31 @@ export const SignUp = () => {
           // }
         )
         .then((res) => {
-          alert("인증번호를 전송했습니다.");
+          toast.success("🦄 인증번호를 전송했습니다!", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
 
           console.log(res);
         })
         .catch((err) => {
-          alert("이메일 전송오류 입니다. 이메일을 다시 확인해주세요");
           console.log("이메일 전송 오류:", err);
+          toast.error("🦄 이메일 전송에 실패했습니다.", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
         });
     }
   };
@@ -301,12 +332,31 @@ export const SignUp = () => {
           console.log("인증확인");
           setCheckEmail(1);
         } else {
-          alert("인증번호가 틀립니다.");
+          toast.error("🦄 틀린 인증번호 입니다.", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
         }
       })
       .catch((err) => {
         console.log(code);
-        alert("인증에 실패했습니다. 인증번호를 확인해주세요");
+        toast.error("🦄 틀린 인증번호 입니다.", {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+
         console.log("이메일 인증 오류:", err);
       });
   };
@@ -324,7 +374,6 @@ export const SignUp = () => {
         </p>
       )}
       <br />
-
       <form onSubmit={handleSubmit(handleSignUp)}>
         {/* 회원가입 첫번째 페이지 */}
         {progress === 0 && (
@@ -407,7 +456,19 @@ export const SignUp = () => {
                       setProgress((prevProgress) => prevProgress + 1);
                     }
                   } else {
-                    alert("개인정보 동의를 모두 동의해주셔야 이용가능합니다.");
+                    toast.error(
+                      "개인정보 이용을 모두 동의 해주셔야 이용가능합니다.",
+                      {
+                        position: "top-center",
+                        autoClose: 1000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                      }
+                    );
                   }
                 }}
               >
@@ -470,6 +531,7 @@ export const SignUp = () => {
 
               {checkEmail ? (
                 <StyledEmailInput
+                  type="button"
                   children="인증확인"
                   name="emailValidation"
                   placeholder="인증번호를 입력하세요"
@@ -609,7 +671,16 @@ export const SignUp = () => {
                       setProgress((prevProgress) => prevProgress + 1);
                     }
                   } else {
-                    alert("이메일인증과 비밀번호를 확인해주세요!");
+                    toast.error("🦄 이메일과 비밀번호를 다시 확인해주세요!", {
+                      position: "top-center",
+                      autoClose: 1000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                    });
                   }
                 }}
               >
@@ -781,7 +852,16 @@ export const SignUp = () => {
                 radius="10px"
                 onClick={() => {
                   if (errors.nickname) {
-                    alert("닉네임을 확인해주세요");
+                    toast.warn("닉네임을 확인해주세요", {
+                      position: "top-center",
+                      autoClose: 1000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                    });
                   } else {
                     if (progress < 5) {
                       setProgress((prevProgress) => prevProgress + 1);
@@ -852,7 +932,16 @@ export const SignUp = () => {
                   if (progress > 0 && likefood.length >= 5) {
                     setProgress((prevProgress) => prevProgress + 1);
                   } else {
-                    alert("최소 5개 이상 좋아하는 음식을 선택해주세요");
+                    toast.warn("최소 5개 이상의 음식을 선택해주세요", {
+                      position: "top-center",
+                      autoClose: 1000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                    });
                   }
                 }}
               >
@@ -936,8 +1025,20 @@ export const SignUp = () => {
           제출
         </StyledButton> */}
       </form>
-
-      {/* <div className={classes.inputContainer}> */}
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        limit={1}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      ;{/* <div className={classes.inputContainer}> */}
       {/* <StyledButton
           disabled={isSubmitting}
           type="submit"
