@@ -5,3 +5,16 @@
   align-content: flex-start;
   border-radius: 50%;
 }
+
+.labelStyle {
+  color: "#525252";
+  font-size: "1rem";
+  font-weight: "600";
+  display: "flex";
+}
+
+.labelContainer {
+  display: flex;
+  justify-content: space-between; /* 수평으로 양 옆에 정렬 */
+  margin-bottom: 10px;
+}

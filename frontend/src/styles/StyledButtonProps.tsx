@@ -1,5 +1,5 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
+import React from "react";
+import styled, { css } from "styled-components";
 
 // interface ButtonProps {
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -29,16 +29,16 @@ const BasicButton = styled.button<ButtonProps>`
   justify-content: center;
   font-family: Inter;
   display: true;
-  border-radius: ${(props) => props.radius || '4px'};
-  color: ${(props) => props.color || 'white'};
-  background: ${(props) => props.background || '#FE9D3A'};
-  font-size: ${(props) => props.fontSize || '24px'};
-  border: ${(props) => props.border || 'none'};
-  width: ${(props) => props.width || 'none'};
-  height: ${(props) => props.height || 'none'};
-  margin-top: ${(props) => props.marginTop || 'none'};
-  margin-bottom: ${(props) => props.marginBottom || 'none'};
-  box-shadow: ${(props) => props.boxShadow || 'none'}
+  border-radius: ${(props) => props.radius || "4px"};
+  color: ${(props) => props.color || "white"};
+  background: ${(props) => props.background || "#FE9D3A"};
+  font-size: ${(props) => props.fontSize || "24px"};
+  border: ${(props) => props.border || "none"};
+  width: ${(props) => props.width || "none"};
+  height: ${(props) => props.height || "none"};
+  margin-top: ${(props) => props.marginTop || "none"};
+  margin-bottom: ${(props) => props.marginBottom || "none"};
+  box-shadow: ${(props) => props.boxShadow || "none"}
 
   cursor: pointer;
 
