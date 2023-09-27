@@ -1,5 +1,5 @@
 import React from "react";
-import { MemberFooterMypage } from "../../components/MemberFooter/MemberFooterMypage";
+import { FooterMypage } from "../../components/footer/FooterMypage";
 import { MemberInfo } from "../../components/membercomponents/MemberInfo";
 import HeaderLogo from "../../components/header/HeaderLogo";
 import classes from "./MyPage.module.css";
@@ -72,7 +72,7 @@ export const MyPage = () => {
         >
           구글인증
         </StyledButton>
-        <MemberFooterMypage />
+        <FooterMypage />
       </div>
     </>
   );

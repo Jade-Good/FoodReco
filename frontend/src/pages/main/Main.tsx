@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { MemberFooterHome } from "../../components/MemberFooter/MemberFooterHome";
+import { FooterHome } from "../../components/footer/FooterHome";
 import { SignUp } from "../singup/SignUp";
 
 interface IForm {
@@ -22,7 +22,7 @@ export const Main: React.FC = () => {
   return (
     <>
       <SignUp />
-      <MemberFooterHome />
+      <FooterHome />
     </>
   );
 };

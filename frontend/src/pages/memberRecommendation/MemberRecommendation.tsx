@@ -1,6 +1,6 @@
 import React from "react";
-import { MemberFooterRecommendation } from "../../components/MemberFooter/MemberFooterRecommendation";
-import HeaderLogo from "../../components/header/HeaderLogo";
+import { FooterRecommendation } from "../../components/footer/FooterRecommendation";
+import HeaderQuestion from "../../components/header/HeaderQuestion";
 import { FoodCard } from "../../components/recommend/foodCard";
 import classes from "./MemberRecommendation.module.css";
 import { FoodButton } from "../../components/recommend/foodButton";
@@ -8,12 +8,12 @@ import { FoodButton } from "../../components/recommend/foodButton";
 export const MemberRecommendation = () => {
   return (
     <>
-      <HeaderLogo />
+      <HeaderQuestion />
       <div className={classes.foodCard}>
         <FoodCard />
       </div>
       <FoodButton />
-      <MemberFooterRecommendation />
+      <FooterRecommendation />
     </>
   );
 };
