@@ -4,7 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import numpy as np
 import time
-file_path = './preprocessed_data/menu_ingredient/reordered_data.xlsx'
+file_path = './preprocessed_data/menu_ingredient/modified_with_index_clustered_new_ingredient.xlsx'
 
 # 파일 읽기
 df = pd.read_excel(file_path)

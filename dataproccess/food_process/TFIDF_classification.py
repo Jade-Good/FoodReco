@@ -7,7 +7,7 @@ import math
 import time
 from joblib import dump, load
 # 파일 경로
-file_path = './preprocessed_data/menu_ingredient/reordered_data.xlsx'
+file_path = './preprocessed_data/menu_ingredient/modified_with_index_clustered_new_ingredient.xlsx'
 
 # 파일 읽기
 df = pd.read_excel(file_path)
@@ -21,13 +21,18 @@ start = time.time()
 loaded_vectorizer = load('./model/vectorizer.joblib')
 loaded_tfidf_matrix = load('./model/tfidf_matrix.joblib')
 
+
+# 스프링으로부터 받은 데이터라고 가정
+foods = ['갈비', '오코노미야끼']
 # 유사도와 인덱스를 저장할 리스트 초기화
-foods = ['피자', '감자탕', '참치샌드위치', '매운떡볶이', "설렁탕"]
 similarity_indices = []
 # 각 음식명에 대한 유사도 계산
 for food_name in foods:
 
-    food_index = df.index[df['음식명'] == food_name][0]
+    matching_indices = df.index[df['음식명'] == food_name].tolist()
+    if not matching_indices:  # 일치하는 행이 없을 경우, 다음 음식명으로 넘어갑니다.
+        continue
+    food_index = matching_indices[0]
     cosine_similarities = linear_kernel(loaded_tfidf_matrix[food_index], loaded_tfidf_matrix).flatten()
     # 유사도와 인덱스 저장
     top_indices = cosine_similarities.argsort()[:-50:-1]
@@ -38,6 +43,10 @@ for food_name in foods:
 # # 유사도에 따라 내림차순 정렬
 sorted_similarity_indices = sorted(similarity_indices, key=lambda x: x[1], reverse=True)
 #
+
+# for i in sorted_similarity_indices:
+#     print(i[0])
+
 # # 유사한 음식명과 유사도를 DataFrame으로 만들기
 similar_foods_df = pd.DataFrame({
     '음식명': [df['음식명'].iloc[i[0]] for i in sorted_similarity_indices],
@@ -54,28 +63,28 @@ print(time.time() - start)
 # print('******************************************')
 #
 name_similarities = []
-# for origin_food in foods:
-#     print("======================================")
-#     print('기준음식명: ', origin_food)
-#     print("======================================")
-#     for sim_food in similar_foods_df.values:
-#         if sim_food[2] == origin_food:
-#             print("추천받은 음식명:", sim_food[0], "/ 유사도", sim_food[1])
+for origin_food in foods:
+    print("======================================")
+    print('기준음식명: ', origin_food)
+    print("======================================")
+    for sim_food in similar_foods_df.values:
+        if sim_food[2] == origin_food:
+            print("추천받은 음식명:", sim_food[0], "/ 유사도", sim_food[1])
 #
 # # # 이름 유사도 계산
-for sim_food in similar_foods_df.values:
-    if sim_food[0] != sim_food[2] and sim_food[1] >= 0.8:
-        similarity = Levenshtein.ratio(sim_food[0], sim_food[2])
-        # 이름 유사도가 0.3미만인 것들
-        if similarity < 0.3:
-            sim_food[1] = similarity
-            name_similarities.append({
-                '음식명': sim_food[0],
-                '유사도': sim_food[1],
-                '기준음식명': sim_food[2]
-                                      })
-print(time.time() - start)
-
+# for sim_food in similar_foods_df.values:
+#     if sim_food[0] != sim_food[2] and sim_food[1] >= 0.8:
+#         similarity = Levenshtein.ratio(sim_food[0], sim_food[2])
+#         # 이름 유사도가 0.3미만인 것들
+#         if similarity < 0.3:
+#             sim_food[1] = similarity
+#             name_similarities.append({
+#                 '음식명': sim_food[0],
+#                 '유사도': sim_food[1],
+#                 '기준음식명': sim_food[2]
+#                                       })
+# print(time.time() - start)
+#
 print('******************************************')
 print('재료 + 이름 유사도')
 print('******************************************')

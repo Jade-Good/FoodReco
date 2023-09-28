@@ -1,22 +1,13 @@
+import copy
+
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
 
-# 파일 경로를 변경해야 할 수도 있습니다.
-filename = './preprocessed_data/menu_ingredient/delete_duplicated.xlsx'  # 여러분의 파일 경로로 변경해 주세요
-
-# 데이터 로드
-data = pd.read_excel(filename)
-
-# 선택된 열을 사용하여 조합된 문자열을 만듭니다.
-selected_columns = ['음식명', '조리방식'] + list(data.columns[data.columns.get_loc("채소"):]) + ['음식분류2', '음식분류1']
-data_selected = data[selected_columns].fillna('')
-data_selected['combined'] = data_selected.apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
+# Load the Excel file
+file_path = './preprocessed_data/menu_ingredient/new_ingredient_deleted.xlsx'  # 실제 파일 경로로 변경해 주세요.
+data = pd.read_excel(file_path)
 
 
 replacement_dict = {
-
-    '커리': '카레',
     '콘': '채소',
     '옥수수': '채소',
     '초장': '양념',
@@ -24,6 +15,7 @@ replacement_dict = {
     '참기름':'양념',
     '쌈장': '양념',
     '마늘': '채소',
+    '커리': '카레',
     '카레': '카레',
     '된장': '된장',
     '간장': '간장',
@@ -123,10 +115,10 @@ replacement_dict = {
     '황태':'생선',
     '홍합':'조개류',
     '치킨': '닭고기',
-    '가자미': '생선'
+    '가자미': '생선',
+    '김치': '김치'
 
 }
-
 allergy_ingredient_category_dict = {
     '카슈넛':'견과류',
     '유부':'대두',
@@ -175,7 +167,20 @@ allergy_ingredient_category_dict = {
     '케첩': '토마토',
     '케쳡': '토마토',
     '굴소스': '조개류',
-    '우렁': '갑각류'
+    '우렁': '갑각류',
+    '계란': '알류',
+    '에그': '알류',
+    '국수': '밀가루',
+    '스팸': '돼지고기',
+    '소시지': '돼지고기',
+    '베이컨': '돼지고기',
+    '샌드위치': '밀가루',
+    '햄버거': '밀가루',
+    '또띠아': '밀가루',
+    '스파게티': '밀가루',
+    '토스트': '밀가루',
+    '쉬림프': '갑각류',
+    '파스타': '밀가루'
 }
 category_dict = {
     '닭고기': '닭고기',
@@ -184,46 +189,27 @@ category_dict = {
     '육류': '육류',
     '소고기': '소고기'
 }
-
-ingredient_list = list(replacement_dict.values()) + list(allergy_ingredient_category_dict.values()) + list(category_dict.values())
-
-
-ingredient_weight_dict = {ingredient: 4 for ingredient in ingredient_list}
+ingredient_column_order = list(replacement_dict.values()) + list(allergy_ingredient_category_dict.values()) + list(category_dict.values())
 
 
-# 리스트에 가중치를 어떻게 부여
-weights = {
-    '음식명': 1,  # 음식명에 높은 가중치 부여
-    '조리방식': 1,  # 조리방식에 높은 가중치 부여
-    # 다른 열에 대한 가중치도 설정할 수 있습니다.
-    '음식분류2': 3,
-    '음식분류1': 2
-}
+# Extract columns before '음식분류2'
+pre_columns = list(data.columns[:data.columns.get_loc("음식분류2") + 1])
 
-combined_dict = {**ingredient_weight_dict, **weights}
+left_colums = pd.DataFrame(columns=ingredient_column_order)
 
-# 가중치 적용
-for column, weight in combined_dict.items():
-    data_selected[column] = data_selected[column].apply(lambda x: (str(x) + ' ') * weight)
+# Reorder the columns of the DataFrame
+ordered_data = copy.deepcopy(data[pre_columns])
 
+for col_name in ingredient_column_order:
+    ordered_data[col_name] = None
 
-# TF-IDF 벡터화
-vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(data_selected['combined'])
+for index, row in data.iterrows():
+    for ingredient in ingredient_column_order:
+        if ingredient in row.values[5:]:
+            ordered_data.loc[index, ingredient] = ingredient
+
+df_cleaned = ordered_data.dropna(how='all')
 
 
-# for i in range(899, 951, 2):
-    # K-means 군집화
-    # k = i  # 군집의 수
-k=199
-model = KMeans(n_clusters=k, random_state=42)
-model.fit(X)
-
-# 군집 레이블을 원본 데이터에 추가
-data['cluster_labels'] = model.labels_
-
-# 결과를 새로운 엑셀 파일로 저장
-output_filename = './preprocessed_data/menu_ingredient/weighted_clustered_new_ingredient_deleted_' + str(
-    k) + '_clusters.xlsx'  # 원하는 파일명으로 변경 가능
-data.to_excel(output_filename, index=False)
-
+# Save the reordered DataFrame if needed
+ordered_data.to_excel('./preprocessed_data/menu_ingredient/reordered_data_deleted.xlsx', index=False)
