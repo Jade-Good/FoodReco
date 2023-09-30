@@ -1,17 +1,14 @@
-
 package com.ssafy.special.dto.request;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
-@NoArgsConstructor
 @Data
-public class UserSignUpDto {
-    private String email;
-    private String password;
+@NoArgsConstructor
+public class UserInfoUpdateDto {
+
+    private MultipartFile img;
     private String nickname;
     private int age;
     private String sex;
@@ -19,6 +16,5 @@ public class UserSignUpDto {
     private int weight;
     private String activityCategory;
     private int activityHour;
-    private List<String> favoriteList;
-    private List<String> hateList;
+
 }

@@ -79,6 +79,9 @@ public class Member {
     @Column(length = 512, name = "refresh_token")
     private String refreshToken;
 
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<MemberFoodPreference> foodPreferences = new ArrayList<>();
+
     //is_deleted
     @Column(name = "is_deleted",columnDefinition = "tinyint default 0") // 컬럼 정의를 설정
     private int isDeleted;
