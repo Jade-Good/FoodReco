@@ -14,35 +14,28 @@ export const MemberRecommendation = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragging(true);
+    const startX = e.clientX - position.x;
+    const startY = e.clientY - position.y;
 
-    const clientX = e.touches[0].clientX;
-    const clientY = e.touches[0].clientY;
-
-    const startX = clientX - position.x;
-    const startY = clientY - position.y;
-
-    const handleTouchMove = (e: TouchEvent) => {
+    const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
 
-      const clientX = e.touches[0].clientX;
-      const clientY = e.touches[0].clientY;
-
-      const newX = clientX - startX;
-      const newY = clientY - startY;
+      const newX = e.clientX - startX;
+      const newY = e.clientY - startY;
 
       setPosition({ x: newX, y: newY });
     };
 
-    const handleTouchEnd = () => {
+    const handleMouseUp = () => {
       setIsDragging(false);
-      document.removeEventListener("touchmove", handleTouchMove);
-      document.removeEventListener("touchend", handleTouchEnd);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
 
-    document.addEventListener("touchmove", handleTouchMove);
-    document.addEventListener("touchend", handleTouchEnd);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   return (
@@ -51,7 +44,7 @@ export const MemberRecommendation = () => {
       <div
         className={`${classes.foodCard} ${isDragging ? "dragging" : ""}`}
         style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
-        onTouchStart={handleTouchStart}
+        onMouseDown={handleMouseDown}
       >
         <FoodCard />
       </div>
