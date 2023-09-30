@@ -130,14 +130,18 @@ public class MemberController {
         return new ResponseEntity<>(resultMap, status);
     }
 
-    @PostMapping("/send/notification/member")
-    public ResponseEntity<?> sendMessage(@RequestBody FcmMessageDto fcmMessageDto){
-        log.info("sendMessage() 메소드 시작");
+    @PostMapping("/send/notification")
+    public ResponseEntity<?> sendMessageToMember(@RequestBody FcmMessageDto fcmMessageDto){
+        log.info("sendMessageToMember() 메소드 시작");
         try{
-            fcmService.sendNotification(fcmMessageDto);
+            log.info(fcmMessageDto.toString());
+            fcmService.sendNotificationToMember(fcmMessageDto);
             return ResponseEntity.ok().body("정상적으로 전송되었습니다.");
         }catch (EntityNotFoundException e){
-            log.info("Crew find 에러 : "+ e.getMessage());
+            log.info("Member find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (IllegalArgumentException e){
+            log.info("FCM 에러 발생 : "+ e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (Exception e){
             e.printStackTrace();

@@ -30,14 +30,21 @@ public class CrewMember {
     private Crew crew;
 
     //status
+    @NotNull
     @Column(name = "status", columnDefinition = "tinyint default 0")
     private int status;
 
+    //check_vote
+    @NotNull
+    @Column(name = "check_vote", columnDefinition = "tinyint default 0")
+    private int checkVote;
+
     // Builder 클래스 정의
     @Builder
-    public CrewMember(Member member, Crew crew, int status) {
+    public CrewMember(Member member, Crew crew, int status, int checkVote) {
         this.member = member;
         this.crew = crew;
         this.status = status;
+        this.checkVote = checkVote;
     }
 }
