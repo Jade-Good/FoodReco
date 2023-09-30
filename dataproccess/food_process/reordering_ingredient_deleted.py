@@ -1,60 +1,12 @@
+import copy
+
 import pandas as pd
 
-# 데이터 불러오기
-data_path = "./preprocessed_data/menu_ingredient/cleaned_inde.xlsx"  # 여기에 실제 파일 경로를 입력해주세요.
-data = pd.read_excel(data_path)
+# Load the Excel file
+file_path = './preprocessed_data/menu_ingredient/new_ingredient_deleted.xlsx'  # 실제 파일 경로로 변경해 주세요.
+data = pd.read_excel(file_path)
 
-allergy_ingredient_category_dict = {
-    '카슈넛':'견과류',
-    '유부':'대두',
-    '두부':'대두',
-    '콩':'대두',
-    '수제비':'밀가루',
-    '땅콩버터': '견과류',
-    '라면': '밀가루',
 
-    '토마토': '토마토',
-    '복숭아': '복숭아',
-    '새우': '갑각류',
-    '꽃게': '갑각류',
-    '랍스타': '갑각류',
-    '랍스터': '갑각류',
-    '게살': '갑각류',
-    '킹크랩': '갑각류',
-    '아몬드': '견과류',
-    '피칸': '견과류',
-    '헤이즐넛': '견과류',
-    '캐슈넛': '견과류',
-    '피스타치오': '견과류',
-    '잣':'견과류',
-    '호두': '견과류',
-    '전복': '조개류',
-    '굴': '조개류',
-    '바지락': '조개류',
-    '홍합':'조개류',
-    '소라':'조개류',
-    '두유': '대두',
-    '메밀': '메밀',
-    '밀가루': '밀가루',
-    '대두': '대두',
-    '우유': '우유',
-    '치즈': '우유',
-    '생크림': '우유',
-    '요거트': '우유',
-    '모짜렐라': '우유',
-    '까르보': '우유',
-    '크림':'우유',
-    '로제':'우유',
-    '마요네즈':'알류',
-    '땅콩': '견과류',
-    '새알류': '알류',
-    '케찹': '토마토',
-    '케챱': '토마토',
-    '케첩': '토마토',
-    '케쳡': '토마토',
-    '굴소스': '조개류',
-    '우렁': '갑각류'
-}
 replacement_dict = {
     '콘': '채소',
     '옥수수': '채소',
@@ -139,7 +91,6 @@ replacement_dict = {
     '볼락': '생선',
     '청어': '생선',
     '노가리': '생선',
-    '미트볼':'돼지고기',
     '돼지': '돼지고기',
     '소갈비': '소고기',
     '쇠고기': '소고기',
@@ -165,9 +116,71 @@ replacement_dict = {
     '홍합':'조개류',
     '치킨': '닭고기',
     '가자미': '생선',
-   '계란': '알류',
+    '김치': '김치'
+
+}
+allergy_ingredient_category_dict = {
+    '카슈넛':'견과류',
+    '유부':'대두',
+    '두부':'대두',
+    '콩':'대두',
+    '수제비':'밀가루',
+    '땅콩버터': '견과류',
+    '라면': '밀가루',
+    '토마토': '토마토',
+    '복숭아': '복숭아',
+    '새우': '갑각류',
+    '꽃게': '갑각류',
+    '랍스타': '갑각류',
+    '랍스터': '갑각류',
+    '게살': '갑각류',
+    '킹크랩': '갑각류',
+    '아몬드': '견과류',
+    '피칸': '견과류',
+    '헤이즐넛': '견과류',
+    '캐슈넛': '견과류',
+    '피스타치오': '견과류',
+    '잣':'견과류',
+    '호두': '견과류',
+    '전복': '조개류',
+    '굴': '조개류',
+    '바지락': '조개류',
+    '홍합':'조개류',
+    '소라':'조개류',
+    '두유': '대두',
+    '메밀': '메밀',
+    '밀가루': '밀가루',
+    '대두': '대두',
+    '우유': '우유',
+    '치즈': '우유',
+    '생크림': '우유',
+    '요거트': '우유',
+    '모짜렐라': '우유',
+    '까르보': '우유',
+    '크림':'우유',
+    '로제':'우유',
+    '마요네즈':'알류',
+    '땅콩': '견과류',
+    '새알류': '알류',
+    '케찹': '토마토',
+    '케챱': '토마토',
+    '케첩': '토마토',
+    '케쳡': '토마토',
+    '굴소스': '조개류',
+    '우렁': '갑각류',
+    '계란': '알류',
     '에그': '알류',
-    '김치':'김치',
+    '국수': '밀가루',
+    '스팸': '돼지고기',
+    '소시지': '돼지고기',
+    '베이컨': '돼지고기',
+    '샌드위치': '밀가루',
+    '햄버거': '밀가루',
+    '또띠아': '밀가루',
+    '스파게티': '밀가루',
+    '토스트': '밀가루',
+    '쉬림프': '갑각류',
+    '파스타': '밀가루'
 }
 category_dict = {
     '닭고기': '닭고기',
@@ -176,39 +189,27 @@ category_dict = {
     '육류': '육류',
     '소고기': '소고기'
 }
-
-replacement_list = list()
-allergy_ingredient_category_list = list()
-category_list = list()
+ingredient_column_order = list(replacement_dict.values()) + list(allergy_ingredient_category_dict.values()) + list(category_dict.values())
 
 
-for key, value in replacement_dict.items():
-    replacement_list.append(value)
+# Extract columns before '음식분류2'
+pre_columns = list(data.columns[:data.columns.get_loc("음식분류2") + 1])
 
+left_colums = pd.DataFrame(columns=ingredient_column_order)
 
-for key, value in allergy_ingredient_category_dict.items():
-    allergy_ingredient_category_list.append(key)
+# Reorder the columns of the DataFrame
+ordered_data = copy.deepcopy(data[pre_columns])
 
-for key, value in category_dict.items():
-    category_list.append(value)
+for col_name in ingredient_column_order:
+    ordered_data[col_name] = None
 
-ingredient_dict = {**replacement_dict, **allergy_ingredient_category_dict, **category_dict}
-
-ingredient_list = replacement_list + allergy_ingredient_category_list + category_list
-
-# ingredient_list = allergy_ingredient_category_list
-
-column_names = data.columns.tolist()
-flag = False
 for index, row in data.iterrows():
-    for col in column_names[column_names.index(1):]:
-        if str(row[col]) not in ingredient_dict.keys():
-            data.at[index, col] = None
-        else:
-            data.at[index, col] = ingredient_dict[str(row[col])]
+    for ingredient in ingredient_column_order:
+        if ingredient in row.values[5:]:
+            ordered_data.loc[index, ingredient] = ingredient
+
+df_cleaned = ordered_data.dropna(how='all')
 
 
-
-# 변경된 데이터 저장
-output_path = "./preprocessed_data/menu_ingredient/fine_data.xlsx"  # 여기에 저장할 파일 경로를 입력해주세요.
-data.to_excel(output_path, index=False)
+# Save the reordered DataFrame if needed
+ordered_data.to_excel('./preprocessed_data/menu_ingredient/reordered_data_deleted.xlsx', index=False)

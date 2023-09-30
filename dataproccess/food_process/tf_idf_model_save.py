@@ -4,10 +4,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import numpy as np
 import time
-file_path = './preprocessed_data/menu_ingredient/reordered_data.xlsx'
+file_path = './preprocessed_data/menu_ingredient/modified_with_index_clustered_new_ingredient.xlsx'
 
 # 파일 읽기
-df = pd.read_excel(file_path, index_col=0)
+df = pd.read_excel(file_path)
 
 
 # 음식명을 제외한 열을 선택하여 각 행을 하나의 문자열로 만듭니다.
