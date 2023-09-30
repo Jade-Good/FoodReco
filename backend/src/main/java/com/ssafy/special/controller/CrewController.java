@@ -3,7 +3,9 @@ package com.ssafy.special.controller;
 import com.ssafy.special.dto.request.CrewDto;
 import com.ssafy.special.dto.request.CrewJoinDto;
 import com.ssafy.special.dto.request.CrewSignUpDto;
+import com.ssafy.special.dto.request.FcmMessageDto;
 import com.ssafy.special.service.crew.CrewService;
+import com.ssafy.special.service.etc.FcmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CrewController {
     private final CrewService crewService;
+    private final FcmService fcmService;
     /*
      * 사용자의 crew list를 가져오는 메소드
      */
@@ -111,8 +114,24 @@ public class CrewController {
         }
     }
 
-    //@RequestBody SaveAttentionRateDto saveAttentionRateDto
-    //@PathVariable Long userNo
+    @PostMapping("/send/notification")
+    public ResponseEntity<?> sendMessageToCrew(@RequestBody FcmMessageDto fcmMessageDto){
+        log.info("sendMessageToCrew() 메소드 시작");
+        try{
+            fcmService.sendNotificationToCrew(fcmMessageDto);
+            return ResponseEntity.ok().body("정상적으로 전송되었습니다.");
+        }catch (EntityNotFoundException e){
+            log.info("Crew find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (IllegalArgumentException e){
+            log.info("FCM 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     // 사용자 Email 가져오는 Email
     public String getEmail() {
