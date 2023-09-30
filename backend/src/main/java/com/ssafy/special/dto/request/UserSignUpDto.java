@@ -17,8 +17,7 @@ public class UserSignUpDto {
     private String sex;
     private int height;
     private int weight;
-    private String activityCategory;
-    private int activityHour;
+    private int activity;
     private List<String> favoriteList;
     private List<String> hateList;
 }

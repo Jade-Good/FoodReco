@@ -75,12 +75,6 @@ public class MemberService {
                 throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
             }
 
-            // 총 걸음 수를 얻어낼 API 요청
-//            String activity_category = userSignUpDto.getActivityCategory();
-//            int activity_hour = userSignUpDto.getActivityHour();
-//
-//            int activity = API 요청 반환값
-
             Member member = Member.builder()
                     .email(userSignUpDto.getEmail())
                     .password(userSignUpDto.getPassword())
@@ -89,7 +83,7 @@ public class MemberService {
                     .sex(userSignUpDto.getSex())
                     .height(userSignUpDto.getHeight())
                     .weight(userSignUpDto.getWeight())
-//                  .activity(activity)
+                    .activity(userSignUpDto.getActivity())
                     .isDeleted(0)
                     .createdAt(LocalDateTime.now())
                     .lastModifiedAt(LocalDateTime.now())
