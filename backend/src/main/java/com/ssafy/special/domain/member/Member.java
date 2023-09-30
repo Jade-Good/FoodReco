@@ -72,7 +72,6 @@ public class Member {
     private String img;
 
     // fcm_token
-    @NotNull
     @Column(length = 180, name = "fcm_token")
     private String fcmToken;
 

@@ -51,10 +51,11 @@ dependencies {
 	// smtp
 	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.0'
 	implementation group: 'org.json', name: 'json', version: '20210307'
-//	// fcm
-//	implementation 'com.google.firebase:firebase-admin:6.8.1'
-//	// okhttp
-//	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
+
+
+	// fcm, okhttp
+	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.1.1'
+	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0'
 
 	// S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
