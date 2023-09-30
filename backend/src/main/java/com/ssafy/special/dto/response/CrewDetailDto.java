@@ -1,6 +1,5 @@
-package com.ssafy.special.dto;
+package com.ssafy.special.dto.response;
 
-import com.ssafy.special.domain.member.Member;
 import lombok.*;
 
 import java.util.List;
