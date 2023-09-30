@@ -113,8 +113,8 @@ replacement_dict2 = {
     '황태':'생선',
     '홍합':'조개류',
     '치킨': '닭고기',
-    '가자미': '생선'
-
+    '가자미': '생선',
+    '김치':'김치'
 }
 
 
@@ -193,7 +193,9 @@ allergy_ingredient_category_dict = {
     '케첩': '토마토',
     '케쳡': '토마토',
     '굴소스': '조개류',
-    '우렁': '갑각류'
+    '우렁': '갑각류',
+    '계란': '알류',
+    '에그': '알류'
 }
 
 
@@ -221,10 +223,10 @@ for index, row in data.iterrows():
         for col in column_names[column_names.index(1):]:
             if '오리고기' in str(row[col]):
                 data.at[index, col] = None  # Replace the cell with NaN
-    if '고추장' in str(row['음식명']):
-        for col in column_names[column_names.index(1):]:
-            if '고추' in str(row[col]):
-                data.at[index, col] = None  # Replace the cell with NaN
+    # if '고추장' in str(row['음식명']):
+    #     for col in column_names[column_names.index(1):]:
+    #         if '고추' in str(row[col]):
+    #             data.at[index, col] = None  # Replace the cell with NaN
 
 
 for i, row in data.iterrows():
