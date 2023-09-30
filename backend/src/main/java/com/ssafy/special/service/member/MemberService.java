@@ -1,20 +1,29 @@
+
 package com.ssafy.special.service.member;
 
+import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.member.FriendList;
 import com.ssafy.special.domain.member.Member;
+import com.ssafy.special.domain.member.MemberFoodPreference;
+import com.ssafy.special.dto.request.UserTasteDto;
+import com.ssafy.special.dto.request.UserInfoUpdateDto;
 import com.ssafy.special.dto.request.UserSignUpDto;
 import com.ssafy.special.dto.response.MemberDetailDto;
 import com.ssafy.special.exception.DuplicateEmailException;
 import com.ssafy.special.exception.DuplicateNicknameException;
 import com.ssafy.special.exception.SignupFailedException;
+import com.ssafy.special.repository.food.FoodRepository;
 import com.ssafy.special.repository.member.FriendListRepository;
+import com.ssafy.special.repository.member.MemberFoodPreferenceRepository;
 import com.ssafy.special.repository.member.MemberRepository;
+import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +38,10 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final FriendListRepository friendListRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
+    private final FoodRepository foodRepository;
+    private final SecurityUtils securityUtils;
+
 
     // 아이디 중복 값 검사
     public void checkEmail(String memberEmail) throws DuplicateEmailException {
@@ -62,16 +75,21 @@ public class MemberService {
                 throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
             }
 
+            // 총 걸음 수를 얻어낼 API 요청
+//            String activity_category = userSignUpDto.getActivityCategory();
+//            int activity_hour = userSignUpDto.getActivityHour();
+//
+//            int activity = API 요청 반환값
+
             Member member = Member.builder()
                     .email(userSignUpDto.getEmail())
                     .password(userSignUpDto.getPassword())
                     .nickname(userSignUpDto.getNickname())
-                    .weight(userSignUpDto.getWeight())
-                    .height(userSignUpDto.getHeight())
                     .age(userSignUpDto.getAge())
-//                    .tendency(userSignUpDto.getTendency())
-                    .activity(userSignUpDto.getActivity())
                     .sex(userSignUpDto.getSex())
+                    .height(userSignUpDto.getHeight())
+                    .weight(userSignUpDto.getWeight())
+//                  .activity(activity)
                     .isDeleted(0)
                     .createdAt(LocalDateTime.now())
                     .lastModifiedAt(LocalDateTime.now())
@@ -79,6 +97,31 @@ public class MemberService {
             member.passwordEncode(passwordEncoder);
             log.info(member.getPassword());
             memberRepository.save(member);
+
+            for (String foodName : userSignUpDto.getFavoriteList()) {
+                Food food = foodRepository.findByName(foodName);
+
+                MemberFoodPreference memberFoodPreference = MemberFoodPreference.builder()
+                        .food(food)
+                        .member(member)
+                        .preferenceType(0)
+                        .build();
+
+                memberFoodPreferenceRepository.save(memberFoodPreference);
+            }
+
+            for (String foodName : userSignUpDto.getHateList()) {
+                Food food = foodRepository.findByName(foodName);
+
+                MemberFoodPreference memberFoodPreference = MemberFoodPreference.builder()
+                        .food(food)
+                        .member(member)
+                        .preferenceType(1)
+                        .build();
+
+                memberFoodPreferenceRepository.save(memberFoodPreference);
+            }
+
         } catch (SignupFailedException e) {
             throw new SignupFailedException("회원가입 실패");
         }
@@ -105,21 +148,76 @@ public class MemberService {
     public MemberDetailDto getUserInfo(String email) throws NullPointerException {
 
 
-            Optional<Member> member = memberRepository.findByEmail(email);
+        Optional<Member> member = memberRepository.findByEmail(email);
 
-            if (member.isPresent()) {
-                MemberDetailDto memberDetailDto = MemberDetailDto.builder()
+        if (member.isPresent()) {
+            MemberDetailDto memberDetailDto = MemberDetailDto.builder()
 //                    .profileUrl(member.get().getProfileUrl())
-                        .nickName(member.get().getNickname())
-                        .height(member.get().getHeight())
-                        .weight(member.get().getWeight())
-                        .activity(member.get().getActivity())
-                        .build();
+                    .nickName(member.get().getNickname())
+                    .height(member.get().getHeight())
+                    .weight(member.get().getWeight())
+                    .activity(member.get().getActivity())
+                    .build();
 
-                return memberDetailDto;
-            } else {
-                throw new NullPointerException("멤버 정보가 없습니다.");
+            return memberDetailDto;
+        } else {
+            throw new NullPointerException("멤버 정보가 없습니다.");
+        }
+
+
+    }
+
+    public List<UserTasteDto> getUserPreference(String email, int type) {
+
+        try {
+            Member member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+            List<UserTasteDto> userFavoriteList = new ArrayList<>();
+
+            log.info(String.valueOf(member.getFoodPreferences().size()));
+            for (MemberFoodPreference preference : member.getFoodPreferences()) {
+
+                if (preference.getPreferenceType() == type) {
+                    UserTasteDto userFavoriteDto = UserTasteDto.builder()
+                            .foodSeq(preference.getFood().getFoodSeq())
+                            .foodUrl(preference.getFood().getImg())
+                            .foodName(preference.getFood().getName())
+                            .build();
+                    userFavoriteList.add(userFavoriteDto);
+                }
             }
+
+            return userFavoriteList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public void updateUserInfo(UserInfoUpdateDto userInfoUpdateDto) throws Exception {
+
+
+        Member member = Member.builder()
+                .nickname(userInfoUpdateDto.getNickname())
+                .age(userInfoUpdateDto.getAge())
+                .sex(userInfoUpdateDto.getSex())
+                .height(userInfoUpdateDto.getHeight())
+                .weight(userInfoUpdateDto.getWeight())
+                .isDeleted(0)
+                .createdAt(LocalDateTime.now())
+                .lastModifiedAt(LocalDateTime.now())
+                .build();
+        memberRepository.save(member);
+
+
+        // 총 걸음 수를 얻어낼 API 요청
+//            String activity_category = userSignUpDto.getActivityCategory();
+//            int activity_hour = userSignUpDto.getActivityHour();
+//
+//            int activity = API 요청 반환값
+//      member.setActivity(activity);
 
 
     }
