@@ -7,15 +7,15 @@ import lombok.Data;
 public class MemberDetailDto {
 
     private String profileUrl;
-    private String nickName;
+    private String nickname;
     private int height;
     private int weight;
     private int activity;
 
     @Builder
-    public MemberDetailDto(String profileUrl, String nickName, int height, int weight, int activity) {
+    public MemberDetailDto(String profileUrl, String nickname, int height, int weight, int activity) {
         this.profileUrl = profileUrl;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.height = height;
         this.weight = weight;
         this.activity = activity;

@@ -14,7 +14,6 @@ public class UserInfoUpdateDto {
     private String sex;
     private int height;
     private int weight;
-    private String activityCategory;
-    private int activityHour;
+    private int activity;
 
 }

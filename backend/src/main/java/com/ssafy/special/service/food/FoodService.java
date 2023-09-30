@@ -41,6 +41,7 @@ public class FoodService {
     private final MemberRepository memberRepository;
 
 
+    @Transactional
     public void uploadImg(String email, MultipartFile file) throws Exception {
 
         try {
@@ -59,6 +60,7 @@ public class FoodService {
             // 그리고 original_fileName으로 DB에서 조회해서 S3_fileName 가져오고 그 값으로 S3에서 가져옴
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
             member.setImg(S3_fileName);
 
         } catch (Exception e) {
@@ -86,8 +88,10 @@ public class FoodService {
 
         // download 받을거면 DB에서 original_fileName으로 S3_fileName을 조회하면 된다.
 
+        Member member = memberRepository.findByEmail("jjhjjh1159@gmail.com")
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         // test Code
-        String S3_fileName = "20230921161846_249679.jpg";
+        String S3_fileName = member.getImg();
 
 
         // S3 해당 bucket에서 해당 이름으로 저장된 이미지를 가져옴.
