@@ -1,29 +1,16 @@
+
 package com.ssafy.special.controller;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.util.IOUtils;
+
 import com.ssafy.special.service.food.FoodService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 
 @RestController
@@ -39,7 +26,7 @@ public class S3Controller {
 
         try {
 
-            foodService.uploadImg(file);
+            foodService.uploadImg("jjhjjh1159@gmail.com",file);
 
             resultMap.put("message", "업로드 성공");
             return new ResponseEntity<>(resultMap, HttpStatus.OK);
@@ -50,8 +37,6 @@ public class S3Controller {
             return new ResponseEntity<>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
-
-
 
     }
 
