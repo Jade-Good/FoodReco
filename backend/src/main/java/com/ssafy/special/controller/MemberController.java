@@ -130,9 +130,8 @@ public class MemberController {
         return new ResponseEntity<>(resultMap, status);
     }
 
-    @PostMapping("/fcm")
+    @PostMapping("/send/notification/member")
     public ResponseEntity<?> sendMessage(@RequestBody FcmMessageDto fcmMessageDto){
-        log.info(fcmMessageDto.toString());
         log.info("sendMessage() 메소드 시작");
         try{
             fcmService.sendNotification(fcmMessageDto);

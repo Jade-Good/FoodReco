@@ -27,6 +27,7 @@ public class FcmService {
     public void sendNotification(FcmMessageDto message){
         Member targetMember =memberRepository.findByMemberSeq(message.getTargetSeq())
                 .orElseThrow(()-> new EntityNotFoundException("존재하는 사용자가 아닙니다."));
+
         if(targetMember.getFcmToken() != null){
             Notification notification = Notification.builder()
                     .setTitle(message.getTitle())
