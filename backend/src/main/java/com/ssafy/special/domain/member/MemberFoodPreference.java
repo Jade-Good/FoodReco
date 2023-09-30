@@ -36,10 +36,10 @@ public class MemberFoodPreference {
     //preference_type
     @NotNull
     @Column(name = "preference_type", columnDefinition = "tinyint")
-    private String preferenceType;
+    private int preferenceType;
 
     @Builder
-    public MemberFoodPreference(Long memberRecommendSeq, Member member, Food food, String preferenceType) {
+    public MemberFoodPreference(Long memberRecommendSeq, Member member, Food food, int preferenceType) {
         this.memberRecommendSeq = memberRecommendSeq;
         this.member = member;
         this.food = food;
