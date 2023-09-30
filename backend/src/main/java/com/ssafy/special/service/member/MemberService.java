@@ -5,7 +5,7 @@ import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.member.FriendList;
 import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.domain.member.MemberFoodPreference;
-import com.ssafy.special.dto.request.UserFavoriteDto;
+import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.request.UserInfoUpdateDto;
 import com.ssafy.special.dto.request.UserSignUpDto;
 import com.ssafy.special.dto.response.MemberDetailDto;
@@ -167,19 +167,19 @@ public class MemberService {
 
     }
 
-    public List<UserFavoriteDto> getUserPreference(String email, int type) {
+    public List<UserTasteDto> getUserPreference(String email, int type) {
 
         try {
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
-            List<UserFavoriteDto> userFavoriteList = new ArrayList<>();
+            List<UserTasteDto> userFavoriteList = new ArrayList<>();
 
             log.info(String.valueOf(member.getFoodPreferences().size()));
             for (MemberFoodPreference preference : member.getFoodPreferences()) {
 
                 if (preference.getPreferenceType() == type) {
-                    UserFavoriteDto userFavoriteDto = UserFavoriteDto.builder()
+                    UserTasteDto userFavoriteDto = UserTasteDto.builder()
                             .foodSeq(preference.getFood().getFoodSeq())
                             .foodUrl(preference.getFood().getImg())
                             .foodName(preference.getFood().getName())
