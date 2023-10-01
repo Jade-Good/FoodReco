@@ -42,30 +42,19 @@ public class Food {
     @Column(name = "category", length = 20)
     private String category;
 
-    // food_association
-    @NotNull
-    @Column(name = "association",columnDefinition = "tinyint")
-    private int association;
-
-    // avg_price
-    @NotNull
-    @Column(name = "avg_price")
-    private int avgPrice;
-
     // img
     @NotNull
     @Column(name = "img", length = 50)
     private String img;
 
     @Builder
-    public Food(Long foodSeq, String name, String cookingMethod, String type, String category, int association, int avgPrice, String img) {
+    public Food(Long foodSeq, String name, String cookingMethod, String type, String category, String img) {
         this.foodSeq = foodSeq;
         this.name = name;
         this.cookingMethod = cookingMethod;
         this.type = type;
         this.category = category;
-        this.association = association;
-        this.avgPrice = avgPrice;
+
         this.img = img;
     }
 }

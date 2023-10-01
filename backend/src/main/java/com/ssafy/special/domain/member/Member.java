@@ -72,8 +72,12 @@ public class Member {
     private String fcmToken;
 
     // refresh_token
-    @Column(length = 512, name = "refresh_token")
-    private String refreshToken;
+    @Column(length = 512, name = "jwt_refresh_token")
+    private String jwtRefreshToken;
+
+    // google_refresh_token
+    @Column(length = 150, name = "google_refresh_token")
+    private String googleRefreshToken;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MemberFoodPreference> foodPreferences = new ArrayList<>();
@@ -104,12 +108,12 @@ public class Member {
         this.password = passwordEncoder.encode(this.password);
     }
 
-    public void updateRefreshToken(String refreshToken){
-        this.refreshToken = refreshToken;
+    public void updateRefreshToken(String jwtRefreshToken){
+        this.jwtRefreshToken = jwtRefreshToken;
     }
     @Builder
 
-    public Member(Long memberSeq, String email, String password, int age, String nickname, String tendency, int height, int weight, int activity, String sex, String img, String fcmToken, String refreshToken, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt, List<CrewMember> crewMembers) {
+    public Member(Long memberSeq, String email, String password, int age, String nickname, String tendency, int height, int weight, int activity, String sex, String img, String fcmToken, String jwtRefreshToken, String googleRefreshToken, List<MemberFoodPreference> foodPreferences, int isDeleted, LocalDateTime createdAt, LocalDateTime lastModifiedAt, List<CrewMember> crewMembers) {
         this.memberSeq = memberSeq;
         this.email = email;
         this.password = password;
@@ -122,7 +126,9 @@ public class Member {
         this.sex = sex;
         this.img = img;
         this.fcmToken = fcmToken;
-        this.refreshToken = refreshToken;
+        this.jwtRefreshToken = jwtRefreshToken;
+        this.googleRefreshToken = googleRefreshToken;
+        this.foodPreferences = foodPreferences;
         this.isDeleted = isDeleted;
         this.createdAt = createdAt;
         this.lastModifiedAt = lastModifiedAt;
