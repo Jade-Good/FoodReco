@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.repository.member.MemberRepository;
+import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,7 @@ public class FoodService {
 
     private final AmazonS3Client amazonS3Client;
     private final MemberRepository memberRepository;
+    private final SecurityUtils securityUtils;
 
 
     @Transactional
@@ -70,6 +72,26 @@ public class FoodService {
 
     }
 
+    public ResponseEntity<byte[]> getFoodImg(int foodSeq) throws IOException {
+
+        String S3_fileName = "foodImg/" + foodSeq + ".jpg";
+
+        // S3 해당 bucket에서 해당 이름으로 저장된 이미지를 가져옴.
+        S3Object s3Object = amazonS3Client.getObject(new GetObjectRequest(bucket, S3_fileName));
+
+        // 파일에 대한 정보를 헤더에 담는다. (contentType, contentLength)
+        S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
+        byte[] bytes = IOUtils.toByteArray(objectInputStream);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(contentType(S3_fileName)); // 파일 타입 지정
+        httpHeaders.setContentLength(bytes.length); // 파일 크기 지정
+
+        return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+
+    }
+
+
     private String getRandomFileName() {
 
         Random generator = new java.util.Random();
@@ -88,7 +110,7 @@ public class FoodService {
 
         // download 받을거면 DB에서 original_fileName으로 S3_fileName을 조회하면 된다.
 
-        Member member = memberRepository.findByEmail("jjhjjh1159@gmail.com")
+        Member member = memberRepository.findByEmail(securityUtils.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         // test Code
         String S3_fileName = member.getImg();
@@ -129,4 +151,5 @@ public class FoodService {
                 return MediaType.APPLICATION_OCTET_STREAM;
         }
     }
+
 }
