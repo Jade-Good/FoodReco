@@ -1,3 +1,4 @@
+
 package com.ssafy.special.service.food;
 
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -6,7 +7,10 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
+import com.ssafy.special.domain.member.Member;
+import com.ssafy.special.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,12 +20,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -32,8 +38,13 @@ public class FoodService {
     private String bucket;
 
     private final AmazonS3Client amazonS3Client;
-    public void uploadImg(MultipartFile file) throws Exception {
+    private final MemberRepository memberRepository;
 
+
+    @Transactional
+    public void uploadImg(String email, MultipartFile file) throws Exception {
+
+        try {
             // 파일에 대한 메타 정보 설정 ( 타입, 사이즈 )
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
@@ -47,7 +58,15 @@ public class FoodService {
 
             // 만약 download 할거라면 original_fileName - S3_fileName 으로 DB에 저장해놓음.
             // 그리고 original_fileName으로 DB에서 조회해서 S3_fileName 가져오고 그 값으로 S3에서 가져옴
+            Member member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
+            member.setImg(S3_fileName);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("문제 발생~!");
+        }
 
     }
 
@@ -69,9 +88,10 @@ public class FoodService {
 
         // download 받을거면 DB에서 original_fileName으로 S3_fileName을 조회하면 된다.
 
-
+        Member member = memberRepository.findByEmail("jjhjjh1159@gmail.com")
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         // test Code
-        String S3_fileName = "20230921161846_249679.jpg";
+        String S3_fileName = member.getImg();
 
 
         // S3 해당 bucket에서 해당 이름으로 저장된 이미지를 가져옴.

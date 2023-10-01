@@ -19,6 +19,7 @@ import com.ssafy.special.repository.member.MemberRepository;
 import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,12 @@ public class MemberService {
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
     private final FoodRepository foodRepository;
     private final SecurityUtils securityUtils;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
 
     // 아이디 중복 값 검사
@@ -75,12 +82,6 @@ public class MemberService {
                 throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
             }
 
-            // 총 걸음 수를 얻어낼 API 요청
-//            String activity_category = userSignUpDto.getActivityCategory();
-//            int activity_hour = userSignUpDto.getActivityHour();
-//
-//            int activity = API 요청 반환값
-
             Member member = Member.builder()
                     .email(userSignUpDto.getEmail())
                     .password(userSignUpDto.getPassword())
@@ -89,7 +90,7 @@ public class MemberService {
                     .sex(userSignUpDto.getSex())
                     .height(userSignUpDto.getHeight())
                     .weight(userSignUpDto.getWeight())
-//                  .activity(activity)
+                    .activity(userSignUpDto.getActivity())
                     .isDeleted(0)
                     .createdAt(LocalDateTime.now())
                     .lastModifiedAt(LocalDateTime.now())
@@ -152,8 +153,8 @@ public class MemberService {
 
         if (member.isPresent()) {
             MemberDetailDto memberDetailDto = MemberDetailDto.builder()
-//                    .profileUrl(member.get().getProfileUrl())
-                    .nickName(member.get().getNickname())
+                    .profileUrl("https://" + bucket + ".s3." + region + ".amazonaws.com/" + member.get().getImg())
+                    .nickname(member.get().getNickname())
                     .height(member.get().getHeight())
                     .weight(member.get().getWeight())
                     .activity(member.get().getActivity())
@@ -196,29 +197,18 @@ public class MemberService {
 
     }
 
-    public void updateUserInfo(UserInfoUpdateDto userInfoUpdateDto) throws Exception {
+    @Transactional
+    public void updateUserInfo(String email, UserInfoUpdateDto userInfoUpdateDto) throws Exception {
 
 
-        Member member = Member.builder()
-                .nickname(userInfoUpdateDto.getNickname())
-                .age(userInfoUpdateDto.getAge())
-                .sex(userInfoUpdateDto.getSex())
-                .height(userInfoUpdateDto.getHeight())
-                .weight(userInfoUpdateDto.getWeight())
-                .isDeleted(0)
-                .createdAt(LocalDateTime.now())
-                .lastModifiedAt(LocalDateTime.now())
-                .build();
-        memberRepository.save(member);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-
-        // 총 걸음 수를 얻어낼 API 요청
-//            String activity_category = userSignUpDto.getActivityCategory();
-//            int activity_hour = userSignUpDto.getActivityHour();
-//
-//            int activity = API 요청 반환값
-//      member.setActivity(activity);
-
-
+        member.setNickname(userInfoUpdateDto.getNickname());
+        member.setAge(userInfoUpdateDto.getAge());
+        member.setSex(userInfoUpdateDto.getSex());
+        member.setHeight(userInfoUpdateDto.getHeight());
+        member.setWeight(userInfoUpdateDto.getWeight());
+        member.setActivity(userInfoUpdateDto.getActivity());
     }
 }

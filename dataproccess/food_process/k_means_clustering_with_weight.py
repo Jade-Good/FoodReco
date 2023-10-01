@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 
 # 파일 경로를 변경해야 할 수도 있습니다.
-filename = './preprocessed_data/menu_ingredient/reordered_data.xlsx'  # 여러분의 파일 경로로 변경해 주세요
+filename = './preprocessed_data/menu_ingredient/delete_duplicated.xlsx'  # 여러분의 파일 경로로 변경해 주세요
 
 # 데이터 로드
 data = pd.read_excel(filename)
@@ -215,7 +215,7 @@ X = vectorizer.fit_transform(data_selected['combined'])
 # for i in range(899, 951, 2):
     # K-means 군집화
     # k = i  # 군집의 수
-k=799
+k=199
 model = KMeans(n_clusters=k, random_state=42)
 model.fit(X)
 
@@ -223,7 +223,7 @@ model.fit(X)
 data['cluster_labels'] = model.labels_
 
 # 결과를 새로운 엑셀 파일로 저장
-output_filename = './preprocessed_data/menu_ingredient/weighted_clustered_new_ingredient_' + str(
+output_filename = './preprocessed_data/menu_ingredient/weighted_clustered_new_ingredient_deleted_' + str(
     k) + '_clusters.xlsx'  # 원하는 파일명으로 변경 가능
 data.to_excel(output_filename, index=False)
 
