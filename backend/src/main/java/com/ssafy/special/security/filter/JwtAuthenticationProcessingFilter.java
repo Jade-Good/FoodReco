@@ -83,7 +83,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
      *  그 후 JwtService.sendAccessTokenAndRefreshToken()으로 응답 헤더에 보내기
      */
     public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-        memberRepository.findByRefreshToken(refreshToken)
+        memberRepository.findByJwtRefreshToken(refreshToken)
                 .ifPresent(member -> {
                     String reIssuedRefreshToken = reIssueRefreshToken(member);
                     jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(member.getEmail()),
