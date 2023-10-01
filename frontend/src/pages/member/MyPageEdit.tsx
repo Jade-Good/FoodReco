@@ -118,15 +118,16 @@ export const MyPageEdit = () => {
     },
   });
   const profileImage = watch("image");
-  const avatar = watch("image");
+  // const avatar = watch("image");
   useEffect(() => {
     if (profileImage && profileImage.length > 0) {
       const file = profileImage[0];
       setImageURL(URL.createObjectURL(file));
+      console.log(imageURL);
     } else {
       setImageURL("/image/foodreco.png"); // 기본 이미지 경로
     }
-  }, [avatar]);
+  }, [profileImage]);
 
   // const handleFileChange = () => {
   //   if (profileImage && profileImage[0]) {

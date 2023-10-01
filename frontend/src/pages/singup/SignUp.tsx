@@ -43,6 +43,8 @@ interface IForm {
   activity: number;
   passwordconfirm: string;
   time: number;
+  likefood: string[];
+  unlikeFood: string[];
 }
 interface ExerciseRates {
   [exercise: string]: {
@@ -180,6 +182,8 @@ export const SignUp = () => {
       activity: undefined,
       passwordconfirm: "",
       time: undefined,
+      likefood: undefined,
+      unlikeFood: undefined,
     },
   });
   // watch 함수를 사용하여 email 값을 실시간으로 관찰합니다.
@@ -202,6 +206,8 @@ export const SignUp = () => {
       activity,
       passwordconfirm,
       time,
+      likefood,
+      unlikeFood,
     } = data;
     const ages = parseInt(age.slice(0, 2));
     const walkingRate = exerciseRates[activity][time];
@@ -214,6 +220,8 @@ export const SignUp = () => {
       age: ages,
       weight: weight,
       height: height,
+      favoriteList: likefood,
+      hateList: unlikeFood,
     };
     console.log(datas);
     if (errors.email || errors.nickname || errors.password) {
@@ -229,6 +237,8 @@ export const SignUp = () => {
           age: ages,
           weight: weight,
           height: height,
+          favoriteList: likefood,
+          hateList: unlikeFood,
         })
         .then((res) => {
           console.log(res);
