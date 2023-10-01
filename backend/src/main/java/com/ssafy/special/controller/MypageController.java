@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
@@ -44,7 +43,7 @@ public class MypageController {
                 resultMap.put("memberDetailDto", memberDetailDto);
                 status = HttpStatus.OK;
             }
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             resultMap.put("message", e.getMessage());
         }
@@ -58,7 +57,7 @@ public class MypageController {
         HttpStatus status = null;
         String message = null;
         try {
-            List<UserTasteDto> userFavoriteList = memberService.getUserPreference("jjhjjh1159@gmail.com", 0);
+            List<UserTasteDto> userFavoriteList = memberService.getUserPreference(securityUtils.getEmail(), 0);
 
             message = "조회 성공";
             status = HttpStatus.OK;
@@ -79,11 +78,11 @@ public class MypageController {
         HttpStatus status = null;
         String message = null;
         try {
-            List<UserTasteDto> userFavoriteList = memberService.getUserPreference("jjhjjh1159@gmail.com", 1);
+            List<UserTasteDto> userFavoriteList = memberService.getUserPreference(securityUtils.getEmail(), 1);
 
             message = "조회 성공";
             status = HttpStatus.OK;
-            resultMap.put("userFavoriteList", userFavoriteList);
+            resultMap.put("userHateList", userFavoriteList);
         } catch (Exception e) {
             message = "조회 실패";
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -101,11 +100,10 @@ public class MypageController {
         Map<String, String> resultMap = new HashMap<>();
         HttpStatus status = null;
         String message = "";
-        log.info("아라리오~~~~~~");
         try {
-            foodService.uploadImg("jjhjjh1159@gmail.com", userInfoUpdateDto.getImg());
+            foodService.uploadImg(securityUtils.getEmail(), userInfoUpdateDto.getImg());
+            memberService.updateUserInfo(securityUtils.getEmail(),userInfoUpdateDto);
 
-//            memberService.updateUserInfo(userInfoUpdateDto);
             status = HttpStatus.OK;
             message = "수정 완료";
         } catch (EntityNotFoundException e) {
