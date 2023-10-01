@@ -13,14 +13,16 @@ public class CrewDetailDto {
     private String crewStatus;
     private String memberStatus;
     private List<CrewMembersDto> crewMembers;
-
+    private List<CrewRecommendHistoryDto> histories;
     @Builder
-    public CrewDetailDto(Long crewSeq, String crewName, String crewImg, String crewStatus, String memberStatus, List<CrewMembersDto> crewMembers) {
+
+    public CrewDetailDto(Long crewSeq, String crewName, String crewImg, String crewStatus, String memberStatus, List<CrewMembersDto> crewMembers, List<CrewRecommendHistoryDto> histories) {
         this.crewSeq = crewSeq;
         this.crewName = crewName;
         this.crewImg = crewImg;
         this.crewStatus = crewStatus;
         this.memberStatus = memberStatus;
         this.crewMembers = crewMembers;
+        this.histories = histories;
     }
 }
