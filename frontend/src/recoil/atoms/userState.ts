@@ -23,3 +23,11 @@ export const userState = atom<User>({
   },
   effects_UNSTABLE: [persistAtom],
 });
+
+export const foodDetailModal = atom({
+  key: "foodDetailModal",
+  default: {
+    modalOpen: true,
+  },
+  effects_UNSTABLE: [persistAtom],
+}); 

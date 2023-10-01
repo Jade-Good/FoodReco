@@ -4,6 +4,9 @@ import HeaderQuestion from "../../components/header/HeaderQuestion";
 import { FoodCard } from "../../components/recommend/foodCard";
 import { FoodButton } from "../../components/recommend/foodButton";
 import styled, { css } from "styled-components";
+import FoodDetail from "../../components/recommend/foodDetail";
+import { useRecoilState } from "recoil";
+import { foodDetailModal } from "../../recoil/atoms/userState";
 
 export const MemberRecommendation = () => {
   // 드래그 상태, 왼쪽|오른쪽|중앙 상태, x 좌표
@@ -24,8 +27,6 @@ export const MemberRecommendation = () => {
   // 터치 시작
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     setIsDragging(true);
-    // setSwipeDirection("");
-    // console.log("터치 시작");
   };
 
   // 터치 드래그
@@ -42,7 +43,6 @@ export const MemberRecommendation = () => {
   // 터치 종료
   const handleTouchEnd = () => {
     setIsDragging(false);
-    // console.log("터치 종료", swipeDirection);
     const card = document.querySelector("#card");
     if (card) {
       card.classList.remove("right");
@@ -69,8 +69,14 @@ export const MemberRecommendation = () => {
     maxOpacity
   );
 
+  // 모달
+  const [modalOpen, setModalOpen] = useRecoilState(foodDetailModal);
+  const detail = () => {
+    setModalOpen(true);
+  };
+
   return (
-    <div style={{ overflow: "hidden" }}>
+    <div style={{ overflow: "hidden", paddingTop: "24vmin" }}>
       <HeaderQuestion />
       <FoodCardBox
         id="card"
@@ -81,9 +87,13 @@ export const MemberRecommendation = () => {
         onTouchStart={handleTouchStart} // 터치 시작
         onTouchMove={handleTouchMove} // 터치 드래그
         onTouchEnd={handleTouchEnd} // 터치 종료
+        onClick={detail}
       >
         <FoodCard />
       </FoodCardBox>
+
+      <FoodDetail />
+
       <FoodButton />
       <FooterRecommendation />
     </div>
@@ -101,7 +111,7 @@ const FoodCardBox = styled.div<{
   justify-content: center;
   align-items: center;
   padding-bottom: 5vh;
-  overflow: auto;
+  // overflow: auto;
 
   // right
   ${(props) =>
