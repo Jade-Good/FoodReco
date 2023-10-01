@@ -8,9 +8,7 @@ import styled, { css } from "styled-components";
 export const MemberRecommendation = () => {
   // 드래그 상태, 왼쪽|오른쪽|중앙 상태, x 좌표
   const [isDragging, setIsDragging] = useState(false);
-  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | "">(
-    ""
-  );
+  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | "">("");
   const [posX, setPosX] = useState(window.innerWidth / 2);
 
   // X 좌표, 투명도, 회전도의 최대/최소 값
@@ -67,10 +65,7 @@ export const MemberRecommendation = () => {
   );
   // 투명도 계산
   const opacity = Math.min(
-    Math.max(
-      minOpacity + (maxOpacity - minOpacity) * (1 - Math.abs(posX / maxX)),
-      minOpacity
-    ),
+    Math.max(minOpacity + (maxOpacity - minOpacity) * (1 - Math.abs(posX / maxX)), minOpacity),
     maxOpacity
   );
 
