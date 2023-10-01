@@ -41,6 +41,7 @@ public class FoodService {
     private final MemberRepository memberRepository;
 
 
+    @Transactional
     public void uploadImg(String email, MultipartFile file) throws Exception {
 
         try {
@@ -87,7 +88,7 @@ public class FoodService {
         // download 받을거면 DB에서 original_fileName으로 S3_fileName을 조회하면 된다.
 
         // test Code
-        String S3_fileName = "foodImg/갈비.jpg";
+        String S3_fileName = "20230921161846_249679.jpg";
 
 
         // S3 해당 bucket에서 해당 이름으로 저장된 이미지를 가져옴.

@@ -27,12 +27,10 @@ public class Member {
     private Long memberSeq;
 
     // email
-    @NotNull
     @Column(name = "email", length = 100,unique = true)
     private String email;
 
     // password
-    @NotNull
     @Column(name = "password", length = 512)
     private String password;
 
