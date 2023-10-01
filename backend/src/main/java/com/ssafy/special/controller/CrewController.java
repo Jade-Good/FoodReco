@@ -14,6 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 
 @Slf4j
@@ -132,6 +135,26 @@ public class CrewController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+//    @GetMapping("/crew/{crewSeq}")
+//    public ResponseEntity<?> startRecommend(@PathVariable Long crewSeq){
+//        log.info("startRecommend() 메소드 시작");
+//        try{
+//            crewService.recommendFood(crewSeq,getEmail());
+//            return ResponseEntity.ok().body("정상적으로 전송되었습니다.");
+//        }catch (EntityNotFoundException e){
+//            log.info("Crew find 에러 : "+ e.getMessage());
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }catch (IllegalArgumentException e){
+//            log.info("FCM 에러 발생 : "+ e.getMessage());
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
+
 
     // 사용자 Email 가져오는 Email
     public String getEmail() {
