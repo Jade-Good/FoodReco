@@ -2,10 +2,7 @@ package com.ssafy.special.domain.member;
 
 
 import com.ssafy.special.domain.crew.CrewMember;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +15,7 @@ import java.util.List;
 
 
 @Getter
+@Setter
 @Entity(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
@@ -29,12 +27,10 @@ public class Member {
     private Long memberSeq;
 
     // email
-    @NotNull
     @Column(name = "email", length = 100,unique = true)
     private String email;
 
     // password
-    @NotNull
     @Column(name = "password", length = 512)
     private String password;
 
