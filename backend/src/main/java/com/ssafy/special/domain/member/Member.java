@@ -2,10 +2,7 @@ package com.ssafy.special.domain.member;
 
 
 import com.ssafy.special.domain.crew.CrewMember;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +15,7 @@ import java.util.List;
 
 
 @Getter
+@Setter
 @Entity(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
@@ -29,12 +27,10 @@ public class Member {
     private Long memberSeq;
 
     // email
-    @NotNull
     @Column(name = "email", length = 100,unique = true)
     private String email;
 
     // password
-    @NotNull
     @Column(name = "password", length = 512)
     private String password;
 
@@ -72,13 +68,15 @@ public class Member {
     private String img;
 
     // fcm_token
-    @NotNull
     @Column(length = 180, name = "fcm_token")
     private String fcmToken;
 
     // refresh_token
     @Column(length = 512, name = "refresh_token")
     private String refreshToken;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<MemberFoodPreference> foodPreferences = new ArrayList<>();
 
     //is_deleted
     @Column(name = "is_deleted",columnDefinition = "tinyint default 0") // 컬럼 정의를 설정

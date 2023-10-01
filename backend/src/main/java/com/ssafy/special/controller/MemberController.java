@@ -2,24 +2,25 @@ package com.ssafy.special.controller;
 
 
 
-import com.ssafy.special.dto.request.UserCodeDto;
-import com.ssafy.special.dto.request.UserEmailDto;
-import com.ssafy.special.dto.request.UserNicknameDto;
-import com.ssafy.special.dto.request.UserSignUpDto;
+import com.ssafy.special.dto.request.*;
 
+import com.ssafy.special.service.etc.FcmService;
 import com.ssafy.special.service.member.MemberService;
 import com.ssafy.special.service.member.VerificationService;
 import com.ssafy.special.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class MemberController {
     private final VerificationService verificationService;
     private final MemberService memberService;
     private final RedisUtil redisUtil;
-
+    private final FcmService fcmService;
     // 회원가입 API
     @PostMapping("/regist")
     public ResponseEntity<Map<String, String>> signUp(@RequestBody UserSignUpDto userSignUpDto) {
@@ -128,6 +129,28 @@ public class MemberController {
 
         return new ResponseEntity<>(resultMap, status);
     }
+
+    @PostMapping("/send/notification")
+    public ResponseEntity<?> sendMessageToMember(@RequestBody FcmMessageDto fcmMessageDto){
+        log.info("sendMessageToMember() 메소드 시작");
+        try{
+            log.info(fcmMessageDto.toString());
+            fcmService.sendNotificationToMember(fcmMessageDto);
+            return ResponseEntity.ok().body("정상적으로 전송되었습니다.");
+        }catch (EntityNotFoundException e){
+            log.info("Member find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (IllegalArgumentException e){
+            log.info("FCM 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
 
     // 사용자 Email 가져오는 Email
     public String getEmail() {

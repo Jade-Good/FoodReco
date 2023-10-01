@@ -15,12 +15,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+
   width: 4vmax;
   height: 4vmax;
   border: #e7e7e7 0.5rem solid;
   border-radius: 100%;
-  text-align: center;
-  line-height: 4.2rem;
+  /* line-height: 4.2vmax; */
 
   padding: 1vmax;
 }
@@ -29,8 +30,9 @@
   display: flex;
   justify-content: center;
   padding: 0 10vw;
+
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 12vh;
+  bottom: 15vh;
 }

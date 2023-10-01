@@ -1,4 +1,4 @@
-package com.ssafy.special.dto;
+package com.ssafy.special.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Builder;
