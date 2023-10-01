@@ -152,14 +152,17 @@ public class MemberService {
         Optional<Member> member = memberRepository.findByEmail(email);
 
         if (member.isPresent()) {
-            MemberDetailDto memberDetailDto = MemberDetailDto.builder()
-                    .profileUrl("https://" + bucket + ".s3." + region + ".amazonaws.com/" + member.get().getImg())
+            MemberDetailDto.MemberDetailDtoBuilder memberDetailDtoBuilder = MemberDetailDto.builder()
                     .nickname(member.get().getNickname())
                     .height(member.get().getHeight())
                     .weight(member.get().getWeight())
-                    .activity(member.get().getActivity())
-                    .build();
+                    .activity(member.get().getActivity());
 
+            if(member.get().getImg() != null) {
+                memberDetailDtoBuilder.profileUrl("https://" + bucket + ".s3." + region + ".amazonaws.com/" + member.get().getImg());
+            }
+
+            MemberDetailDto memberDetailDto = memberDetailDtoBuilder.build();
             return memberDetailDto;
         } else {
             throw new NullPointerException("멤버 정보가 없습니다.");
