@@ -45,6 +45,7 @@ interface IForm {
   time: number;
   likefood: string[];
   unlikeFood: string[];
+  allergyFood: string[];
 }
 interface ExerciseRates {
   [exercise: string]: {
@@ -71,8 +72,8 @@ const CustomToggleButton = styled(ToggleButton)`
 
 export const SignUp = () => {
   const navigate = useNavigate();
-  const [isAutoLogin, setIsAutoLogin] = useState(0);
-  const [isRememberId, setIsRememberId] = useState(0);
+  // const [isAutoLogin, setIsAutoLogin] = useState(0);
+  // const [isRememberId, setIsRememberId] = useState(0);
   // 회원가입 페이지 체크
   const [progress, setProgress] = useState(0);
   // 이메일 인증체크
@@ -94,15 +95,45 @@ export const SignUp = () => {
   // 걷기 1시간 6750 , 헬스 1시간 14700, 수영: 12850, 자전거:11050
   const [likefood, setLikeFood] = useState<string[]>([]);
   const [unlikeFood, setUnlikeFood] = useState<string[]>([]);
-  const foodList = [
-    "시과",
-    "자장면",
-    "소고기",
+  const [allergyFood, setAllergyFood] = useState<string[]>([]);
+  const allergyList = [
+    "알류",
+    "우유",
+    "밀가루",
+    "갑각류",
+    "생선",
     "돼지고기",
+    "견과류",
+    "조개류",
+    "복숭아",
+    "대두",
+  ];
+  const foodList = [
+    "김치찌개",
+    "불고기",
+    "알리오올리오파스타",
+    "돼지국밥",
     "피자",
-    "파스타",
-    "된찌",
-    "김찌",
+    "치킨",
+    "햄버거",
+    "비빔밥",
+    "샐러드",
+    "달걀찜",
+    "삼겹살",
+    "돈까스",
+    "닭칼국수",
+    "떡갈비",
+    "라면",
+    "마라탕",
+    "만둣국",
+    "메밀막국수",
+    "베이컨리조또",
+    "보쌈",
+    "사골곰탕",
+    "새우볶음밥",
+    "설렁탕",
+    "소고기갈비탕",
+    "김치전",
   ];
   const exerciseRates: ExerciseRates = {
     걷기: {
@@ -184,6 +215,7 @@ export const SignUp = () => {
       time: undefined,
       likefood: undefined,
       unlikeFood: undefined,
+      allergyFood: undefined,
     },
   });
   // watch 함수를 사용하여 email 값을 실시간으로 관찰합니다.
@@ -208,6 +240,7 @@ export const SignUp = () => {
       time,
       likefood,
       unlikeFood,
+      allergyFood,
     } = data;
     const ages = parseInt(age.slice(0, 2));
     const walkingRate = exerciseRates[activity][time];
@@ -222,24 +255,14 @@ export const SignUp = () => {
       height: height,
       favoriteList: likefood,
       hateList: unlikeFood,
+      allergy: allergyFood,
     };
     console.log(datas);
     if (errors.email || errors.nickname || errors.password) {
       console.log(errors);
     } else {
       axios
-        .post(`${process.env.REACT_APP_BASE_URL}/member/regist`, {
-          email: email,
-          password: password,
-          nickname: nickname,
-          sex: sex,
-          activity: walkingRate,
-          age: ages,
-          weight: weight,
-          height: height,
-          favoriteList: likefood,
-          hateList: unlikeFood,
-        })
+        .post(`${process.env.REACT_APP_BASE_URL}/member/regist`, datas)
         .then((res) => {
           console.log(res);
           navigate("/signup/complete");
@@ -884,8 +907,84 @@ export const SignUp = () => {
             </div>
           </div>
         )}
-        {/* 좋아하는 음식 선택하기 */}
+        {/* 알러지 음식 선택하기 */}
         {progress === 3 && (
+          <div>
+            <Box sx={{ width: "100%" }}>
+              <Stepper activeStep={1} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+            </Box>
+            <br />
+            <label>알러지가 있는 음식을 선택해 주세요</label>
+            <ToggleButtonContainer>
+              {allergyList.map((food, index) => (
+                <CustomToggleButton
+                  value="check"
+                  selected={allergyFood.includes(food)} // 버튼 선택 상태는 좋아요 목록에 음식이 있는지 여부에 따라 결정됩니다.
+                  onClick={() => toggleLikeFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
+                  key={index}
+                >
+                  # {food}
+                </CustomToggleButton>
+              ))}
+            </ToggleButtonContainer>
+            <div className={classes.inputContainer}>
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="#7D7B7B;"
+                fontSize="1.25rem"
+                background="#F9F9F9"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0) {
+                    setProgress((prevProgress) => prevProgress - 1);
+                  }
+                }}
+              >
+                이전
+              </StyledButton>
+              &nbsp;&nbsp;&nbsp;
+              <StyledButton
+                type="button"
+                disabled={isSubmitting}
+                width="9.0rem"
+                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)" /* 그림자 스타일 지정 */
+                color="white"
+                fontSize="1.25rem"
+                background="#FE9D3A"
+                radius="10px"
+                onClick={() => {
+                  if (progress > 0 && likefood.length >= 5) {
+                    setProgress((prevProgress) => prevProgress + 1);
+                  } else {
+                    toast.warn("최소 5개 이상의 음식을 선택해주세요", {
+                      position: "top-center",
+                      autoClose: 1000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                    });
+                  }
+                }}
+              >
+                다음
+              </StyledButton>
+            </div>
+          </div>
+        )}
+        {/* 좋아하는 음식 선택하기 */}
+        {progress === 4 && (
           <div>
             <Box sx={{ width: "100%" }}>
               <Stepper activeStep={1} alternativeLabel>
@@ -961,7 +1060,7 @@ export const SignUp = () => {
           </div>
         )}
         {/* 싫어하는 음식 선택하기 */}
-        {progress === 4 && (
+        {progress === 5 && (
           <div>
             <Box sx={{ width: "100%" }}>
               <Stepper activeStep={1} alternativeLabel>

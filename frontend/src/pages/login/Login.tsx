@@ -24,7 +24,6 @@ export const Login = () => {
   const navigate = useNavigate();
   // const dispatch = useDispatch();
   const [user, setUser] = useRecoilState(userState);
-  const JWT_EXPIRY_TIME = 3600 * 1000; // 만료 시간 (24시간 밀리 초로 표현)
 
   const {
     register,
@@ -74,7 +73,8 @@ export const Login = () => {
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
-          // localStorage.setItem('accesstoken', accessToken);
+          // localStorage.setItem("accesstoken", accessToken);
+          // localStorage.setItem("refreshtoken", refreshToken);
 
           setUser((prevUser) => ({
             ...prevUser,
@@ -85,57 +85,16 @@ export const Login = () => {
           }));
 
           // accessToken 만료하기 1분 전에 로그인 연장
-          setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
+          // setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
 
           navigate("/");
         })
         .catch((err) => {
-          handleSilentRefresh(data);
+          // handleSilentRefresh(data);
+
           console.log("이메일 전송 오류:", err);
         });
     }
-  };
-  const handleSilentRefresh: SubmitHandler<IForm> = (data) => {
-    console.log("refreshtoken axois", data);
-    axios
-      .post("/silent-refresh", data)
-      .then((res) => {
-        const nickcname = res.data.nickname;
-        const accessToken = res.headers.authorization;
-        const email = res.data.email;
-        const refreshToken = res.headers.authorizationRefresh;
-
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${accessToken}`;
-        // localStorage.setItem('accesstoken', accessToken);
-
-        setUser((prevUser) => ({
-          ...prevUser,
-          refreshToken: refreshToken,
-          accessToken: accessToken,
-          nickname: nickcname,
-          email: email,
-        }));
-
-        // accessToken 만료하기 1분 전에 로그인 연장
-        setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
-
-        navigate("/");
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error("이메일과 비밀번호를 다시 확인해주세요", {
-          position: "top-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
-      });
   };
 
   return (

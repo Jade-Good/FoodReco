@@ -18,10 +18,11 @@ import styled from "styled-components";
 import BasicSelect from "../../components/option/BasicSelect";
 import { useNavigate } from "react-router-dom";
 import StyledBasicInputUnit from "../../components/inputs/StyledBasicInputUnit";
+import { toast } from "react-toastify";
 
 interface IForm {
   image: FileList | null;
-  // profileImg: string | File | null;
+  profileImg: string | File | null;
   nickname: string;
   age: string;
   sex: string;
@@ -98,10 +99,10 @@ export const MyPageEdit = () => {
 
   const {
     register,
-    formState: { errors, isSubmitting, isSubmitted },
+    formState: { errors, isSubmitting },
     handleSubmit,
     control,
-    getValues,
+    // getValues,
     watch,
   } = useForm<IForm>({
     mode: "onSubmit",
@@ -141,8 +142,15 @@ export const MyPageEdit = () => {
     const { image, nickname, age, sex, height, weight, activity, time } = data;
     const ages = parseInt(age.slice(0, 2));
     const walkingRate = exerciseRates[activity][time];
+    let imgURL = null;
+    if (image && image.length > 0) {
+      const file = image[0]; // FileList에서 첫 번째 파일을 가져옵니다.
+      // formData.append("img", file); // 파일을 FormData에 추가합니다.
+      imgURL = URL.createObjectURL(file); // 이미지 URL을 생성합니다.
+    }
+
     const datas = {
-      image: image,
+      img: imgURL,
       nickname: nickname,
       sex: sex,
       activity: walkingRate,
@@ -154,7 +162,16 @@ export const MyPageEdit = () => {
     console.log(datas);
     if (errors.nickname) {
       console.log(errors);
-      alert("정보를 다시 확인해주세요!");
+      toast.error("정보를 다시 확인해주세요!", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     } else {
       axios
         .patch(`${process.env.REACT_APP_BASE_URL}/mypage/info`, formData, {
