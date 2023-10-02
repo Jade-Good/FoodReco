@@ -2,8 +2,10 @@
 package com.ssafy.special.service.member;
 
 import com.ssafy.special.domain.food.Food;
+import com.ssafy.special.domain.food.Ingredient;
 import com.ssafy.special.domain.member.FriendList;
 import com.ssafy.special.domain.member.Member;
+import com.ssafy.special.domain.member.MemberAllergy;
 import com.ssafy.special.domain.member.MemberFoodPreference;
 import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.request.UserInfoUpdateDto;
@@ -13,7 +15,9 @@ import com.ssafy.special.exception.DuplicateEmailException;
 import com.ssafy.special.exception.DuplicateNicknameException;
 import com.ssafy.special.exception.SignupFailedException;
 import com.ssafy.special.repository.food.FoodRepository;
+import com.ssafy.special.repository.food.IngredientRepository;
 import com.ssafy.special.repository.member.FriendListRepository;
+import com.ssafy.special.repository.member.MemberAllergyRepository;
 import com.ssafy.special.repository.member.MemberFoodPreferenceRepository;
 import com.ssafy.special.repository.member.MemberRepository;
 import com.ssafy.special.util.SecurityUtils;
@@ -42,6 +46,8 @@ public class MemberService {
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
     private final FoodRepository foodRepository;
     private final SecurityUtils securityUtils;
+    private final IngredientRepository ingredientRepository;
+    private final MemberAllergyRepository memberAllergyRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -121,6 +127,17 @@ public class MemberService {
                         .build();
 
                 memberFoodPreferenceRepository.save(memberFoodPreference);
+            }
+
+
+            for(String allergyName : userSignUpDto.getAllergyList()) {
+                Ingredient ingredient = ingredientRepository.findByName(allergyName);
+                MemberAllergy memberAllergy = MemberAllergy.builder()
+                        .member(member)
+                        .ingredient(ingredient)
+                        .build();
+
+                memberAllergyRepository.save(memberAllergy);
             }
 
         } catch (SignupFailedException e) {
