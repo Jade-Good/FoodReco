@@ -94,6 +94,7 @@ public class CrewService {
                 .crew(crew)
                 .member(member)
                 .status(0)
+                .checkVote(1)
                 .build();
         crewMemberRepository.save(crewMember);
         log.info("crew 생성 완료");
