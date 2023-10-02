@@ -10,15 +10,14 @@ import com.ssafy.special.dto.response.*;
 import com.ssafy.special.repository.crew.*;
 import com.ssafy.special.repository.food.FoodRepository;
 import com.ssafy.special.repository.member.MemberRepository;
+import com.ssafy.special.service.etc.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
