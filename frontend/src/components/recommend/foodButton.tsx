@@ -1,5 +1,5 @@
 import React from "react";
-import classes from "./foodButton.module.css";
+import classes from "./FoodButton.module.css";
 import { ImBlocked } from "react-icons/im";
 import { IoArrowRedoSharp } from "react-icons/io5";
 import { MdFavorite } from "react-icons/md";

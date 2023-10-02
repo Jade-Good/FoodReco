@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FooterRecommendation } from "../../components/footer/FooterRecommendation";
 import HeaderQuestion from "../../components/header/HeaderQuestion";
-import { FoodCard } from "../../components/recommend/foodCard";
-import { FoodButton } from "../../components/recommend/foodButton";
-import FoodDetail from "../../components/recommend/foodDetail";
+import { FoodCard } from "../../components/recommend/FoodCard";
+import { FoodButton } from "../../components/recommend/FoodButton";
+import FoodDetail from "../../components/recommend/FoodDetail";
 
 export const MemberRecommendation = () => {
   return (

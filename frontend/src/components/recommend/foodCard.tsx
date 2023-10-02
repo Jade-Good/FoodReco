@@ -8,6 +8,7 @@ export const FoodCard = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | "">("");
   const [posX, setPosX] = useState(window.innerWidth / 2);
+  const [startX, setStartX] = useState(0);
 
   // X 좌표, 투명도, 회전도의 최대/최소 값
   const maxX = window.innerWidth / 2;
@@ -22,12 +23,14 @@ export const FoodCard = () => {
   // 터치 시작
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     setIsDragging(true);
+    setStartX(e.touches[0].clientX);
   };
 
   // 터치 드래그
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     if (!isDragging) return;
-    const nowX = e.touches[0].clientX - maxX;
+
+    const nowX = e.touches[0].clientX - startX;
     setPosX(nowX);
 
     // x좌표 : 최대 최소 판단, 상태 판단
