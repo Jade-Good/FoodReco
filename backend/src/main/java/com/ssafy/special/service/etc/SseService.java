@@ -1,4 +1,4 @@
-package com.ssafy.special.service.crew;
+package com.ssafy.special.service.etc;
 
 import com.ssafy.special.domain.crew.Crew;
 import com.ssafy.special.domain.crew.CrewMember;
