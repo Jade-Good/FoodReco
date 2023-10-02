@@ -1,4 +1,4 @@
-package com.ssafy.special.service.member;
+package com.ssafy.special.service.etc;
 
 import com.ssafy.special.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
