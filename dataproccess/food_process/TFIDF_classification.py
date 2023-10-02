@@ -7,7 +7,7 @@ import math
 import time
 from joblib import dump, load
 # 파일 경로
-file_path = './preprocessed_data/menu_ingredient/modified_with_index_clustered_new_ingredient.xlsx'
+file_path = 'preprocessed_data/menu_ingredient/indexed_new_ingredient.xlsx'
 
 # 파일 읽기
 df = pd.read_excel(file_path)
@@ -23,7 +23,7 @@ loaded_tfidf_matrix = load('./model/tfidf_matrix.joblib')
 
 
 # 스프링으로부터 받은 데이터라고 가정
-foods = ['갈비', '오코노미야끼']
+foods = ['갈비', '오꼬노미야끼']
 # 유사도와 인덱스를 저장할 리스트 초기화
 similarity_indices = []
 # 각 음식명에 대한 유사도 계산
@@ -72,17 +72,17 @@ for origin_food in foods:
             print("추천받은 음식명:", sim_food[0], "/ 유사도", sim_food[1])
 #
 # # # 이름 유사도 계산
-# for sim_food in similar_foods_df.values:
-#     if sim_food[0] != sim_food[2] and sim_food[1] >= 0.8:
-#         similarity = Levenshtein.ratio(sim_food[0], sim_food[2])
-#         # 이름 유사도가 0.3미만인 것들
-#         if similarity < 0.3:
-#             sim_food[1] = similarity
-#             name_similarities.append({
-#                 '음식명': sim_food[0],
-#                 '유사도': sim_food[1],
-#                 '기준음식명': sim_food[2]
-#                                       })
+for sim_food in similar_foods_df.values:
+    if sim_food[0] != sim_food[2] and sim_food[1] >= 0.8:
+        similarity = Levenshtein.ratio(sim_food[0], sim_food[2])
+        # 이름 유사도가 0.3미만인 것들
+        if similarity < 0.3:
+            sim_food[1] = similarity
+            name_similarities.append({
+                '음식명': sim_food[0],
+                '유사도': sim_food[1],
+                '기준음식명': sim_food[2]
+                                      })
 # print(time.time() - start)
 #
 print('******************************************')
