@@ -30,6 +30,7 @@ import StyledBasicInputUnit from "../../components/inputs/StyledBasicInputUnit";
 import { ChooseLikeFood } from "./ChooseLikeFood";
 import ToggleButton from "@mui/material/ToggleButton";
 import { ToastContainer, toast } from "react-toastify";
+import api from "../../utils/axios";
 
 interface IForm {
   email: string;
@@ -343,16 +344,11 @@ export const SignUp = () => {
 
   //이메일 인증확인
   const handleCheckEmail = () => {
-    // const formData = new FormData();
-    // formData.append("email", sendEmail);
-    // formData.append("code", code);
-
     axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/member/verification/email/code`,
         {
           email: sendEmail,
-          // code: String(code),
           code: code,
         }
         // {
@@ -397,11 +393,11 @@ export const SignUp = () => {
   return (
     <div className={classes.container}>
       <br />
-      {progress !== 5 && <HeaderLogo />}
+      {progress !== 6 && <HeaderLogo />}
       <br />
       <br />
       <br />
-      {progress !== 5 && (
+      {progress !== 6 && (
         <p style={{ color: "#525252", fontSize: "1.5rem", fontWeight: "bold" }}>
           회원가입
         </p>
@@ -1134,7 +1130,7 @@ export const SignUp = () => {
           제출
         </StyledButton> */}
       </form>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-center"
         autoClose={1000}
         limit={1}
@@ -1146,8 +1142,8 @@ export const SignUp = () => {
         draggable
         pauseOnHover
         theme="light"
-      />
-      ;{/* <div className={classes.inputContainer}> */}
+      /> */}
+      {/* <div className={classes.inputContainer}> */}
       {/* <StyledButton
           disabled={isSubmitting}
           type="submit"

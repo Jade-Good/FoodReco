@@ -95,6 +95,7 @@ api.interceptors.response.use(
       });
       window.location.replace(`https://j9b102.p.ssafy.io/login`);
     }
+
     return Promise.reject(error);
   }
 );

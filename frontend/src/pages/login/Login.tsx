@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atoms/userState";
 import { ToastContainer, toast } from "react-toastify";
+import api from "../../utils/axios";
 
 interface IForm {
   email: string;
@@ -53,7 +54,7 @@ export const Login = () => {
         theme: "colored",
       });
     } else {
-      axios
+      api
         .post(
           `${process.env.REACT_APP_BASE_URL}/member/login`,
 
@@ -83,9 +84,6 @@ export const Login = () => {
             nickname: nickcname,
             email: email,
           }));
-
-          // accessToken 만료하기 1분 전에 로그인 연장
-          // setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
 
           navigate("/");
         })
