@@ -3,6 +3,7 @@ package com.ssafy.special.security.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.dto.request.JwtTokenDto;
 import com.ssafy.special.dto.response.NewJwtTokenDto;
 import com.ssafy.special.repository.member.MemberRepository;
@@ -184,7 +185,12 @@ public class JwtService {
     public NewJwtTokenDto newToken(JwtTokenDto jwtTokenDto){
         String newAccessToken = createAccessToken(jwtTokenDto.getEmail());
         String newRefeshToken = createRefreshToken();
-
+        Member member = memberRepository.findByEmail(jwtTokenDto.getEmail())
+                .orElse(null);
+        if(member != null){
+            member.setJwtRefreshToken(newRefeshToken);
+            memberRepository.save(member);
+        }
         return NewJwtTokenDto.builder()
                 .authorization(newAccessToken)
                 .authorizationRefresh(newRefeshToken)
