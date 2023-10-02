@@ -22,9 +22,13 @@ import { Test } from "./pages/Test";
 import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
 
+import { NavermapsProvider } from "react-naver-maps";
+
 const queryClient = new QueryClient();
 
 const App = () => {
+  let NCP_Client_Id = `${process.env.REACT_APP_NCP_Client_Id}`;
+
   function setScreenSize() {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -35,50 +39,46 @@ const App = () => {
 
   return (
     <>
-      <Provider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <Routes>
-              {/* 메인페이지 */}
-              <Route path="/" element={<Main />} />
-              {/* 로그인페이지 */}
-              <Route path="/login" element={<Login />} />
-              {/* 회원가입페이지 */}
-              <Route path="/signup" element={<SignUp />} />
-              {/* 회원가입완료페이지 */}
-              <Route path="/signup/complete" element={<SignUpComplete />} />
-              {/* 마이페이지 */}
-              <Route path="/mypage/:memberId" element={<MyPage />} />
-              {/* 마이페이지 수정페이지 */}
-              <Route path="/mypage/edit/:memberId" element={<MyPageEdit />} />
-              {/* 개인 메뉴 추천페이지 */}
-              <Route
-                path="/recommendation/:memberId"
-                element={<MemberRecommendation />}
-              />
-              {/* 자기 친구목록 페이지 */}
-              <Route path="/friend/:memberId" element={<FriendList />} />
-              {/* 친구 초대QR 초대하는사람의 ID, 초대받는사람의 ID 두개가 필요할까 고민*/}
-              {/* <Route path="/friend/invite/:memberId" element={<FriendInvite />} /> */}
-              {/* 그룹목록 페이지 */}
-              <Route path="/crew/:memberId" element={<CrewList />} />
-              {/* 특정 그룹 상세보기 */}
-              <Route path="/crew/:crewId" element={<CrewDetail />} />
-              {/* 그룹생성 - 그룹생성자의 친구목록 보여주기 */}
-              <Route path="/crew/make/:memberId" element={<CrewMake />} />
-              {/* 그룹초대 QR */}
-              <Route path="/crew/invite/:crewId" element={<CrewInvite />} />
-              {/* 그룹메뉴추천페이지 */}
-              <Route
-                path="/crewrecommendation/:crewId"
-                element={<CrewRecommendation />}
-              />
-              <Route path="/test" element={<Test />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </QueryClientProvider>
-      </Provider>
+      <NavermapsProvider ncpClientId={NCP_Client_Id}>
+        <Provider store={store}>
+          <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+              <Routes>
+                {/* 메인페이지 */}
+                <Route path="/" element={<Main />} />
+                {/* 로그인페이지 */}
+                <Route path="/login" element={<Login />} />
+                {/* 회원가입페이지 */}
+                <Route path="/signup" element={<SignUp />} />
+                {/* 회원가입완료페이지 */}
+                <Route path="/signup/complete" element={<SignUpComplete />} />
+                {/* 마이페이지 */}
+                <Route path="/mypage/:memberId" element={<MyPage />} />
+                {/* 마이페이지 수정페이지 */}
+                <Route path="/mypage/edit/:memberId" element={<MyPageEdit />} />
+                {/* 개인 메뉴 추천페이지 */}
+                <Route path="/recommendation/:memberId" element={<MemberRecommendation />} />
+                {/* 자기 친구목록 페이지 */}
+                <Route path="/friend/:memberId" element={<FriendList />} />
+                {/* 친구 초대QR 초대하는사람의 ID, 초대받는사람의 ID 두개가 필요할까 고민*/}
+                {/* <Route path="/friend/invite/:memberId" element={<FriendInvite />} /> */}
+                {/* 그룹목록 페이지 */}
+                <Route path="/crew/:memberId" element={<CrewList />} />
+                {/* 특정 그룹 상세보기 */}
+                <Route path="/crew/:crewId" element={<CrewDetail />} />
+                {/* 그룹생성 - 그룹생성자의 친구목록 보여주기 */}
+                <Route path="/crew/make/:memberId" element={<CrewMake />} />
+                {/* 그룹초대 QR */}
+                <Route path="/crew/invite/:crewId" element={<CrewInvite />} />
+                {/* 그룹메뉴추천페이지 */}
+                <Route path="/crewrecommendation/:crewId" element={<CrewRecommendation />} />
+                <Route path="/test" element={<Test />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </QueryClientProvider>
+        </Provider>
+      </NavermapsProvider>
     </>
   );
 };

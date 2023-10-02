@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { useRecoilState } from "recoil";
 import { foodDetailModal } from "../../recoil/atoms/modalState";
+import { Container as MapDiv, NaverMap, Marker } from "react-naver-maps";
 
 /*overlay는 모달 창 바깥 부분을 처리하는 부분이고,
 content는 모달 창부분이라고 생각하면 쉬울 것이다*/
@@ -17,13 +18,16 @@ const customModalStyles: ReactModal.Styles = {
   },
   content: {
     width: "70vw",
-    height: "180px",
-    zIndex: "150",
+    height: "70vh",
+    // zIndex: "150",
     position: "absolute",
     top: "50%",
     left: "50%",
+
+    padding: "1rem",
+
     transform: "translate(-50%, -50%)",
-    borderRadius: "10px",
+    borderRadius: "1rem",
     boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
     backgroundColor: "white",
     justifyContent: "center",
@@ -31,8 +35,36 @@ const customModalStyles: ReactModal.Styles = {
   },
 };
 
+interface Coords {
+  latitude: number | null;
+  longitude: number | null;
+}
+
 const FoodDetail = () => {
   const [modal, setModalOpen] = useRecoilState(foodDetailModal);
+
+  let foodName = "짜장면";
+
+  const [coords, setCoords] = useState<Coords>({ latitude: null, longitude: null });
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // 위치 정보 가져오기 시도
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCoords({ latitude, longitude });
+        },
+        (err) => {
+          setError(`오류: ${err.message}`);
+        }
+      );
+    } else {
+      setError("브라우저에서 Geolocation을 지원하지 않습니다.");
+    }
+  }, []);
+
   return (
     <Modal
       isOpen={modal.modalOpen}
@@ -42,7 +74,31 @@ const FoodDetail = () => {
       contentLabel="Pop up Message"
       shouldCloseOnOverlayClick={true}
     >
-      모달 내용
+      <h4 style={{ margin: "0" }}>주변 '{foodName}' 가게</h4>
+
+      <div>
+        {coords.latitude !== null && coords.longitude !== null ? (
+          <div>
+            <p>현재 위치:</p>
+            <p>위도: {coords.latitude}</p>
+            <p>경도: {coords.longitude}</p>
+          </div>
+        ) : error ? (
+          <p>{error}</p>
+        ) : (
+          <p>위치 정보를 가져오는 중...</p>
+        )}
+      </div>
+
+      <MapDiv
+        style={{
+          height: 400,
+        }}
+      >
+        <NaverMap>
+          <Marker defaultPosition={{ lat: 37.5666103, lng: 126.9783882 }} />
+        </NaverMap>
+      </MapDiv>
     </Modal>
   );
 };
