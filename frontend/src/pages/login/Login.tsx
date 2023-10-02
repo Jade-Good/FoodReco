@@ -8,10 +8,11 @@ import { BsSquare } from "react-icons/bs";
 import { BsFillCheckSquareFill } from "react-icons/bs";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atoms/userState";
+import { ToastContainer, toast } from "react-toastify";
+import api from "../../utils/axios";
 
 interface IForm {
   email: string;
@@ -24,7 +25,6 @@ export const Login = () => {
   const navigate = useNavigate();
   // const dispatch = useDispatch();
   const [user, setUser] = useRecoilState(userState);
-  const JWT_EXPIRY_TIME = 3600 * 1000; // 만료 시간 (24시간 밀리 초로 표현)
 
   const {
     register,
@@ -43,9 +43,18 @@ export const Login = () => {
     const { email, password } = data;
     if (errors.email) {
       console.log(errors.email);
-      alert("이메일을 다시 확인해 주십시오");
+      toast.error("이메일을 다시 확인해주세요!", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     } else {
-      axios
+      api
         .post(
           `${process.env.REACT_APP_BASE_URL}/member/login`,
 
@@ -65,7 +74,8 @@ export const Login = () => {
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
-          // localStorage.setItem('accesstoken', accessToken);
+          // localStorage.setItem("accesstoken", accessToken);
+          // localStorage.setItem("refreshtoken", refreshToken);
 
           setUser((prevUser) => ({
             ...prevUser,
@@ -75,51 +85,15 @@ export const Login = () => {
             email: email,
           }));
 
-          // accessToken 만료하기 1분 전에 로그인 연장
-          setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
-
           navigate("/");
         })
         .catch((err) => {
-          handleSilentRefresh(data);
+          // handleSilentRefresh(data);
+
           console.log("이메일 전송 오류:", err);
         });
     }
   };
-  const handleSilentRefresh: SubmitHandler<IForm> = (data) => {
-    console.log("refreshtoken axois", data);
-    axios
-      .post("/silent-refresh", data)
-      .then((res) => {
-        const nickcname = res.data.nickname;
-        const accessToken = res.headers.authorization;
-        const email = res.data.email;
-        const refreshToken = res.headers.authorizationRefresh;
-
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${accessToken}`;
-        // localStorage.setItem('accesstoken', accessToken);
-
-        setUser((prevUser) => ({
-          ...prevUser,
-          refreshToken: refreshToken,
-          accessToken: accessToken,
-          nickname: nickcname,
-          email: email,
-        }));
-
-        // accessToken 만료하기 1분 전에 로그인 연장
-        setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
-
-        navigate("/");
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("이메일과 비밀번호를 확인해주세요");
-      });
-  };
-  const notify = () => toast("This is a toast notification !");
 
   return (
     <div className={classes.container}>
@@ -135,8 +109,6 @@ export const Login = () => {
       <br />
       <br />
 
-      <button onClick={notify}>Notify !</button>
-      <ToastContainer />
       <form onSubmit={handleSubmit(handleLogin)}>
         <div className={classes.inputContainer}>
           {errors.email && (
@@ -249,6 +221,7 @@ export const Login = () => {
           회원가입
         </p>
       </div>
+      <ToastContainer />
     </div>
   );
 };
