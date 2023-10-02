@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-modal";
 import { useRecoilState } from "recoil";
-import { foodDetailModal } from "../../recoil/atoms/userState";
+import { foodDetailModal } from "../../recoil/atoms/modalState";
 
 /*overlay는 모달 창 바깥 부분을 처리하는 부분이고,
 content는 모달 창부분이라고 생각하면 쉬울 것이다*/
@@ -32,11 +32,11 @@ const customModalStyles: ReactModal.Styles = {
 };
 
 const FoodDetail = () => {
-  const [modalOpen, setModalOpen] = useRecoilState(foodDetailModal);
+  const [modal, setModalOpen] = useRecoilState(foodDetailModal);
   return (
     <Modal
-      isOpen={modalOpen}
-      onRequestClose={() => setModalOpen(false)}
+      isOpen={modal.modalOpen}
+      onRequestClose={() => setModalOpen({ modalOpen: false })}
       style={customModalStyles}
       ariaHideApp={false}
       contentLabel="Pop up Message"

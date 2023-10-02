@@ -27,7 +27,7 @@ export const userState = atom<User>({
 export const foodDetailModal = atom({
   key: "foodDetailModal",
   default: {
-    modalOpen: true,
+    modalOpen: false,
   },
   effects_UNSTABLE: [persistAtom],
 }); 

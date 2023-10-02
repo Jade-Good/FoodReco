@@ -6,45 +6,44 @@ import { MdFavorite } from "react-icons/md";
 import { RiTimerFill } from "react-icons/ri";
 import axios from "axios";
 
-
 export const FoodButton = () => {
   const feedBack = (num: number) => {
     console.log(num);
-    axios
-        .post(
-          `${process.env.REACT_APP_BASE_URL}/recommend/feedback/{nextFoodSeq}`,
+    // axios
+    //     .post(
+    //       `${process.env.REACT_APP_BASE_URL}/recommend/feedback/{nextFoodSeq}`,
 
-        )
-        // .then((res) => {
-        //   console.log(data);
-        //   console.log("로그인중", res);
-        //   const nickcname = res.data.nickname;
-        //   const accessToken = res.headers.authorization;
-        //   const email = res.data.email;
-        //   const refreshToken = res.headers.authorizationRefresh;
+    //     )
+    // .then((res) => {
+    //   console.log(data);
+    //   console.log("로그인중", res);
+    //   const nickcname = res.data.nickname;
+    //   const accessToken = res.headers.authorization;
+    //   const email = res.data.email;
+    //   const refreshToken = res.headers.authorizationRefresh;
 
-        //   axios.defaults.headers.common[
-        //     "Authorization"
-        //   ] = `Bearer ${accessToken}`;
-        //   // localStorage.setItem('accesstoken', accessToken);
+    //   axios.defaults.headers.common[
+    //     "Authorization"
+    //   ] = `Bearer ${accessToken}`;
+    //   // localStorage.setItem('accesstoken', accessToken);
 
-        //   setUser((prevUser) => ({
-        //     ...prevUser,
-        //     refreshToken: refreshToken,
-        //     accessToken: accessToken,
-        //     nickname: nickcname,
-        //     email: email,
-        //   }));
+    //   setUser((prevUser) => ({
+    //     ...prevUser,
+    //     refreshToken: refreshToken,
+    //     accessToken: accessToken,
+    //     nickname: nickcname,
+    //     email: email,
+    //   }));
 
-        //   // accessToken 만료하기 1분 전에 로그인 연장
-        //   setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
+    //   // accessToken 만료하기 1분 전에 로그인 연장
+    //   setTimeout(handleSilentRefresh, JWT_EXPIRY_TIME - 60000);
 
-        //   navigate("/");
-        // })
-        // .catch((err) => {
-        //   handleSilentRefresh(data);
-        //   console.log("이메일 전송 오류:", err);
-        // });
+    //   navigate("/");
+    // })
+    // .catch((err) => {
+    //   handleSilentRefresh(data);
+    //   console.log("이메일 전송 오류:", err);
+    // });
   };
 
   return (
