@@ -93,7 +93,7 @@ public class CrewService {
         CrewMember crewMember = CrewMember.builder()
                 .crew(crew)
                 .member(member)
-                .status(1)
+                .status(0)
                 .build();
         crewMemberRepository.save(crewMember);
         log.info("crew 생성 완료");
