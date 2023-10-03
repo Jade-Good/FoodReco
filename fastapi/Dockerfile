@@ -2,8 +2,8 @@ FROM python:latest
 
 WORKDIR /app
 
-COPY ./src/main.py /app
-COPY ./src/requirements.txt /app
+COPY ./main.py /app
+COPY ./requirements.txt /app
 
 RUN pip install -r requirements.txt
 
