@@ -1,5 +1,5 @@
 from typing import Union, List
-from .food import Food
+from food import Food
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
