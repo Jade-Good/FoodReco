@@ -3,7 +3,12 @@ import styled, { css } from "styled-components";
 import { useRecoilState } from "recoil";
 import { foodDetailModal } from "../../recoil/atoms/modalState";
 
-export const FoodCard = () => {
+interface FoodCardInfo {
+  foodImg: string;
+  foodName: string;
+}
+
+export const FoodCard: React.FC<FoodCardInfo> = ({ foodImg, foodName }) => {
   // 드래그 상태, 왼쪽|오른쪽|중앙 상태, x 좌표
   const [isDragging, setIsDragging] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | "">("");
@@ -86,9 +91,9 @@ export const FoodCard = () => {
         onTouchEnd={handleTouchEnd} // 터치 종료
         onClick={detail}
       >
-        <FoodImg src="../images/짜장면.png" />
+        <FoodImg src={`${foodImg}`} />
         {/* <img className={classes.foodImg} src="../images/짜장면.png" alt="foodImg" /> */}
-        <h1 style={{ margin: "0", fontSize: "4vmax" }}>짜장면</h1>
+        <h1 style={{ margin: "0", fontSize: "4vmax" }}>{foodName}</h1>
       </FoodCardBox>
     </div>
   );

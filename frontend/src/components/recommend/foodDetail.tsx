@@ -26,7 +26,7 @@ interface Stores {
   y?: number;
 }
 
-const FoodDetail = () => {
+const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
   // -------------------------- 모달 --------------------------
   const [modal, setModalOpen] = useRecoilState(foodDetailModal);
 
@@ -52,7 +52,7 @@ const FoodDetail = () => {
   }, []);
 
   // -------------------------- 검색 --------------------------
-  let foodName = "짜장면";
+
   // const [info, setInfo] = useState<any>(); // info 상태의 타입은 여러 가지 일 수 있으므로 any를 사용합니다.
   const [markers, setMarkers] = useState<any[]>([]); // markers 상태의 타입은 여러 가지 객체 배열일 수 있으므로 any[]를 사용합니다.
   const [map, setMap] = useState<any>(); // map 상태의 타입은 여러 가지 일 수 있으므로 any를 사용합니다.
