@@ -5,3 +5,4 @@ scikit-learn
 Levenshtein
 joblib
 pydantic
+uvloop
