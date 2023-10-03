@@ -22,6 +22,8 @@ interface Stores {
   place_name?: string;
   place_url?: string;
   road_address_name?: string;
+  x?: number;
+  y?: number;
 }
 
 const FoodDetail = () => {
@@ -61,6 +63,7 @@ const FoodDetail = () => {
   const [stores, setStores] = useState<Stores[]>([]); // 검색 결과
 
   const [clicked, setClicked] = useState(false); // 재검색 버튼
+  const [listclicked, setListClicked] = useState<boolean[]>([]); // 리스트 클릭 버튼
 
   // ---------------------------------------------------------
 
@@ -78,7 +81,7 @@ const FoodDetail = () => {
       category_group_code: "FD6",
       x: Number(`${coords.longitude}`),
       y: Number(`${coords.latitude}`),
-      radius: 500,
+      radius: 1000,
       sort: kakao.maps.services.SortBy.DISTANCE,
     });
   }, [map]);
@@ -89,6 +92,7 @@ const FoodDetail = () => {
     if (status === kakao.maps.services.Status.OK) {
       // 검색 결과 저장
       setStores(data);
+      setListClicked(new Array(data.length).fill(false));
 
       // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
       // LatLngBounds 객체에 좌표를 추가합니다
@@ -140,78 +144,118 @@ const FoodDetail = () => {
       contentLabel="Pop up Message"
       shouldCloseOnOverlayClick={true}
     >
-      <h4 style={{ margin: "1rem 0rem 1rem 1rem" }}>주변 '{foodName}' 가게</h4>
+      <MapWrap>
+        <h4 style={{ margin: "1rem 0rem 1rem 1rem" }}>주변 '{foodName}' 가게</h4>
 
-      <SearchButtonLayout>
-        <SearchButtonStyle
-          onClick={search}
-          clicked={clicked}
-          onTouchStart={() => {
-            setClicked(true);
-          }}
-          onTouchEnd={() => {
-            setClicked(false);
-          }}
-        >
-          <SearchIcon fontSize="small" style={{ transform: "translate(-5%, 25%)" }} />
-          <p style={{ display: "inline-block" }}>현 지도에서 검색</p>
-        </SearchButtonStyle>
-      </SearchButtonLayout>
-      <Map // 로드뷰를 표시할 Container
-        center={{
-          lat: Number(`${coords.latitude}`),
-          lng: Number(`${coords.longitude}`),
-        }}
-        style={{
-          width: "100%",
-          height: "25vh",
-        }}
-        level={7}
-        onCreate={setMap}
-      >
-        <MapMarker
-          position={{ lat: Number(coords.latitude), lng: Number(coords.longitude) }}
-          image={{
-            src: "/images/현위치 마커.png", // 마커이미지의 주소입니다
-            size: {
-              width: 50,
-              height: 50,
-            }, // 마커이미지의 크기입니다
-          }}
-        />
-
-        {markers.map((marker: any) => (
-          <MapMarker
-            key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
-            position={marker.position}
-            onClick={() => setInfo(marker)}
+        <SearchButtonLayout>
+          <SearchButtonStyle
+            onClick={search}
+            clicked={clicked}
+            onTouchStart={() => {
+              setClicked(true);
+            }}
+            onTouchEnd={() => {
+              setClicked(false);
+            }}
           >
-            {info && info.content === marker.content && (
-              <div style={{ color: "#000" }}>{marker.content}</div>
-            )}
-          </MapMarker>
-        ))}
-      </Map>
+            <SearchIcon fontSize="small" style={{ transform: "translate(-5%, 25%)" }} />
+            <p style={{ display: "inline-block" }}>현 지도에서 검색</p>
+          </SearchButtonStyle>
+        </SearchButtonLayout>
+        <Map // 로드뷰를 표시할 Container
+          center={{
+            lat: Number(`${coords.latitude}`),
+            lng: Number(`${coords.longitude}`),
+          }}
+          style={{
+            width: "100%",
+            height: "25vh",
+          }}
+          level={7}
+          onCreate={setMap}
+        >
+          {/* 현위치 마커 */}
+          <MapMarker
+            position={{ lat: Number(coords.latitude), lng: Number(coords.longitude) }}
+            image={{
+              src: "/images/현위치 마커.png",
+              size: {
+                width: 50,
+                height: 50,
+              },
+            }}
+          />
+          {/* 검색 결과 가게들 마커 */}
+          {markers.map((marker: any) => (
+            <MapMarker
+              key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
+              position={marker.position}
+              onClick={() => setInfo(marker)}
+            >
+              {/* {info && info.content === marker.content && (
+                <span style={{ color: "#000" }}>{marker.content}</span>
+              )} */}
+            </MapMarker>
+          ))}
+        </Map>
+      </MapWrap>
 
-      <hr />
+      <div style={{ height: "46vh", overflow: "scroll", marginTop: "6vh" }}>
+        {stores
+          ? stores.map((result, idx) => {
+              return (
+                <StoreList
+                  onClick={() => {
+                    if (!result.x || !result.y) return;
+                    // 이동할 위도 경도 위치를 생성합니다
+                    var moveLatLon = new kakao.maps.LatLng(result.y, result.x);
 
-      {stores
-        ? stores.map((result, idx) => {
-            return (
-              <>
-                <ul>
-                  <li>주소이름 : {result.address_name}</li>
-                  <li>카테고리 : {result.category_name}</li>
-                  <li>전화번호 : {result.phone}</li>
-                  <li>장소명 : {result.place_name}</li>
-                  {/* <li>url : {result.place_url}</li> */}
-                  <li>주소 : {result.road_address_name}</li>
-                </ul>
-                <hr />
-              </>
-            );
-          })
-        : null}
+                    // 지도 중심을 이동 시킵니다
+                    map.panTo(moveLatLon);
+
+                    // info 창 표시
+                    setInfo(markers[idx]);
+
+                    // 지도 레벨 변경
+                    map.setLevel(4);
+                  }}
+                  touched={listclicked[idx]}
+                  onTouchStart={() => {
+                    let copy = [...listclicked];
+                    copy[idx] = true;
+                    setListClicked(copy);
+                  }}
+                  onTouchEnd={() => {
+                    let copy = [...listclicked];
+                    copy[idx] = false;
+                    setListClicked(copy);
+                  }}
+                >
+                  <hr style={{ border: "solid 1px #ececec", margin: "0" }} />
+                  <div style={{ padding: "1vmin 3vmin 1vmin 3vmin" }}>
+                    <h3 style={{ margin: "1rem 0 0.5rem 0" }}>{result.place_name}</h3>
+                    {result.address_name}
+                    <p style={{ color: "gray", marginBottom: "0.5rem" }}>
+                      (지번) {result.road_address_name}
+                    </p>
+                    {String(result.phone).length > 0 ? (
+                      <StoreTel href={`tel:${result.phone}}`}>{result.phone}</StoreTel>
+                    ) : (
+                      <p style={{ display: "inline", fontSize: "1rem", fontWeight: "100" }}>
+                        번호 미입력
+                      </p>
+                    )}
+                    {"  "}|{"  "}
+                    <StoreLink href={result.place_url}>상세보기</StoreLink>
+                    <p style={{ color: "#b8b8b8", marginTop: "0.5rem", marginBottom: "1rem" }}>
+                      {result.category_name}
+                    </p>
+                  </div>
+                </StoreList>
+              );
+            })
+          : null}
+      </div>
     </Modal>
   );
 };
@@ -259,7 +303,7 @@ const customModalStyles: ReactModal.Styles = {
     width: "90vw",
     height: "80vh",
     // zIndex: "150",
-    position: "absolute",
+    // position: "absolute",
     top: "50%",
     left: "50%",
 
@@ -270,18 +314,28 @@ const customModalStyles: ReactModal.Styles = {
     boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
     backgroundColor: "white",
     justifyContent: "center",
-    overflow: "auto",
+    overflow: "hidden",
   },
 };
+
+const MapWrap = styled.div`
+  // layout
+  position: sticky;
+  top: 0%;
+  /* left: 0%; */
+  width: 100%;
+  height: 25vh;
+`;
 
 const SearchButtonLayout = styled.div`
   // layout
   position: absolute;
-  top: 12%;
+  top: 33%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
 `;
+
 const SearchButtonStyle = styled.button<{ clicked: boolean }>`
   display: inline-block;
   padding: 0.5vmin 1rem 0.5rem 0.5rem;
@@ -294,4 +348,30 @@ const SearchButtonStyle = styled.button<{ clicked: boolean }>`
   /* font-size: 0.8rem; */
   color: #fe9d3a;
   font-weight: bold;
+`;
+
+const StoreList = styled.div<{ touched: boolean }>`
+  // layout
+  background-color: ${(props) => (props.touched ? "#dbe8ff" : "white")};
+`;
+
+const StoreLink = styled.a`
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fe9d3a;
+
+  &:visited {
+    color: #d49c64;
+  }
+`;
+
+const StoreTel = styled.a`
+  text-decoration: none;
+  font-size: 1rem;
+  color: #43a800;
+
+  &:visited {
+    color: #43a800;
+  }
 `;
