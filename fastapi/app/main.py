@@ -27,11 +27,12 @@ def read_root():
 
 @app.post("/fastapi/recommend")
 async def food_recommend(foods: List[Food]):
+    logging.info(foods)
     pd.set_option('display.max_rows', None)
 
     try:
 
-        file_path = './model/modified_with_index_clustered_new_ingredient.xlsx'
+        file_path = './model/indexed_new_ingredient.xlsx'
         df = pd.read_excel(file_path)
         logging.info("엑셀 읽어옴")
         
@@ -61,19 +62,21 @@ async def food_recommend(foods: List[Food]):
         similar_foods_df.drop_duplicates(subset='name', keep='first', inplace=True)
 
         logging.info("재료 유사도 중복제거 완료")
-        
+        # 먹었던것도 나와야함
         for sim_food in similar_foods_df.itertuples():
             if sim_food.name != sim_food.originName and sim_food.similarity >= 0.6:
                 name_similarity = Levenshtein.ratio(sim_food.name, sim_food.originName)
                 logging.info(name_similarity)
                 if 0 < name_similarity < 0.5:
                     name_similarities.append({
-                        'foodSeq': sim_food.foodSeq,
+                        'foodSeq': sim_food.foodSeq+1,
+                        'similarity': sim_food.similarity,
                         'name': sim_food.name,
                         'nameSimilarity': name_similarity,
                         'originName': sim_food.originName
                     })
         logging.info("이름 유사도 비교 완료")
+        logging.info(name_similarities)
         return name_similarities
 
     except Exception as e:
