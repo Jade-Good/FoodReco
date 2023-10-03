@@ -4,6 +4,7 @@ package com.ssafy.special.controller;
 import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.request.UserInfoUpdateDto;
 import com.ssafy.special.dto.response.MemberDetailDto;
+import com.ssafy.special.dto.response.WeatherStatus;
 import com.ssafy.special.service.food.FoodService;
 import com.ssafy.special.service.member.MemberService;
 import com.ssafy.special.util.SecurityUtils;
@@ -29,7 +30,6 @@ public class MypageController {
     private final SecurityUtils securityUtils;
 
     private final FoodService foodService;
-
 
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> getUserInfo() {
