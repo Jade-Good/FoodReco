@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./app/main.py /app
 COPY ./app/requirements.txt /app
-COPY ./app/model /app
+COPY ./app/model /app/model
 
 
 RUN pip install -r requirements.txt
