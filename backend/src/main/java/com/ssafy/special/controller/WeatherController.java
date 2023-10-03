@@ -5,6 +5,8 @@ package com.ssafy.special.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.special.dto.request.WeatherRequestDto;
+import com.ssafy.special.dto.response.WeatherStatus;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,12 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class WeatherController {
 
+
+    private final WeatherStatus weatherStatus;
 
     @GetMapping("/weather")
     public ResponseEntity<Map<String, Object>> getWeather(@RequestBody WeatherRequestDto weatherRequestDto) throws Exception {
@@ -41,7 +46,7 @@ public class WeatherController {
         String hour = String.valueOf(time.getHour());
         String minute = String.valueOf(time.getMinute());
 
-//        System.out.println(year + ", " + month + ", " + day + ", " + hour + ", " + minute + ", " + lon + ", " + lat);
+        System.out.println(year + ", " + month + ", " + day + ", " + hour + ", " + minute);
 
         int[] location = mapConv(weatherRequestDto.getLon(), weatherRequestDto.getLet(), new LamcParameter());
         String ny = String.valueOf(location[1]);
@@ -51,14 +56,14 @@ public class WeatherController {
         int m = Integer.parseInt(minute);
         if (m <= 45) tempHour--;
         if (tempHour < 0) tempHour = 23;
-        String hourStr = tempHour <= 10 ? "0" + tempHour : tempHour + "";
+        String hourStr = tempHour < 10 ? "0" + tempHour : tempHour + "";
 
         int baseHour = Integer.parseInt(hour);
         if (m > 45) baseHour = Integer.parseInt(hour) + 1;
-        String baseHourStr = baseHour <= 10 ? "0" + baseHour : baseHour + "";
+        String baseHourStr = baseHour < 10 ? "0" + baseHour : baseHour + "";
         baseHourStr += "00";
 
-//        System.out.println("BaseHourStr : " + baseHourStr);
+        System.out.println("BaseHourStr : " + baseHourStr);
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=tIfq32iij%2BsIheoYyLcaRXO%2BvPAh0op7gD0UfQBmaCklNVDoLTf6frvF%2FH2puSvuRaLTOPaZdGolietA4eqMrg%3D%3D"); /*Service Key*/
         urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
@@ -69,7 +74,7 @@ public class WeatherController {
         urlBuilder.append("&" + URLEncoder.encode("nx", "UTF-8") + "=" + URLEncoder.encode(nx, "UTF-8")); /*예보지점의 X 좌표값*/
         urlBuilder.append("&" + URLEncoder.encode("ny", "UTF-8") + "=" + URLEncoder.encode(ny, "UTF-8")); /*예보지점의 Y 좌표값*/
 
-//        System.out.println(urlBuilder.toString());
+        System.out.println(urlBuilder.toString());
 
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -91,7 +96,7 @@ public class WeatherController {
         conn.disconnect();
         String data = sb.toString();
 
-//        System.out.println(data);
+        System.out.println(data);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> weatherData = objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {
         });
@@ -119,16 +124,14 @@ public class WeatherController {
                     } else if (fcstValue.equals("4")) {
                         weather = "흐림";
                     }
-//                    dataMap.put("weather", weather);
-                    resultMap.put("weather", weather);
+                    resultMap.put("message", "날씨가 없데이트 되었습니다 : " + weather);
+                    weatherStatus.setStatus(weather);
                 }
             }
         }
 
-//        System.out.println(resultMap);
 
-        resultMap.put("message", "success");
-        status = HttpStatus.ACCEPTED;
+        status = HttpStatus.OK;
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
 
     }
