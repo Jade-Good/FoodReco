@@ -18,9 +18,11 @@ import styled from "styled-components";
 import BasicSelect from "../../components/option/BasicSelect";
 import { useNavigate } from "react-router-dom";
 import StyledBasicInputUnit from "../../components/inputs/StyledBasicInputUnit";
+import { toast } from "react-toastify";
 
 interface IForm {
   image: FileList | null;
+  profileImg: string | File | null;
   nickname: string;
   age: string;
   sex: string;
@@ -39,13 +41,11 @@ interface ExerciseRates {
 export const MyPageEdit = () => {
   const navigate = useNavigate();
 
-  const steps = ["약관동의", "회원 정보", "취향 설문"];
   const ageList = ["10대", "20대", "30대", "40대", "50대", "60대", "70대이상"];
   const sexList = ["남자", "여자"];
   const activityList = ["운동안함", "걷기", "헬스", "수영", "자전거"];
   const timeList = [0.5, 1, 1.5, 2, 2.5, 3];
   // 걷기 1시간 6750 , 헬스 1시간 14700, 수영: 12850, 자전거:11050
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [imageURL, setImageURL] = useState<string | undefined>();
 
   // let imageURL: string;
@@ -99,10 +99,10 @@ export const MyPageEdit = () => {
 
   const {
     register,
-    formState: { errors, isSubmitting, isSubmitted },
+    formState: { errors, isSubmitting },
     handleSubmit,
     control,
-    getValues,
+    // getValues,
     watch,
   } = useForm<IForm>({
     mode: "onSubmit",
@@ -117,8 +117,8 @@ export const MyPageEdit = () => {
       time: undefined,
     },
   });
+
   const profileImage = watch("image");
-  const avatar = watch("image");
   useEffect(() => {
     if (profileImage && profileImage.length > 0) {
       const file = profileImage[0];
@@ -126,22 +126,31 @@ export const MyPageEdit = () => {
     } else {
       setImageURL("/image/foodreco.png"); // 기본 이미지 경로
     }
-  }, [avatar]);
+  }, [profileImage]);
 
   // const handleFileChange = () => {
   //   if (profileImage && profileImage[0]) {
   //     setProfileImageFile(profileImage[0]);
   //   }
   // };
+
   // 회원가입 로직
   const handleEdit: SubmitHandler<IForm> = (data) => {
     console.log(data);
+    const formData = new FormData();
 
     const { image, nickname, age, sex, height, weight, activity, time } = data;
     const ages = parseInt(age.slice(0, 2));
     const walkingRate = exerciseRates[activity][time];
+    let imgURL = null;
+    if (image && image.length > 0) {
+      const file = image[0]; // FileList에서 첫 번째 파일을 가져옵니다.
+      // formData.append("img", file); // 파일을 FormData에 추가합니다.
+      imgURL = URL.createObjectURL(file); // 이미지 URL을 생성합니다.
+    }
+
     const datas = {
-      image: image,
+      img: imgURL,
       nickname: nickname,
       sex: sex,
       activity: walkingRate,
@@ -149,20 +158,26 @@ export const MyPageEdit = () => {
       weight: weight,
       height: height,
     };
+    formData.append("request", new Blob([JSON.stringify(datas)]));
     console.log(datas);
     if (errors.nickname) {
       console.log(errors);
-      alert("정보를 다시 확인해주세요!");
+      toast.error("정보를 다시 확인해주세요!", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     } else {
       axios
-        .post(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
-          image: image,
-          nickname: nickname,
-          sex: sex,
-          activity: walkingRate,
-          age: ages,
-          weight: weight,
-          height: height,
+        .patch(`${process.env.REACT_APP_BASE_URL}/mypage/info`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         })
         .then((res) => {
           console.log(res);

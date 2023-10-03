@@ -6,7 +6,7 @@ import com.ssafy.special.dto.request.*;
 
 import com.ssafy.special.service.etc.FcmService;
 import com.ssafy.special.service.member.MemberService;
-import com.ssafy.special.service.member.VerificationService;
+import com.ssafy.special.service.etc.VerificationService;
 import com.ssafy.special.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -142,6 +142,55 @@ public class MemberController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (IllegalArgumentException e){
             log.info("FCM 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/friend/{friendSeq}")
+    public ResponseEntity<?> makeFriendship(@PathVariable Long friendSeq){
+        log.info("makeFriendship() 메소드 시작");
+        try{
+            memberService.addFriend(getEmail(),friendSeq);
+            return ResponseEntity.ok().body("친구 등록이 정상적으로 완료되었습니다.");
+        }catch (EntityNotFoundException e){
+            log.info("Member find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (IllegalArgumentException e){
+            log.info("잘못된 친구 SEQ : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/friend/list/{searchKeyword}")
+    public ResponseEntity<?> findFriendByNickname(@PathVariable String searchKeyword){
+        log.info("findFriendByNickname() 메소드 시작");
+        try{
+            return ResponseEntity.ok().body(memberService.getFriendListByNickname(getEmail(),searchKeyword));
+        }catch (EntityNotFoundException e){
+            log.info("Member find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/friend/list")
+    public ResponseEntity<?> findFriendList(){
+        log.info("findFriendList() 메소드 시작");
+        try{
+            return ResponseEntity.ok().body(memberService.getFriendList(getEmail()));
+        }catch (EntityNotFoundException e){
+            log.info("Member find 에러 : "+ e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (Exception e){
             e.printStackTrace();

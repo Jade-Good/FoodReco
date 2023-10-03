@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 
 
 @Getter
-@Setter
 @Entity(name = "member_allergy")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberAllergy {

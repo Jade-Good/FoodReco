@@ -2,18 +2,24 @@
 package com.ssafy.special.service.member;
 
 import com.ssafy.special.domain.food.Food;
+import com.ssafy.special.domain.food.Ingredient;
 import com.ssafy.special.domain.member.FriendList;
 import com.ssafy.special.domain.member.Member;
+import com.ssafy.special.domain.member.MemberAllergy;
 import com.ssafy.special.domain.member.MemberFoodPreference;
 import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.request.UserInfoUpdateDto;
 import com.ssafy.special.dto.request.UserSignUpDto;
+import com.ssafy.special.dto.response.FriendListDto;
 import com.ssafy.special.dto.response.MemberDetailDto;
+import com.ssafy.special.dto.response.MemberInfoDto;
 import com.ssafy.special.exception.DuplicateEmailException;
 import com.ssafy.special.exception.DuplicateNicknameException;
 import com.ssafy.special.exception.SignupFailedException;
 import com.ssafy.special.repository.food.FoodRepository;
+import com.ssafy.special.repository.food.IngredientRepository;
 import com.ssafy.special.repository.member.FriendListRepository;
+import com.ssafy.special.repository.member.MemberAllergyRepository;
 import com.ssafy.special.repository.member.MemberFoodPreferenceRepository;
 import com.ssafy.special.repository.member.MemberRepository;
 import com.ssafy.special.util.SecurityUtils;
@@ -42,6 +48,8 @@ public class MemberService {
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
     private final FoodRepository foodRepository;
     private final SecurityUtils securityUtils;
+    private final IngredientRepository ingredientRepository;
+    private final MemberAllergyRepository memberAllergyRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -123,43 +131,74 @@ public class MemberService {
                 memberFoodPreferenceRepository.save(memberFoodPreference);
             }
 
+
+            for(String allergyName : userSignUpDto.getAllergyList()) {
+                Ingredient ingredient = ingredientRepository.findByName(allergyName);
+                MemberAllergy memberAllergy = MemberAllergy.builder()
+                        .member(member)
+                        .ingredient(ingredient)
+                        .build();
+
+                memberAllergyRepository.save(memberAllergy);
+            }
+
         } catch (SignupFailedException e) {
             throw new SignupFailedException("회원가입 실패");
         }
     }
 
-    public List<Member> getFriendList(Long memberSeq) {
+    public FriendListDto getFriendList(String memberEmail) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
         // one 또는 other 필드가 memberId와 일치하는 친구 목록을 가져옴
-        List<FriendList> friendLists = friendListRepository.findByOneMemberSeqOrOtherMemberSeq(memberSeq, memberSeq);
+        List<FriendList> friendLists = friendListRepository.findByOneMemberSeqOrOtherMemberSeq(member.getMemberSeq(), member.getMemberSeq());
 
         // 친구 목록을 저장할 List<Member> 생성
-        List<Member> friends = new ArrayList<>();
+        List<MemberInfoDto> friends = new ArrayList<>();
 
         // FriendList에서 one 필드에 해당하는 친구를 friends 목록에 추가
         for (FriendList friendList : friendLists) {
-            if (friendList.getOne().getMemberSeq().equals(memberSeq)) {
-                friends.add(friendList.getOther());
+            if (friendList.getOne().getMemberSeq().equals(member.getMemberSeq())) {
+                Member friend = friendList.getOther();
+                friends.add(MemberInfoDto.builder()
+                        .memberSeq(friend.getMemberSeq())
+                        .memberNickname(friend.getNickname())
+                        .memberImg(friend.getImg())
+                        .memberEmail(friend.getEmail())
+                        .build());
             } else {
-                friends.add(friendList.getOne());
+                Member friend = friendList.getOne();
+                friends.add(MemberInfoDto.builder()
+                        .memberSeq(friend.getMemberSeq())
+                        .memberNickname(friend.getNickname())
+                        .memberImg(friend.getImg())
+                        .memberEmail(friend.getEmail())
+                        .build());
             }
         }
-        return friends;
+
+        return FriendListDto.builder()
+                .memberEmail(memberEmail)
+                .friendList(friends)
+                .build();
     }
 
     public MemberDetailDto getUserInfo(String email) throws NullPointerException {
-
-
         Optional<Member> member = memberRepository.findByEmail(email);
 
         if (member.isPresent()) {
-            MemberDetailDto memberDetailDto = MemberDetailDto.builder()
-                    .profileUrl("https://" + bucket + ".s3." + region + ".amazonaws.com/" + member.get().getImg())
+            MemberDetailDto.MemberDetailDtoBuilder memberDetailDtoBuilder = MemberDetailDto.builder()
                     .nickname(member.get().getNickname())
                     .height(member.get().getHeight())
                     .weight(member.get().getWeight())
-                    .activity(member.get().getActivity())
-                    .build();
+                    .activity(member.get().getActivity());
 
+            if(member.get().getImg() != null) {
+                memberDetailDtoBuilder.profileUrl("https://" + bucket + ".s3." + region + ".amazonaws.com/" + member.get().getImg());
+            }
+
+            MemberDetailDto memberDetailDto = memberDetailDtoBuilder.build();
             return memberDetailDto;
         } else {
             throw new NullPointerException("멤버 정보가 없습니다.");
@@ -169,7 +208,6 @@ public class MemberService {
     }
 
     public List<UserTasteDto> getUserPreference(String email, int type) {
-
         try {
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
@@ -199,8 +237,6 @@ public class MemberService {
 
     @Transactional
     public void updateUserInfo(String email, UserInfoUpdateDto userInfoUpdateDto) throws Exception {
-
-
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
@@ -210,5 +246,63 @@ public class MemberService {
         member.setHeight(userInfoUpdateDto.getHeight());
         member.setWeight(userInfoUpdateDto.getWeight());
         member.setActivity(userInfoUpdateDto.getActivity());
+    }
+
+    @Transactional
+    public void addFriend(String memberEmail, Long friendSeq){
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Member friend = memberRepository.findByMemberSeq(friendSeq)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 친구 정보입니다."));
+
+        FriendList friendList = FriendList.builder()
+                .one(member)
+                .other(friend)
+                .createdAt(LocalDateTime.now())
+                .deletedAt(LocalDateTime.now())
+                .build();
+
+        friendListRepository.save(friendList);
+    }
+
+    public FriendListDto getFriendListByNickname(String memberEmail,String searchKeyword) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        // one 또는 other 필드가 memberId와 일치하는 친구 목록을 가져옴
+        List<FriendList> friendLists = friendListRepository.findByOneMemberSeqOrOtherMemberSeq(member.getMemberSeq(), member.getMemberSeq());
+
+        // 친구 목록을 저장할 List<Member> 생성
+        List<MemberInfoDto> friends = new ArrayList<>();
+
+        // FriendList에서 one 필드에 해당하는 친구를 friends 목록에 추가
+        for (FriendList friendList : friendLists) {
+            if (friendList.getOne().getMemberSeq().equals(member.getMemberSeq())) {
+                Member friend = friendList.getOther();
+                log.info("nickname : "+friend.getNickname() + " / search : "+searchKeyword);
+                if(!friend.getNickname().contains(searchKeyword)) continue;
+                friends.add(MemberInfoDto.builder()
+                        .memberSeq(friend.getMemberSeq())
+                        .memberNickname(friend.getNickname())
+                        .memberImg(friend.getImg())
+                        .memberEmail(friend.getEmail())
+                        .build());
+            } else {
+                Member friend = friendList.getOne();
+                if(!friend.getNickname().contains(searchKeyword)) continue;
+                friends.add(MemberInfoDto.builder()
+                        .memberSeq(friend.getMemberSeq())
+                        .memberNickname(friend.getNickname())
+                        .memberImg(friend.getImg())
+                        .memberEmail(friend.getEmail())
+                        .build());
+            }
+        }
+
+        return FriendListDto.builder()
+                .memberEmail(memberEmail)
+                .friendList(friends)
+                .build();
     }
 }
