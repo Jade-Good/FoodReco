@@ -60,7 +60,6 @@ public class SecurityConfig {
                         "/api/member/verification/email/code",
                         "/api/member/checkNickname",
                         "/api/member/checkEmail",
-                        "/api/weather",
                         "/api/member/login",
                         "/api/jwt"
 
