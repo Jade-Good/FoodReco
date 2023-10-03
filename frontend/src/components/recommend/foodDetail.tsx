@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import styled, { css } from "styled-components";
 
@@ -53,7 +53,7 @@ const FoodDetail = () => {
 
   // -------------------------- 검색 --------------------------
   let foodName = "짜장면";
-  const [info, setInfo] = useState<any>(); // info 상태의 타입은 여러 가지 일 수 있으므로 any를 사용합니다.
+  // const [info, setInfo] = useState<any>(); // info 상태의 타입은 여러 가지 일 수 있으므로 any를 사용합니다.
   const [markers, setMarkers] = useState<any[]>([]); // markers 상태의 타입은 여러 가지 객체 배열일 수 있으므로 any[]를 사용합니다.
   const [map, setMap] = useState<any>(); // map 상태의 타입은 여러 가지 일 수 있으므로 any를 사용합니다.
 
@@ -124,7 +124,7 @@ const FoodDetail = () => {
     let latlng = map.getCenter();
 
     // info창 지우기
-    setInfo(null);
+    // setInfo(null);
 
     ps.keywordSearch(foodName, placesSearchCB, {
       category_group_code: "FD6",
@@ -133,6 +133,39 @@ const FoodDetail = () => {
       radius: mapLevel[map.getLevel() - 3] * 2,
       sort: kakao.maps.services.SortBy.DISTANCE,
     });
+  };
+
+  // 마커 누르면 리스트 스크롤 이동
+  const listRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToItem = (idx: number) => {
+    const listItemHeight = 160; // 각 항목의 높이 (예시)
+
+    if (listRef.current) {
+      listRef.current.scrollTop = idx * listItemHeight;
+    }
+  };
+
+  // 리스트 누르면 지도 위치 이동
+  const moveToMap = (idx: number) => {
+    // 이동할 위도 경도 위치를 생성합니다
+    const moveLatLon = new kakao.maps.LatLng(markers[idx].position.lat, markers[idx].position.lng);
+
+    // 지도 중심을 이동 시킵니다
+    map.setCenter(moveLatLon);
+
+    // 현재 맵 영역
+    // const bounds = map.getBounds();
+
+    // // 이동하려는 좌표가 현재 맵 영역에 포함되지 않으면 이동
+    // if (!bounds.contain(moveLatLon)) {
+    //   map.panTo(moveLatLon);
+    // } else {
+    //   map.setCenter(moveLatLon);
+    // }
+
+    // 지도 레벨 변경
+    map.setLevel(4);
   };
 
   return (
@@ -186,11 +219,14 @@ const FoodDetail = () => {
             }}
           />
           {/* 검색 결과 가게들 마커 */}
-          {markers.map((marker: any) => (
+          {markers.map((marker: any, idx: number) => (
             <MapMarker
               key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
               position={marker.position}
-              onClick={() => setInfo(marker)}
+              onClick={() => {
+                scrollToItem(idx);
+                moveToMap(idx);
+              }}
             >
               {/* {info && info.content === marker.content && (
                 <span style={{ color: "#000" }}>{marker.content}</span>
@@ -200,24 +236,13 @@ const FoodDetail = () => {
         </Map>
       </MapWrap>
 
-      <div style={{ height: "46vh", overflow: "scroll", marginTop: "6vh" }}>
+      <div ref={listRef} style={{ height: "46vh", overflowY: "scroll", marginTop: "6vh" }}>
         {stores
           ? stores.map((result, idx) => {
               return (
                 <StoreList
                   onClick={() => {
-                    if (!result.x || !result.y) return;
-                    // 이동할 위도 경도 위치를 생성합니다
-                    var moveLatLon = new kakao.maps.LatLng(result.y, result.x);
-
-                    // 지도 중심을 이동 시킵니다
-                    map.panTo(moveLatLon);
-
-                    // info 창 표시
-                    setInfo(markers[idx]);
-
-                    // 지도 레벨 변경
-                    map.setLevel(4);
+                    moveToMap(idx);
                   }}
                   touched={listclicked[idx]}
                   onTouchStart={() => {
@@ -353,6 +378,7 @@ const SearchButtonStyle = styled.button<{ clicked: boolean }>`
 const StoreList = styled.div<{ touched: boolean }>`
   // layout
   background-color: ${(props) => (props.touched ? "#dbe8ff" : "white")};
+  height: 10rem;
 `;
 
 const StoreLink = styled.a`
