@@ -20,4 +20,5 @@ public class UserSignUpDto {
     private int activity;
     private List<String> favoriteList;
     private List<String> hateList;
+    private List<String> allergyList;
 }
