@@ -11,33 +11,26 @@ import javax.persistence.*;
 @Getter
 @Entity(name = "crew_recommend_vote")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@IdClass(VoteId.class)
 public class CrewRecommendVote {
     // 사용자 seq
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "crew_recommend_seq")
-    @JsonBackReference
-    private CrewRecommend crewRecommendSeq;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "crew_recommend_vote_seq")
+    private Long crewRecommendVoteSeq;
 
-    // 음식 seq
-    @Id
+    // crew_seq
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "food_seq")
-    @JsonBackReference
-    private Food food;
-
-    // 사용자 seq
-    @Id
+    @JoinColumn(name="crew_recommend_food_seq")
+    private CrewRecommendFood crewRecommendFood;
+    // crew_seq
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "member_seq")
-    @JsonBackReference
+    @JoinColumn(name="member_seq")
     private Member member;
 
     @Builder
-    public CrewRecommendVote(CrewRecommend crewRecommendSeq, Food food, Member member) {
-        this.crewRecommendSeq = crewRecommendSeq;
-        this.food = food;
+    public CrewRecommendVote(Long crewRecommendVoteSeq, CrewRecommendFood crewRecommendFood, Member member) {
+        this.crewRecommendVoteSeq = crewRecommendVoteSeq;
+        this.crewRecommendFood = crewRecommendFood;
         this.member = member;
     }
 }

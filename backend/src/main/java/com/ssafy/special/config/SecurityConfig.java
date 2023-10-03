@@ -60,7 +60,10 @@ public class SecurityConfig {
                         "/api/member/verification/email/code",
                         "/api/member/checkNickname",
                         "/api/member/checkEmail",
-                        "/api/weather"
+                        "/api/weather",
+                        "/api/member/login",
+                        "/api/jwt"
+
                 )
                 .permitAll() // 회원가입 접근 가능
                 .anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능

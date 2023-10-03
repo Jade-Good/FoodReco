@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FooterMypage } from "../../components/footer/FooterMypage";
 import { MemberInfo } from "../../components/membercomponents/MemberInfo";
 import HeaderLogo from "../../components/header/HeaderLogo";
 import classes from "./MyPage.module.css";
 import StyledButton from "../../styles/StyledButton";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const MyPage = () => {
   const navigate = useNavigate();
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_BASE_URL}/member/login`);
+  });
   return (
     <>
       <HeaderLogo />
