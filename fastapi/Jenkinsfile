@@ -7,7 +7,7 @@ stages {
             dir('fastapi'){
                 sh '''
                 echo 'Dockerimage build'
-                docker build --no-cache -t fastapi:0.1 .
+                docker build -t fastapi:0.1 .
                 '''
             }
         }
