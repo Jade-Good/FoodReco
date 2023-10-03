@@ -54,7 +54,7 @@ public class Crew {
 
     // 자신이 속한 crew member list
     @OneToMany(mappedBy = "crew")
-    private List<CrewMember> crewMembers = new ArrayList<>();
+    private List<CrewMember> crewMembers;
 
     @Builder
     public Crew(Long crewSeq, String name, String img, String status, LocalDateTime createdAt, LocalDateTime lastModifiedAt, List<CrewMember> crewMembers) {
