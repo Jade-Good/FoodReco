@@ -32,7 +32,7 @@ public class WeatherController {
 
     private final WeatherStatus weatherStatus;
 
-    @Value("{weather.service-key}")
+    @Value("${weather.service-key}")
     private String serviceKey;
 
     @GetMapping("/weather")
