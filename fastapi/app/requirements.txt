@@ -6,3 +6,4 @@ Levenshtein
 joblib
 pydantic
 uvloop
+openpyxl
