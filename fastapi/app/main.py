@@ -1,5 +1,4 @@
 from typing import Union, List
-from food import Food
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
@@ -7,6 +6,10 @@ from sklearn.metrics.pairwise import linear_kernel
 import Levenshtein
 from joblib import dump, load
 import logging
+from pydantic import BaseModel
+class Food(BaseModel):
+    foodSeq: int
+    name: str
 
 logging.basicConfig(level=logging.INFO)
 
