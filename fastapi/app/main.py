@@ -7,6 +7,7 @@ import Levenshtein
 from joblib import dump, load
 import logging
 from pydantic import BaseModel
+
 class Food(BaseModel):
     foodSeq: int
     name: str
