@@ -1,8 +1,9 @@
 FROM python:latest
 
+WORKDIR /app/
 
-COPY app/main.py /app
-COPY app/requirements.txt /app
+COPY ./main.py /app/
+COPY ./requirements.txt /app/
 
 RUN pip install -r requirements.txt
 
