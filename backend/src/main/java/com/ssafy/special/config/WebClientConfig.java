@@ -7,8 +7,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebClientConfig {
+
     @Value("${webclient.baseurl}")
     private String baseUrl;
+
     @Bean
     public WebClient webClient() {
         return WebClient.builder()
