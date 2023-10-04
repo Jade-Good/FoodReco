@@ -5,6 +5,7 @@ import { IoArrowRedoSharp } from "react-icons/io5";
 import { MdFavorite } from "react-icons/md";
 import { RiTimerFill } from "react-icons/ri";
 import axios from "axios";
+import styled, { css } from "styled-components";
 
 export const FoodButton = () => {
   const feedBack = (num: number) => {
@@ -47,39 +48,72 @@ export const FoodButton = () => {
   };
 
   return (
-    <div className={classes.buttons}>
-      <div
-        className={classes.circleTall}
+    <Buttons>
+      <CircleTall
         onClick={() => {
           feedBack(1);
         }}
       >
         <ImBlocked style={{ color: "#7D7B7B", fontSize: "4vh" }} />
-      </div>
-      <div
-        className={classes.circleLarge}
+      </CircleTall>
+      <CircleLarge
         onClick={() => {
           feedBack(2);
         }}
       >
         <IoArrowRedoSharp style={{ color: "#4D7EFF", fontSize: "7vh" }} />
-      </div>
-      <div
-        className={classes.circleLarge}
+      </CircleLarge>
+      <CircleLarge
         onClick={() => {
           feedBack(3);
         }}
       >
         <MdFavorite style={{ color: "#FF4747", fontSize: "7vh" }} />
-      </div>
-      <div
-        className={classes.circleTall}
+      </CircleLarge>
+      <CircleTall
         onClick={() => {
           feedBack(4);
         }}
       >
         <RiTimerFill style={{ color: "#C6C5C5", fontSize: "4vh" }} />
-      </div>
-    </div>
+      </CircleTall>
+    </Buttons>
   );
 };
+
+const CircleLarge = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 7vmax;
+  height: 7vmax;
+  border: #e7e7e7 0.5rem solid;
+  border-radius: 100%;
+  text-align: center;
+
+  padding: 1.5vmax;
+`;
+const CircleTall = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  width: 4vmax;
+  height: 4vmax;
+  border: #e7e7e7 0.5rem solid;
+  border-radius: 100%;
+  /* line-height: 4.2vmax; */
+
+  padding: 1vmax;
+`;
+const Buttons = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 0 10vw;
+
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 15vh;
+`;

@@ -56,7 +56,10 @@ export const MemberRecommendation = () => {
     <div style={{ overflow: "hidden", paddingTop: "24vmin" }}>
       <HeaderQuestion />
 
-      <FoodCard foodImg={foodList[foodIdx].img} foodName={foodList[foodIdx].recommendedFoodName} />
+      <FoodCard
+        foodImg={foodList[foodIdx].img}
+        foodName={foodList[foodIdx].recommendedFoodName}
+      />
 
       <FoodDetail foodName={foodList[foodIdx].recommendedFoodName} />
 
