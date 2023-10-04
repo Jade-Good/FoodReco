@@ -52,10 +52,7 @@ const App = () => {
               {/* 마이페이지 수정페이지 */}
               <Route path="/mypage/edit/:memberId" element={<MyPageEdit />} />
               {/* 개인 메뉴 추천페이지 */}
-              <Route
-                path="/recommendation/:memberId"
-                element={<MemberRecommendation />}
-              />
+              <Route path="/recommendation/:memberId" element={<MemberRecommendation />} />
               {/* 자기 친구목록 페이지 */}
               <Route path="/friend/:memberId" element={<FriendList />} />
               {/* 친구 초대QR 초대하는사람의 ID, 초대받는사람의 ID 두개가 필요할까 고민*/}
@@ -69,10 +66,7 @@ const App = () => {
               {/* 그룹초대 QR */}
               <Route path="/crew/invite/:crewId" element={<CrewInvite />} />
               {/* 그룹메뉴추천페이지 */}
-              <Route
-                path="/crewrecommendation/:crewId"
-                element={<CrewRecommendation />}
-              />
+              <Route path="/crewrecommendation/:crewId" element={<CrewRecommendation />} />
               <Route path="/test" element={<Test />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
