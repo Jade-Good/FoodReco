@@ -6,6 +6,7 @@ import classes from "./MyPage.module.css";
 import StyledButton from "../../styles/StyledButton";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from "../../utils/axios";
 
 export const MyPage = () => {
   const navigate = useNavigate();
@@ -28,18 +29,21 @@ export const MyPage = () => {
       })
       .catch((err) => {
         console.log(err);
+        console.log(err.response.status);
       });
-  });
+  }, []);
   return (
     <>
       <HeaderLogo />
       <div
         style={{
+          height: "60vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "column",
           marginTop: "10rem",
+          overflow: "scroll",
         }}
       >
         <div
@@ -83,7 +87,7 @@ export const MyPage = () => {
         </div>
         <br />
         <StyledButton
-          width="20.5vw"
+          width="50vw"
           background="#FFF6EC"
           color="#FE9D3A"
           border="1px solid #FE9D3A"

@@ -22,7 +22,6 @@ export const Main: React.FC = () => {
 
   return (
     <>
-      <Login />
       <FooterHome />
     </>
   );

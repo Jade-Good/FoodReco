@@ -54,14 +54,14 @@ export const Login = () => {
         theme: "colored",
       });
     } else {
-      api
+      axios
         .post(
           `${process.env.REACT_APP_BASE_URL}/member/login`,
 
-          { email: email, password: password }
-          // {
-          //   headers: { 'Content-Type': `application/json` },
-          // }
+          { email: email, password: password },
+          {
+            headers: { "Content-Type": `application/json` },
+          }
         )
         .then((res) => {
           console.log(data);

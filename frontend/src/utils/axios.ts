@@ -32,7 +32,7 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.log("error", error);
+    console.error("error", error);
     const originalRequest = error.config;
 
     // 응답 상태 코드가 401인 경우, 리프레시 토큰을 사용하여 액세스 토큰을 갱신합니다.
@@ -78,7 +78,7 @@ api.interceptors.response.use(
           });
 
         // 이전 요청을 복원하고 새로운 액세스 토큰을 사용하여 다시 요청합니다.
-        originalRequest.headers.Authorization = `Bearer ${user.accessToken}`;
+        // originalRequest.headers.Authorization = `Bearer ${user.accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
         // 리프레시 토큰을 사용하여 액세스 토큰을 갱신하는 과정에서 오류가 발생한 경우, 처리할 내용을 추가로 구현합니다.
