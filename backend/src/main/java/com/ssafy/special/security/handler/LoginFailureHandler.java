@@ -1,5 +1,7 @@
 package com.ssafy.special.security.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.special.dto.response.LoginResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -19,8 +21,13 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
                                         AuthenticationException exception) throws IOException {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/plain;charset=UTF-8");
-        response.getWriter().write("로그인 실패! 이메일이나 비밀번호를 확인해주세요.");
+        response.setContentType("application/json;charset=UTF-8");
+        LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                .status(404)
+                .message("로그인 실패! 이메일이나 비밀번호를 확인해주세요.")
+                .build();
+        // 객체를 JSON으로 변환
+        response.getWriter().write(new ObjectMapper().writeValueAsString(loginResponseDto));
         log.info("로그인에 실패했습니다. 메시지 : {}", exception.getMessage());
     }
 }

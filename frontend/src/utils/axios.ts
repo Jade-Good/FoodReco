@@ -32,6 +32,7 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
+    console.error("error", error);
     const originalRequest = error.config;
 
     // 응답 상태 코드가 401인 경우, 리프레시 토큰을 사용하여 액세스 토큰을 갱신합니다.
@@ -44,13 +45,13 @@ api.interceptors.response.use(
 
       try {
         const [user, setUser] = useRecoilState(userState);
-        const email = user.email;
-        const refreshToken = user.refreshToken;
+        // const email = user.email;
+        const refreshToken = localStorage.getItem("refreshToken");
         axios
           .post(
             `${process.env.REACT_APP_BASE_URL}/member/login`,
 
-            { email: email, refreshToken: refreshToken }
+            { refreshToken: refreshToken }
           )
           .then((res) => {
             const accessToken = res.headers.authorization;
@@ -59,8 +60,9 @@ api.interceptors.response.use(
             // axios.defaults.headers.common[
             //   "Authorization"
             // ] = `Bearer ${accessToken}`;
-            // localStorage.setItem("accesstoken", accessToken);
-            // localStorage.setItem("refreshtoken", refreshToken);
+            localStorage.setItem("accesstoken", accessToken);
+            localStorage.setItem("refreshtoken", refreshToken);
+
             axios.defaults.headers.common[
               "Authorization"
             ] = `Bearer ${accessToken}`;
@@ -76,7 +78,7 @@ api.interceptors.response.use(
           });
 
         // 이전 요청을 복원하고 새로운 액세스 토큰을 사용하여 다시 요청합니다.
-        originalRequest.headers.Authorization = `Bearer ${user.accessToken}`;
+        // originalRequest.headers.Authorization = `Bearer ${user.accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
         // 리프레시 토큰을 사용하여 액세스 토큰을 갱신하는 과정에서 오류가 발생한 경우, 처리할 내용을 추가로 구현합니다.

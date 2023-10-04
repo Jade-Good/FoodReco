@@ -54,14 +54,14 @@ export const Login = () => {
         theme: "colored",
       });
     } else {
-      api
+      axios
         .post(
           `${process.env.REACT_APP_BASE_URL}/member/login`,
 
-          { email: email, password: password }
-          // {
-          //   headers: { 'Content-Type': `application/json` },
-          // }
+          { email: email, password: password },
+          {
+            headers: { "Content-Type": `application/json` },
+          }
         )
         .then((res) => {
           console.log(data);
@@ -74,8 +74,8 @@ export const Login = () => {
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
-          // localStorage.setItem("accesstoken", accessToken);
-          // localStorage.setItem("refreshtoken", refreshToken);
+          localStorage.setItem("accesstoken", accessToken);
+          localStorage.setItem("refreshtoken", refreshToken);
 
           setUser((prevUser) => ({
             ...prevUser,
@@ -221,7 +221,18 @@ export const Login = () => {
           회원가입
         </p>
       </div>
-      <ToastContainer />
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };

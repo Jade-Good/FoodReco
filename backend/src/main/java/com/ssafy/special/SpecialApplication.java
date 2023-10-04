@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.client.RestTemplate;
 
+@CrossOrigin("*")
 @EnableScheduling
 @SpringBootApplication
 public class SpecialApplication {

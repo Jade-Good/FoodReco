@@ -26,9 +26,16 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <script
+      type="text/javascript"
+      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=%REACT_APP_KAKAO_MAP_JS_APP_KEY%&libraries=services,clusterer,drawing"
+    ></script>
     <title>FoodReco</title>
   </head>
   <body>
+    <script>
+      console.log(location.origin);
+    </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--

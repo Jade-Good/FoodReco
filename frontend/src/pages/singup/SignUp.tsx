@@ -172,6 +172,17 @@ export const SignUp = () => {
   };
 
   //좋아하는 음식 선택
+  const toggleAllergyFood = (food: string) => {
+    if (allergyFood.includes(food)) {
+      // 음식이 이미 좋아요 목록에 있는 경우, 제거합니다.
+      setAllergyFood(allergyFood.filter((item) => item !== food));
+    } else {
+      // 음식이 좋아요 목록에 없는 경우, 추가합니다.
+      setAllergyFood([...allergyFood, food]);
+    }
+  };
+
+  //좋아하는 음식 선택
   const toggleLikeFood = (food: string) => {
     if (likefood.includes(food)) {
       // 음식이 이미 좋아요 목록에 있는 경우, 제거합니다.
@@ -239,9 +250,9 @@ export const SignUp = () => {
       activity,
       passwordconfirm,
       time,
-      likefood,
-      unlikeFood,
-      allergyFood,
+      // likefood,
+      // unlikeFood,
+      // allergyFood,
     } = data;
     const ages = parseInt(age.slice(0, 2));
     const walkingRate = exerciseRates[activity][time];
@@ -256,9 +267,9 @@ export const SignUp = () => {
       height: height,
       favoriteList: likefood,
       hateList: unlikeFood,
-      allergy: allergyFood,
+      allergyList: allergyFood,
     };
-    console.log(datas);
+    console.log("datas", datas);
     if (errors.email || errors.nickname || errors.password) {
       console.log(errors);
     } else {
@@ -892,7 +903,7 @@ export const SignUp = () => {
                       theme: "colored",
                     });
                   } else {
-                    if (progress < 5) {
+                    if (progress < 6) {
                       setProgress((prevProgress) => prevProgress + 1);
                     }
                   }
@@ -922,7 +933,7 @@ export const SignUp = () => {
                 <CustomToggleButton
                   value="check"
                   selected={allergyFood.includes(food)} // 버튼 선택 상태는 좋아요 목록에 음식이 있는지 여부에 따라 결정됩니다.
-                  onClick={() => toggleLikeFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
+                  onClick={() => toggleAllergyFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
                   key={index}
                 >
                   # {food}
@@ -958,19 +969,9 @@ export const SignUp = () => {
                 background="#FE9D3A"
                 radius="10px"
                 onClick={() => {
-                  if (progress > 0 && likefood.length >= 5) {
+                  if (progress < 5) {
+                    console.log(progress);
                     setProgress((prevProgress) => prevProgress + 1);
-                  } else {
-                    toast.warn("최소 5개 이상의 음식을 선택해주세요", {
-                      position: "top-center",
-                      autoClose: 1000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                      theme: "colored",
-                    });
                   }
                 }}
               >
@@ -1180,6 +1181,18 @@ export const SignUp = () => {
           다음
         </StyledButton> */}
       {/* </div> */}
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };
