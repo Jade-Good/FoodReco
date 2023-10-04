@@ -11,7 +11,9 @@ interface FoodCardInfo {
 export const FoodCard: React.FC<FoodCardInfo> = ({ foodImg, foodName }) => {
   // 드래그 상태, 왼쪽|오른쪽|중앙 상태, x 좌표
   const [isDragging, setIsDragging] = useState(false);
-  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | "">("");
+  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | "">(
+    ""
+  );
   const [posX, setPosX] = useState(window.innerWidth / 2);
   const [startX, setStartX] = useState(0);
 
@@ -68,7 +70,10 @@ export const FoodCard: React.FC<FoodCardInfo> = ({ foodImg, foodName }) => {
   );
   // 투명도 계산
   const opacity = Math.min(
-    Math.max(minOpacity + (maxOpacity - minOpacity) * (1 - Math.abs(posX / maxX)), minOpacity),
+    Math.max(
+      minOpacity + (maxOpacity - minOpacity) * (1 - Math.abs(posX / maxX)),
+      minOpacity
+    ),
     maxOpacity
   );
 
