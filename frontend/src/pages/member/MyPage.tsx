@@ -56,7 +56,11 @@ export const MyPage = () => {
       const response = await axios.patch(
         `${process.env.REACT_APP_BASE_URL}/google/auth`,
         { exchangeToken: code },
-        { headers: { "Content-Type": "application/json" } },
+        {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        },
       );
       console.log(response.data);
     } catch (error) {
