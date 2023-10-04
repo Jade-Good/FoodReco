@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,11 +58,26 @@ public class CrewService {
         // 회원이 속한 모든 크루를 가져옵니다.
         List<CrewDto> crews = new ArrayList<>();
         for (CrewMember c:member.getCrewMembers()) {
+            Crew memberCrew = c.getCrew();
+            int cnt = 0;
+            for(CrewMember m : memberCrew.getCrewMembers()){
+                if(m.getStatus()!=-1){cnt++;}
+            }
+            CrewRecommend crewRecommend = crewRecommendRepository.findFirstByCrewOrderByRecommendAtDesc(memberCrew);
+            LocalDateTime startDateTime = crewRecommend.getRecommendAt();
+
+            // LocalDate로 변환
+            LocalDate startDate = startDateTime.toLocalDate();
+            LocalDate endDate = LocalDate.now();
+            // 날짜 차이 계산
+            Long daysDifference = ChronoUnit.DAYS.between(startDate, endDate);
             CrewDto crew = CrewDto.builder()
                     .crewSeq(c.getCrew().getCrewSeq())
                     .name(c.getCrew().getName())
                     .img(c.getCrew().getImg())
                     .status(c.getStatus()==0?"미반응":(c.getStatus()==-1?"거절":"수락"))
+                    .crewCnt(cnt)
+                    .recentRecommend(daysDifference)
                     .build();
             crews.add(crew);
         }
