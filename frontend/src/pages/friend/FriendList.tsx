@@ -1,11 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FooterFriend } from "../../components/footer/FooterFriend";
 import HeaderFriendAdd from "../../components/header/HeaderFriendAdd";
 import { Friend } from "../../components/friend/Friend";
 import { FriendInviteModal } from "../../components/friend/FriendInviteModal";
 import "../../components/friend/Friend.module.css";
+import axios from "axios";
+import api from "../../utils/axios";
 
 export const FriendList = () => {
+  const [friendList, setFriendList] = useState<
+    { memberNickname: string; memberImg: string }[]
+  >([]);
+  useEffect(() => {
+    api
+      .get(`${process.env.REACT_APP_BASE_URL}/member/friend/list`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setFriendList(res.data.friendList);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  console.log(friendList);
   let arr = [
     "김인아",
     "고인원",
@@ -49,8 +69,14 @@ export const FriendList = () => {
     <>
       <HeaderFriendAdd exitModal={modalOn} />
       <div style={{ margin: "5.5rem 0", overflow: "hidden" }}>
-        {arr.map((name, i) => {
-          return <Friend name={name} key={i} />;
+        {friendList.map((friend, i) => {
+          return (
+            <Friend
+              name={friend.memberNickname}
+              imgUrl={friend.memberImg}
+              key={i}
+            />
+          );
         })}
       </div>
       <FooterFriend />

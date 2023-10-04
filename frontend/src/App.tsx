@@ -57,10 +57,6 @@ const App = () => {
             <Routes>
               {/* 메인페이지 */}
               <Route path="/" element={isLogin ? <Main /> : <Login />} />
-<<<<<<< HEAD
-=======
-
->>>>>>> 4e39b76110915e2c635d9b4d63e15ec29e94ff64
               {/* 로그인페이지 */}
               <Route path="/login" element={<Login />} />
 
