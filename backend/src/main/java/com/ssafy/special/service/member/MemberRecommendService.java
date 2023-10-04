@@ -152,7 +152,6 @@ public class MemberRecommendService {
 //        상세보기, 좋아요가 아니면서 마지막 추천 음식이 아닌 경우
         if ((feedback != 3 || feedback != 4) && !isLast) {
             Food nextFood = foodRepository.findFoodByFoodSeq(nextFoodSeq);
-            log.info("다음 음식 추천로그 추가");
             MemberRecommend memberRecommend1 = MemberRecommend.builder()
                     .member(memberOptional.get())
                     .food(nextFood)
@@ -162,6 +161,7 @@ public class MemberRecommendService {
                     .foodRating(1)
                     .build();
             memberRecommendRepository.save(memberRecommend1);
+            log.info("다음 음식 추천 히스토리 추가 완료");
         }
 //        피드백 반영
 //        패스할때 이전에 상세보기였는지, 좋아요였는지,
