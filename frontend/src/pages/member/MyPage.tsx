@@ -7,6 +7,8 @@ import StyledButton from "../../styles/StyledButton";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import api from "../../utils/axios";
+import { useRecoilState } from "recoil";
+import { userState } from "../../recoil/atoms/userState";
 
 export const MyPage = () => {
   const navigate = useNavigate();
@@ -15,17 +17,22 @@ export const MyPage = () => {
   const [nickname, setNickname] = useState("");
   const [activity, setActivicty] = useState(0);
   const [profileURL, setProfileURL] = useState("");
+  const [user, setUser] = useRecoilState(userState);
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`)
+      .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      })
       .then((res) => {
         console.log(res);
-        setHeight(res.data.height);
-        setWeight(res.data.weight);
-        setNickname(res.data.nickname);
-        setActivicty(res.data.activity);
-        setProfileURL(res.data.profileUrl);
+        setHeight(res.data.memberDetailDto.height);
+        setWeight(res.data.memberDetailDto.weight);
+        setNickname(res.data.memberDetailDto.nickname);
+        setActivicty(res.data.memberDetailDto.activity);
+        setProfileURL(res.data.memberDetailDto.profileUrl);
       })
       .catch((err) => {
         console.log(err);
@@ -49,7 +56,7 @@ export const MyPage = () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/google/auth`,
-        new URLSearchParams(code),
+        new URLSearchParams(code)
       );
       console.log(response.data);
     } catch (error) {
@@ -66,8 +73,7 @@ export const MyPage = () => {
   }, [code, fetchAccessToken]);
 
   const handleGoogleAuth = () => {
-    window.location.href =
-      "https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline&redirect_uri=http://localhost:3000/mypage/1&response_type=code&client_id=195561660115-6gse0lsa1ggdm3t9jplps3sodm7e735n.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.nutrition.read https://www.googleapis.com/auth/fitness.sleep.read";
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline&redirect_uri=${process.env.REACT_APP_BASE_URL}/mypage/1&response_type=code&client_id=195561660115-6gse0lsa1ggdm3t9jplps3sodm7e735n.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.nutrition.read https://www.googleapis.com/auth/fitness.sleep.read`;
     fetchAccessToken();
   };
 

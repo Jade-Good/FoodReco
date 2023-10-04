@@ -19,15 +19,15 @@ import BasicSelect from "../../components/option/BasicSelect";
 import { useNavigate } from "react-router-dom";
 import StyledBasicInputUnit from "../../components/inputs/StyledBasicInputUnit";
 import { toast } from "react-toastify";
+import { useRecoilState } from "recoil";
+import { userState } from "../../recoil/atoms/userState";
 
 interface IForm {
   image: FileList | null;
   profileImg: string | File | null;
   nickname: string;
-  age: string;
-  sex: string;
-  height: number | undefined;
-  weight: number | undefined;
+  height: string | number | undefined;
+  weight: string | number | undefined;
   activity: string;
   time: number;
 }
@@ -41,13 +41,44 @@ interface ExerciseRates {
 export const MyPageEdit = () => {
   const navigate = useNavigate();
 
-  const ageList = ["10대", "20대", "30대", "40대", "50대", "60대", "70대이상"];
-  const sexList = ["남자", "여자"];
   const activityList = ["운동안함", "걷기", "헬스", "수영", "자전거"];
   const timeList = [0.5, 1, 1.5, 2, 2.5, 3];
   // 걷기 1시간 6750 , 헬스 1시간 14700, 수영: 12850, 자전거:11050
   const [imageURL, setImageURL] = useState<string | undefined>();
 
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [activity, setActivicty] = useState(0);
+  const [profileURL, setProfileURL] = useState("");
+  const [user, setUser] = useRecoilState(userState);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setHeight(res.data.memberDetailDto.height);
+        setWeight(res.data.memberDetailDto.weight);
+        setNickname(res.data.memberDetailDto.nickname);
+        setActivicty(res.data.memberDetailDto.activity);
+        setProfileURL(res.data.memberDetailDto.profileUrl);
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log(err.response.status);
+      });
+  }, []);
+
+  useEffect(() => {
+    setValue("nickname", nickname);
+    setValue("height", height);
+    setValue("weight", weight);
+  }, [nickname, height, weight]);
   // let imageURL: string;
 
   // if (profileImageFile) {
@@ -102,17 +133,17 @@ export const MyPageEdit = () => {
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
+    setValue,
     // getValues,
     watch,
   } = useForm<IForm>({
     mode: "onSubmit",
     defaultValues: {
       image: null,
-      nickname: "",
-      age: "",
-      sex: "",
-      height: undefined,
-      weight: undefined,
+      nickname: nickname,
+
+      height: height,
+      weight: weight,
       activity: "",
       time: undefined,
     },
@@ -139,22 +170,23 @@ export const MyPageEdit = () => {
     console.log(data);
     const formData = new FormData();
 
-    const { image, nickname, age, sex, height, weight, activity, time } = data;
-    const ages = parseInt(age.slice(0, 2));
+    const { image, nickname, height, weight, activity, time } = data;
+
     const walkingRate = exerciseRates[activity][time];
     let imgURL = null;
+    let imgFile = null;
     if (image && image.length > 0) {
-      const file = image[0]; // FileList에서 첫 번째 파일을 가져옵니다.
+      imgFile = image[0]; // FileList에서 첫 번째 파일을 가져옵니다.
       // formData.append("img", file); // 파일을 FormData에 추가합니다.
-      imgURL = URL.createObjectURL(file); // 이미지 URL을 생성합니다.
+      imgURL = URL.createObjectURL(imgFile); // 이미지 URL을 생성합니다.
     }
 
     const datas = {
-      img: imgURL,
+      img: imgFile,
       nickname: nickname,
-      sex: sex,
+
       activity: walkingRate,
-      age: ages,
+
       weight: weight,
       height: height,
     };
@@ -265,34 +297,6 @@ export const MyPageEdit = () => {
           </div>
 
           <div className={classes.mB}>
-            <div className={classes.labelContainer}>
-              <div>
-                <label className={classes.labelStyle} htmlFor="age">
-                  연령
-                </label>
-
-                <BasicSelect
-                  control={control}
-                  {...register("age")}
-                  name="age"
-                  label="age"
-                  options={ageList}
-                />
-              </div>
-              <div>
-                <label className={classes.labelStyle} htmlFor="sex">
-                  성별
-                </label>
-
-                <BasicSelect
-                  control={control}
-                  {...register("sex")}
-                  name="sex"
-                  label="sex"
-                  options={sexList}
-                />
-              </div>
-            </div>
             <div className={classes.labelContainer}>
               <div>
                 <label className={classes.labelStyle} htmlFor="height">
