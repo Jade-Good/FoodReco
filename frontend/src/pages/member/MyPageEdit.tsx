@@ -21,9 +21,10 @@ import StyledBasicInputUnit from "../../components/inputs/StyledBasicInputUnit";
 import { toast } from "react-toastify";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atoms/userState";
+import api from "../../utils/axios";
 
 interface IForm {
-  image: FileList | null;
+  image: FileList | string | null;
   profileImg: string | File | null;
   nickname: string;
   height: string | number | undefined;
@@ -54,14 +55,14 @@ export const MyPageEdit = () => {
   const [user, setUser] = useRecoilState(userState);
 
   useEffect(() => {
-    axios
+    api
       .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setHeight(res.data.memberDetailDto.height);
         setWeight(res.data.memberDetailDto.weight);
         setNickname(res.data.memberDetailDto.nickname);
@@ -70,7 +71,7 @@ export const MyPageEdit = () => {
       })
       .catch((err) => {
         console.log(err);
-        console.log(err.response.status);
+        // console.log(err.response.status);
       });
   }, []);
 
@@ -78,7 +79,8 @@ export const MyPageEdit = () => {
     setValue("nickname", nickname);
     setValue("height", height);
     setValue("weight", weight);
-  }, [nickname, height, weight]);
+    setValue("image", profileURL);
+  }, [nickname, height, weight, profileURL]);
   // let imageURL: string;
 
   // if (profileImageFile) {
@@ -126,6 +128,14 @@ export const MyPageEdit = () => {
       2.5: 55250,
       3: 66300,
     },
+    운동안함: {
+      0.5: 0,
+      1: 0,
+      1.5: 0,
+      2: 0,
+      2.5: 0,
+      3: 0,
+    },
   };
 
   const {
@@ -150,8 +160,13 @@ export const MyPageEdit = () => {
   });
 
   const profileImage = watch("image");
+
   useEffect(() => {
-    if (profileImage && profileImage.length > 0) {
+    if (
+      profileImage &&
+      profileImage.length > 0 &&
+      profileImage[0] instanceof File
+    ) {
       const file = profileImage[0];
       setImageURL(URL.createObjectURL(file));
     } else {
@@ -167,7 +182,6 @@ export const MyPageEdit = () => {
 
   // 회원가입 로직
   const handleEdit: SubmitHandler<IForm> = (data) => {
-    console.log(data);
     const formData = new FormData();
 
     const { image, nickname, height, weight, activity, time } = data;
@@ -175,7 +189,7 @@ export const MyPageEdit = () => {
     const walkingRate = exerciseRates[activity][time];
     let imgURL = null;
     let imgFile = null;
-    if (image && image.length > 0) {
+    if (image && image.length > 0 && image[0] instanceof File) {
       imgFile = image[0]; // FileList에서 첫 번째 파일을 가져옵니다.
       // formData.append("img", file); // 파일을 FormData에 추가합니다.
       imgURL = URL.createObjectURL(imgFile); // 이미지 URL을 생성합니다.
@@ -184,16 +198,18 @@ export const MyPageEdit = () => {
     const datas = {
       img: imgFile,
       nickname: nickname,
-
       activity: walkingRate,
-
       weight: weight,
       height: height,
     };
-    formData.append("request", new Blob([JSON.stringify(datas)]));
+    formData.append(
+      "request",
+      new Blob([JSON.stringify(datas)], { type: "application/json" })
+    );
     console.log(datas);
+
     if (errors.nickname) {
-      console.log(errors);
+      // console.log(errors);
       toast.error("정보를 다시 확인해주세요!", {
         position: "top-center",
         autoClose: 1000,
@@ -205,15 +221,23 @@ export const MyPageEdit = () => {
         theme: "colored",
       });
     } else {
-      axios
-        .patch(`${process.env.REACT_APP_BASE_URL}/mypage/info`, formData, {
+      // console.log("sdfasdf");
+      api
+        .patch(`http://192.168.31.134:8080/api/mypage/info`, datas, {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         })
+        // .patch(`${process.env.REACT_APP_BASE_URL}/mypage/info`, formData, {
+        //   headers: {
+        //     "Content-Type": "multipart/form-data",
+        //     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        //   },
+        // })
         .then((res) => {
           console.log(res);
-          navigate("/signup/complete");
+          navigate("/mypage");
           // alert("회원가입이 완료되었습니다!")
         })
         .catch((error) => {
