@@ -1,7 +1,7 @@
 package com.ssafy.special.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ssafy.special.service.member.GoogleAuthService;
+import com.ssafy.special.service.member.MemberGoogleAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,16 +17,15 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/google")
-public class GoogleOauthController {
-    private final GoogleAuthService googleAuthService;
+public class MemberGoogleOauthController {
+    private final MemberGoogleAuthService memberGoogleAuthService;
     @PatchMapping("/auth")
     public ResponseEntity<?> getAuthTokens(@RequestBody Map<String, String> exchangeToken) {
         String memberEmail = getEmail();
 
         try{
-            String tokens = googleAuthService.getAccessTokens(memberEmail, exchangeToken.get("exchangeToken"));
-            googleAuthService.storeAuthTokens(memberEmail, tokens);
-            googleAuthService.getActivityFromGoogle(memberEmail);
+            String tokens = memberGoogleAuthService.getAccessTokens(memberEmail, exchangeToken.get("exchangeToken"));
+            memberGoogleAuthService.storeRefreshToken(memberEmail, tokens);
             return ResponseEntity.ok().body("완료");
         }catch (EntityNotFoundException e){
             return ResponseEntity.badRequest().body(e.getMessage());
