@@ -57,7 +57,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors()
-                .configurationSource(corsConfigurationSource()) // <-- CORS 구성 소스 지정
                 .and()
                 .formLogin().disable() // FormLogin 사용 X
                 .httpBasic().disable() // httpBasic 사용 X
