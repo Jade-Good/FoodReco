@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 import React, { useEffect, useState } from "react";
+=======
+import React, { useEffect, useCallback } from "react";
+>>>>>>> Stashed changes
 import { FooterMypage } from "../../components/footer/FooterMypage";
 import { MemberInfo } from "../../components/membercomponents/MemberInfo";
 import HeaderLogo from "../../components/header/HeaderLogo";
@@ -10,6 +14,7 @@ import api from "../../utils/axios";
 
 export const MyPage = () => {
   const navigate = useNavigate();
+<<<<<<< Updated upstream
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [nickname, setNickname] = useState("");
@@ -32,6 +37,45 @@ export const MyPage = () => {
         console.log(err.response.status);
       });
   }, []);
+=======
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get("code");
+
+  // useEffect(() => {
+  //   axios.get(`${process.env.REACT_APP_BASE_URL}/member/login`);
+  // });
+
+  const fetchAccessToken = useCallback(async () => {
+    if (!code) {
+      console.log("코드 못읽어옴");
+      return; // code가 없으면 함수를 종료합니다.
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/google/auth`,
+        new URLSearchParams(code),
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(code);
+
+      console.error("Error:", error);
+    }
+  }, [code]);
+
+  useEffect(() => {
+    // console.log(code);
+
+    fetchAccessToken();
+  }, [code, fetchAccessToken]);
+
+  const handleGoogleAuth = () => {
+    window.location.href =
+      "https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline&redirect_uri=http://localhost:3000/mypage/1&response_type=code&client_id=195561660115-6gse0lsa1ggdm3t9jplps3sodm7e735n.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.nutrition.read https://www.googleapis.com/auth/fitness.sleep.read";
+    fetchAccessToken();
+  };
+>>>>>>> Stashed changes
   return (
     <>
       <HeaderLogo />
@@ -91,10 +135,7 @@ export const MyPage = () => {
           background="#FFF6EC"
           color="#FE9D3A"
           border="1px solid #FE9D3A"
-          onClick={() =>
-            (window.location.href =
-              "https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=https://j9b102.p.ssafy.io/test&prompt=consent&response_type=code&client_id=195561660115-6gse0lsa1ggdm3t9jplps3sodm7e735n.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.nutrition.read https://www.googleapis.com/auth/fitness.sleep.read")
-          }
+          onClick={handleGoogleAuth}
         >
           구글 연동하기 : Fitness
         </StyledButton>

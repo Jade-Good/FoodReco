@@ -2,6 +2,8 @@ package com.ssafy.special.controller;
 
 import com.ssafy.special.dto.request.FeedbackDto;
 import com.ssafy.special.dto.response.RecommendFoodResultDto;
+import com.ssafy.special.dto.response.WeatherStatus;
+import com.ssafy.special.service.member.GoogleAuthService;
 import com.ssafy.special.service.crew.CrewRecommendService;
 import com.ssafy.special.service.member.MemberRecommendService;
 import com.ssafy.special.util.SecurityUtils;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequestMapping("/api/recommend")
 public class MemberRecommendController {
     private final MemberRecommendService memberRecommendService;
+    private final GoogleAuthService googleAuthService;
     private final CrewRecommendService crewRecommendService;
     private final SecurityUtils securityUtils;
 
@@ -44,6 +47,7 @@ public class MemberRecommendController {
     public ResponseEntity<?> personalRecommendation(){
         String memberEmail = securityUtils.getEmail();
         try {
+            googleAuthService.getActivityFromGoogle(memberEmail);
             List<RecommendFoodResultDto> recommendFoodDtoList = memberRecommendService.recommendFood(memberEmail);
             log.info("추천 완료");
             return ResponseEntity.ok().body(recommendFoodDtoList);
