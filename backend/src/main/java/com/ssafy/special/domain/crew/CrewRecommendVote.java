@@ -8,7 +8,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Getter
+@Data
 @Entity(name = "crew_recommend_vote")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CrewRecommendVote {

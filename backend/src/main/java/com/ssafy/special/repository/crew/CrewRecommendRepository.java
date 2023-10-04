@@ -10,5 +10,7 @@ import java.util.List;
 
 @Repository
 public interface CrewRecommendRepository extends JpaRepository<CrewRecommend, Long> {
-    List<CrewRecommend> findAllByCrew(Crew crew);
+    List<CrewRecommend> findAllByCrewOrderByRecommendAtDesc(Crew crew);
+
+    CrewRecommend findByCrewRecommendSeq(Long crewRecommendSeq);
 }

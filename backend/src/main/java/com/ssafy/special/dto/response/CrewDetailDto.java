@@ -12,17 +12,20 @@ public class CrewDetailDto {
     private String crewImg;
     private String crewStatus;
     private String memberStatus;
+    private String memberCheckVote;
     private List<CrewMembersDto> crewMembers;
     private List<CrewRecommendHistoryDto> histories;
+    private VoteRecommendDto voteRecommend;
     @Builder
-
-    public CrewDetailDto(Long crewSeq, String crewName, String crewImg, String crewStatus, String memberStatus, List<CrewMembersDto> crewMembers, List<CrewRecommendHistoryDto> histories) {
+    public CrewDetailDto(Long crewSeq, String crewName, String crewImg, String crewStatus, String memberStatus, String memberCheckVote, List<CrewMembersDto> crewMembers, List<CrewRecommendHistoryDto> histories, VoteRecommendDto voteRecommend) {
         this.crewSeq = crewSeq;
         this.crewName = crewName;
         this.crewImg = crewImg;
         this.crewStatus = crewStatus;
         this.memberStatus = memberStatus;
+        this.memberCheckVote = memberCheckVote;
         this.crewMembers = crewMembers;
         this.histories = histories;
+        this.voteRecommend = voteRecommend;
     }
 }

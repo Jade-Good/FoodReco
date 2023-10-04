@@ -1,22 +1,26 @@
 package com.ssafy.special.dto.response;
 
-import com.ssafy.special.domain.food.Food;
-import com.ssafy.special.domain.member.Member;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RecommendFoodDto {
-    private Member member;
-    private List<Food> recommendFoods;
+    Long foodSeq;
+    Double similarity;
+    String name;
+    Double nameSimilarity;
+    String originName;
 
     @Builder
-    public RecommendFoodDto(Member member, List<Food> recommendFoods) {
-        this.member = member;
-        this.recommendFoods = recommendFoods;
+    public RecommendFoodDto(Long foodSeq, Double similarity, String name, Double nameSimilarity, String originName){
+        this.foodSeq = foodSeq;
+        this.similarity = similarity;
+        this.name = name;
+        this.nameSimilarity = nameSimilarity;
+        this.originName = originName;
+
     }
 }
