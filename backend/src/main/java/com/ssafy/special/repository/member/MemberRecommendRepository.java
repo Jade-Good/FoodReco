@@ -1,5 +1,6 @@
 package com.ssafy.special.repository.member;
 
+import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.domain.member.MemberRecommend;
 import com.ssafy.special.dto.RecentRecommendFoodDto;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ public interface MemberRecommendRepository extends JpaRepository<MemberRecommend
     List<RecentRecommendFoodDto>
     findRecentlyRecommendedFood(@Param("memberSeq") Long memberSeq, @Param("now")LocalDateTime now);
 
+    List<MemberRecommend> findAllByMemberOrderByRecommendAtDesc(Member member);
 //    테스트용
 //    @Query("SELECT mr.food.foodSeq, mr.food.name FROM member_recommend mr WHERE mr.member.memberSeq = :memberSeq AND DATEDIFF(:now, mr.recommendAt) < 7 and DATEDIFF(:now, mr.recommendAt) > 7 AND mr.foodRating > 0 ORDER BY mr.foodRating DESC, mr.recommendAt DESC")
 //    List<RecentRecommendFoodDto>
