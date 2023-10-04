@@ -46,7 +46,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://j9b102.p.ssafy.io"));  // 허용할 출처 지정
         configuration.setExposedHeaders(Arrays.asList("Authorization","Authorizationrefresh"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS")); // 허용할 HTTP 메서드 지정
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS","PATCH")); // 허용할 HTTP 메서드 지정
         configuration.setAllowedHeaders(Arrays.asList("*"));  // 허용할 헤더
         configuration.setAllowCredentials(true);  // 쿠키 및 자격 증명 허용
 
