@@ -49,7 +49,7 @@ public class GoogleAuthService {
         requestBody.add("client_secret", "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");
         requestBody.add("code", code);
         requestBody.add("grant_type", "authorization_code");
-        requestBody.add("redirect_uri", "http://localhost:3000/mypage/1");
+        requestBody.add("redirect_uri", "https://j9b102.p.ssafy.io/mypage/1");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
