@@ -4,14 +4,14 @@ package com.ssafy.special.controller;
 import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.request.UserInfoUpdateDto;
 import com.ssafy.special.dto.response.MemberDetailDto;
-import com.ssafy.special.dto.response.WeatherStatus;
 import com.ssafy.special.service.food.FoodService;
 import com.ssafy.special.service.member.MemberService;
-import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -27,7 +27,6 @@ public class MypageController {
 
 
     private final MemberService memberService;
-    private final SecurityUtils securityUtils;
 
     private final FoodService foodService;
 
@@ -37,7 +36,7 @@ public class MypageController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         try {
-            MemberDetailDto memberDetailDto = memberService.getUserInfo(securityUtils.getEmail());
+            MemberDetailDto memberDetailDto = memberService.getUserInfo(getEmail());
 
             if (memberDetailDto != null) {
                 resultMap.put("memberDetailDto", memberDetailDto);
@@ -57,7 +56,7 @@ public class MypageController {
         HttpStatus status = null;
         String message = null;
         try {
-            List<UserTasteDto> userFavoriteList = memberService.getUserPreference(securityUtils.getEmail(), 0);
+            List<UserTasteDto> userFavoriteList = memberService.getUserPreference(getEmail(), 0);
 
             message = "조회 성공";
             status = HttpStatus.OK;
@@ -78,7 +77,7 @@ public class MypageController {
         HttpStatus status = null;
         String message = null;
         try {
-            List<UserTasteDto> userFavoriteList = memberService.getUserPreference(securityUtils.getEmail(), 1);
+            List<UserTasteDto> userFavoriteList = memberService.getUserPreference(getEmail(), 1);
 
             message = "조회 성공";
             status = HttpStatus.OK;
@@ -101,8 +100,8 @@ public class MypageController {
         HttpStatus status = null;
         String message = "";
         try {
-            foodService.uploadImg(securityUtils.getEmail(), userInfoUpdateDto.getImg());
-            memberService.updateUserInfo(securityUtils.getEmail(),userInfoUpdateDto);
+            foodService.uploadImg(getEmail(), userInfoUpdateDto.getImg());
+            memberService.updateUserInfo(getEmail(),userInfoUpdateDto);
 
             status = HttpStatus.OK;
             message = "수정 완료";
@@ -117,6 +116,11 @@ public class MypageController {
         resultMap.put("message", message);
 
         return new ResponseEntity<>(resultMap, status);
+    }
+
+    public String getEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 
 }

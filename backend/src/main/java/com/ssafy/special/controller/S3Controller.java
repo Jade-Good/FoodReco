@@ -3,11 +3,12 @@ package com.ssafy.special.controller;
 
 
 import com.ssafy.special.service.food.FoodService;
-import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +23,6 @@ import java.util.Map;
 public class S3Controller {
 
     private final FoodService foodService;
-    private final SecurityUtils securityUtils;
 
     @PostMapping("/food/img")
     public ResponseEntity<?> uploadImg(@RequestPart(value = "file", required = false) MultipartFile file) throws Exception {
@@ -30,7 +30,7 @@ public class S3Controller {
 
         try {
 
-            foodService.uploadImg(securityUtils.getEmail(),file);
+            foodService.uploadImg(getEmail(),file);
 
             resultMap.put("message", "업로드 성공");
             return new ResponseEntity<>(resultMap, HttpStatus.OK);
@@ -72,6 +72,12 @@ public class S3Controller {
 
     }
 
+
+    // 사용자 Email 가져오는 Email
+    public String getEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
 
 
 

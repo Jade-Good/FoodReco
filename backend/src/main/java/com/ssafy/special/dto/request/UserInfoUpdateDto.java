@@ -10,8 +10,6 @@ public class UserInfoUpdateDto {
 
     private MultipartFile img;
     private String nickname;
-    private int age;
-    private String sex;
     private int height;
     private int weight;
     private int activity;

@@ -22,7 +22,6 @@ import com.ssafy.special.repository.member.FriendListRepository;
 import com.ssafy.special.repository.member.MemberAllergyRepository;
 import com.ssafy.special.repository.member.MemberFoodPreferenceRepository;
 import com.ssafy.special.repository.member.MemberRepository;
-import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +46,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
     private final FoodRepository foodRepository;
-    private final SecurityUtils securityUtils;
     private final IngredientRepository ingredientRepository;
     private final MemberAllergyRepository memberAllergyRepository;
 
@@ -237,13 +235,11 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateUserInfo(String email, UserInfoUpdateDto userInfoUpdateDto) throws Exception {
+    public void updateUserInfo(String email, UserInfoUpdateDto userInfoUpdateDto) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         member.setNickname(userInfoUpdateDto.getNickname());
-        member.setAge(userInfoUpdateDto.getAge());
-        member.setSex(userInfoUpdateDto.getSex());
         member.setHeight(userInfoUpdateDto.getHeight());
         member.setWeight(userInfoUpdateDto.getWeight());
         member.setActivity(userInfoUpdateDto.getActivity());
