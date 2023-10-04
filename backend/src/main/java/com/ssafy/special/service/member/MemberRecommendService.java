@@ -22,6 +22,7 @@ import com.ssafy.special.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +54,11 @@ public class MemberRecommendService {
 
     private List<RecommendFoodDto> GlobalrecommendFoodDtoList;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     /* 묵시적 피드백 반영 */
     /*
@@ -307,7 +313,7 @@ public class MemberRecommendService {
                         .type(food.getType())
                         .category(food.getCategory())
                         .cookingMethod(food.getCookingMethod())
-                        .img(food.getImg())
+                        .img("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
                         .build();
                 RecommendFoodResultList.add(recommendFoodResultDto);
             }
