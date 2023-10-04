@@ -11,12 +11,14 @@ const api = axios.create({
 // Axios 요청 인터셉터: 모든 요청에 대해 헤더에 액세스 토큰을 추가합니다.
 api.interceptors.request.use(
   (request) => {
-    const [user, setUser] = useRecoilState(userState);
+    // const [user, setUser] = useRecoilState(userState);
+    const accessToken = localStorage.getItem("accessToken");
 
-    const accessToken = user.accessToken; // 액세스 토큰을 가져오는 함수를 구현해야 합니다.
+    // const accessToken = user.accessToken; // 액세스 토큰을 가져오는 함수를 구현해야 합니다.
 
     if (accessToken) {
       request.headers.Authorization = `Bearer ${accessToken}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     }
 
     return request;
@@ -60,8 +62,8 @@ api.interceptors.response.use(
             // axios.defaults.headers.common[
             //   "Authorization"
             // ] = `Bearer ${accessToken}`;
-            localStorage.setItem("accesstoken", accessToken);
-            localStorage.setItem("refreshtoken", refreshToken);
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
 
             axios.defaults.headers.common[
               "Authorization"
