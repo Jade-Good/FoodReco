@@ -35,42 +35,42 @@ export const MemberRecommendation = () => {
 
   let foodIdx = 0;
 
-  // 최초 1회 검색 및 지도 생성
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.permissions
-        .query({ name: "geolocation" })
-        .then(function (permissionStatus) {
-          if (permissionStatus.state === "granted") {
-            // 위치 정보 권한이 이미 부여된 경우
-            // 여기에 위치 정보를 요청하는 코드를 작성하세요.
-          } else if (permissionStatus.state === "prompt") {
-            // 위치 정보 권한을 사용자에게 요청
-            navigator.geolocation.getCurrentPosition(
-              function (position) {
-                // 위치 정보를 사용하여 원하는 작업 수행
-              },
-              function (error) {
-                console.error("Error getting geolocation:", error);
-              }
-            );
-          } else {
-            // 위치 정보 권한이 거부된 경우 또는 다른 상태인 경우
-            console.log(
-              "Geolocation permission is denied or in another state."
-            );
-          }
-        });
-    } else {
-      // Geolocation API를 지원하지 않는 경우
-      console.log("Geolocation is not supported in this browser.");
-    }
-  }, []);
+  const [pos, setPos] = useState<string>("확인");
 
   // 최초 1회 검색 및 지도 생성
   useEffect(() => {
     foodRecommend();
+    retryLocationRequest();
   }, []);
+
+  function retryLocationRequest() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // 위치 정보를 성공적으로 가져옴
+        setPos(
+          String(position.coords.latitude) +
+            " " +
+            String(position.coords.latitude)
+        );
+      },
+      (error) => {
+        // 위치 정보를 가져오지 못한 경우
+        switch (error.code) {
+          case 1:
+            setPos("사용자가 위치 정보 요청을 거부했습니다.");
+            break;
+          case 2:
+            setPos("위치 정보를 사용할 수 없습니다.");
+            break;
+          case 3:
+            setPos("요청 시간이 초과되었습니다.");
+            break;
+          default:
+            setPos("알 수 없는 오류가 발생했습니다.");
+        }
+      }
+    );
+  }
 
   const foodRecommend = () => {
     api
@@ -96,7 +96,8 @@ export const MemberRecommendation = () => {
       <FoodDetail foodName={foodList[foodIdx].recommendedFoodName} />
 
       <FoodButton />
-
+      <button onClick={retryLocationRequest}>위치 정보 다시 요청</button>
+      {pos}
       <FooterRecommendation />
     </div>
   );
