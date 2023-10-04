@@ -33,7 +33,7 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-
+    console.log(error);
     // 응답 상태 코드가 401인 경우, 리프레시 토큰을 사용하여 액세스 토큰을 갱신합니다.
     if (
       error.response &&

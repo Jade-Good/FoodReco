@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FooterRecommendation } from "../../components/footer/FooterRecommendation";
 import HeaderQuestion from "../../components/header/HeaderQuestion";
-import { FoodCard } from "../../components/recommend/foodCard2";
-import { FoodButton } from "../../components/recommend/foodButton2";
-import FoodDetail from "../../components/recommend/foodDetail2";
+import { FoodCard } from "../../components/recommend/FoodCard";
+import { FoodButton } from "../../components/recommend/FoodButton";
+import FoodDetail from "../../components/recommend/FoodDetail";
 import api from "../../utils/axios";
 
 export interface FoodList {
