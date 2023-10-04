@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FitnessDto {
-    private List<Bucket> bucket = new ArrayList<>();
+    private List<Bucket> bucket;
     
     @Data
     @Builder
@@ -22,7 +22,7 @@ public class FitnessDto {
     public static class Bucket {
         private String startTimeMillis;
         private String endTimeMillis;
-        private List<Dataset> dataset = new ArrayList<>();
+        private List<Dataset> dataset;
     }
     
     @Data
@@ -31,7 +31,7 @@ public class FitnessDto {
     @AllArgsConstructor
     public static class Dataset {
         private String dataSourceId;
-        private List<Point> point = new ArrayList<>();
+        private List<Point> point;
     }
     
     @Data
@@ -42,7 +42,7 @@ public class FitnessDto {
         private String startTimeNanos;
         private String originDataSourceId;
         private String endTimeNanos;
-        private List<Value> value = new ArrayList<>();
+        private List<Value> value;
         private String dataTypeName;
     }
     
@@ -51,7 +51,7 @@ public class FitnessDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Value {
-        private List<Integer> mapVal = new ArrayList<>();
+        private List<Integer> mapVal;
         private Integer intVal;
     }
 
