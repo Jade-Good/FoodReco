@@ -93,7 +93,7 @@ public class MypageController {
     }
 
 
-    @PatchMapping("/info")
+    @PatchMapping(path = "/info",consumes = {"multipart/form-data"})
     public ResponseEntity<Map<String, String>> updateUserInfo(UserInfoUpdateDto userInfoUpdateDto) {
 
         Map<String, String> resultMap = new HashMap<>();
