@@ -53,7 +53,7 @@ public class FoodService {
             metadata.setContentLength(file.getSize());
 
             // S3에 저장할 파일 이름을 만든다.
-            String S3_fileName = getRandomFileName();
+            String S3_fileName = "userImg/" + getRandomFileName();
 
             // S3 해당 "bucket"에 "S3_fileName"이름으로 "파일 내용", "파일 정보"를 업로드한다.
             amazonS3Client.putObject(bucket, S3_fileName, file.getInputStream(), metadata);
