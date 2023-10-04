@@ -44,6 +44,8 @@ public class CrewService {
     // S3 버킷 정보. (버킷 - S3 저장소 이름이라고 생각하면 됨)
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     private final AmazonS3Client amazonS3Client;
 
@@ -79,7 +81,7 @@ public class CrewService {
             CrewDto crew = CrewDto.builder()
                     .crewSeq(c.getCrew().getCrewSeq())
                     .name(c.getCrew().getName())
-                    .img(c.getCrew().getImg())
+                    .img("https://" + bucket + ".s3." + region + ".amazonaws.com/" + c.getCrew().getImg())
                     .status(c.getStatus()==0?"미반응":(c.getStatus()==-1?"거절":"수락"))
                     .crewCnt(cnt)
                     .recentRecommend(daysDifference)
