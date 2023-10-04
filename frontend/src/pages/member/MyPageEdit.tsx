@@ -67,7 +67,7 @@ export const MyPageEdit = () => {
         setWeight(res.data.memberDetailDto.weight);
         setNickname(res.data.memberDetailDto.nickname);
         setActivicty(res.data.memberDetailDto.activity);
-        setProfileURL(res.data.memberDetailDto.profileUrl);
+        // setProfileURL(res.data.memberDetailDto.profileUrl);
       })
       .catch((err) => {
         console.log(err);
@@ -80,7 +80,7 @@ export const MyPageEdit = () => {
     setValue("height", height);
     setValue("weight", weight);
     setValue("image", profileURL);
-  }, [nickname, height, weight, profileURL]);
+  }, [nickname, height, weight]);
   // let imageURL: string;
 
   // if (profileImageFile) {
@@ -223,18 +223,13 @@ export const MyPageEdit = () => {
     } else {
       // console.log("sdfasdf");
       api
-        .patch(`http://192.168.31.134:8080/api/mypage/info`, datas, {
+        .patch(`${process.env.REACT_APP_BASE_URL}/mypage/info`, datas, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         })
-        // .patch(`${process.env.REACT_APP_BASE_URL}/mypage/info`, formData, {
-        //   headers: {
-        //     "Content-Type": "multipart/form-data",
-        //     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        //   },
-        // })
+
         .then((res) => {
           console.log(res);
           navigate("/mypage");
@@ -385,7 +380,7 @@ export const MyPageEdit = () => {
         <StyledButton
           type="submit"
           disabled={isSubmitting}
-          width="9.0rem"
+          width="40vw"
           boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
           color="white"
           fontSize="1.25rem"
@@ -393,6 +388,19 @@ export const MyPageEdit = () => {
           radius="10px"
         >
           적용
+        </StyledButton>
+        <StyledButton
+          type="button"
+          disabled={isSubmitting}
+          width="40vw"
+          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
+          color="white"
+          fontSize="1.25rem"
+          background="#FE9D3A"
+          radius="10px"
+          onClick={() => navigate("/mypage")}
+        >
+          취소
         </StyledButton>
       </form>
     </div>
