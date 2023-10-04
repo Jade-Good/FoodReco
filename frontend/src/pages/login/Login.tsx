@@ -87,8 +87,8 @@ export const Login = () => {
             nickname: nickcname,
             email: email,
           }));
-          window.location.reload();
           navigate("/");
+          window.location.reload();
         })
         .catch((err) => {
           // handleSilentRefresh(data)
