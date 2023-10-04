@@ -14,7 +14,7 @@
     }
   ],
   "geolocation": {
-    "default": "prompt",
+    "default": "allow",
     "high_accuracy": true,
     "maximum_age": 0,
     "timeout": 60000
