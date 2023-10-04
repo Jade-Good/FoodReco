@@ -64,13 +64,18 @@ public class CrewService {
                 if(m.getStatus()!=-1){cnt++;}
             }
             CrewRecommend crewRecommend = crewRecommendRepository.findFirstByCrewOrderByRecommendAtDesc(memberCrew);
-            LocalDateTime startDateTime = crewRecommend.getRecommendAt();
+            Long daysDifference;
+            if(crewRecommend!=null){
+                LocalDateTime startDateTime = crewRecommend.getRecommendAt();
 
-            // LocalDate로 변환
-            LocalDate startDate = startDateTime.toLocalDate();
-            LocalDate endDate = LocalDate.now();
-            // 날짜 차이 계산
-            Long daysDifference = ChronoUnit.DAYS.between(startDate, endDate);
+                // LocalDate로 변환
+                LocalDate startDate = startDateTime.toLocalDate();
+                LocalDate endDate = LocalDate.now();
+                // 날짜 차이 계산
+                daysDifference= ChronoUnit.DAYS.between(startDate, endDate);
+            }else{
+                daysDifference = -1L;
+            }
             CrewDto crew = CrewDto.builder()
                     .crewSeq(c.getCrew().getCrewSeq())
                     .name(c.getCrew().getName())
