@@ -36,7 +36,7 @@ export const MyPage = () => {
       })
       .catch((err) => {
         console.log(err);
-        console.log(err.response.status);
+        // console.log(err.response.status);
       });
   }, []);
 
@@ -49,7 +49,6 @@ export const MyPage = () => {
 
   const fetchAccessToken = useCallback(async () => {
     if (!code) {
-      console.log("코드 못읽어옴");
       return; // code가 없으면 함수를 종료합니다.
     }
 

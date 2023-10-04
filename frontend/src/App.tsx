@@ -57,7 +57,6 @@ const App = () => {
             <Routes>
               {/* 메인페이지 */}
               <Route path="/" element={isLogin ? <Main /> : <Login />} />
-
               {/* 로그인페이지 */}
               <Route path="/login" element={<Login />} />
 
