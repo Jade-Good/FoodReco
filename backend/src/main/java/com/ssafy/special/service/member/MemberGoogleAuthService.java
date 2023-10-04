@@ -73,7 +73,31 @@ public class MemberGoogleAuthService {
         if (member.isEmpty()) {
             throw new EntityNotFoundException("해당 회원 존재하지 않음");
         }
-
+        if(member.get().getGoogleRefreshToken() == null){
+            int hour = LocalDateTime.now().getHour();
+            int noneGoogleMemberActivity = 0;
+            if (21 < hour && hour <=24 || 0<= hour && hour <=4){
+//            야식
+//            일일 활동량
+                noneGoogleMemberActivity = 5000;
+            } else if( 4 < hour && hour <= 8 ) {
+//                아침
+//                활동량 0
+                noneGoogleMemberActivity = 0;
+            }else if (8 < hour && hour <= 15) {
+//            점심
+//            오전 활동량(4시간)
+                noneGoogleMemberActivity = 1500;
+            } else if (15 < hour && hour <= 21) {
+//            저녁
+//            오후 활동량
+                noneGoogleMemberActivity = 3000;
+            } else{
+//            일일 활동량
+                noneGoogleMemberActivity = 2000;
+            }
+            return noneGoogleMemberActivity;
+        }
         String accessToken = issueNewAccessToken(memberEmail);
         if (accessToken.equals("fail")) {
             log.info("엑세스토큰 받아오기 실패");
@@ -87,13 +111,17 @@ public class MemberGoogleAuthService {
         long duration = 0L;
         long startTimeMillis = -1;
         long endTimeMillis = -1;
-        if (21 < hour && hour <=24 || 0<= hour && hour <=8){
+        if (21 < hour && hour <=24 || 0<= hour && hour <=4){
 //            야식 및 아침
 //            일일 활동량
             duration = 86_400_000L;
             startTimeMillis = System.currentTimeMillis() - duration;
             endTimeMillis = System.currentTimeMillis();
-        }  else if (8 < hour && hour <= 15) {
+        } else if( 4 < hour && hour <= 8 ){
+
+            startTimeMillis = System.currentTimeMillis();
+            endTimeMillis = System.currentTimeMillis();
+        }else if (8 < hour && hour <= 15) {
 //            점심
 //            오전 활동량(4시간)
             duration = 14_400_000L;
