@@ -3,12 +3,18 @@ import styled, { css } from "styled-components";
 import { useRecoilState } from "recoil";
 import { foodDetailModal } from "../../recoil/atoms/modalState";
 
-interface FoodCardInfo {
+import { FoodFeedBackProps } from "../../pages/memberRecommendation/MemberRecommendation";
+
+interface FoodCardInfo extends FoodFeedBackProps {
   foodImg: string;
   foodName: string;
 }
 
-export const FoodCard: React.FC<FoodCardInfo> = ({ foodImg, foodName }) => {
+export const FoodCard: React.FC<FoodCardInfo> = ({
+  foodImg,
+  foodName,
+  foodFeedBack,
+}) => {
   // 드래그 상태, 왼쪽|오른쪽|중앙 상태, x 좌표
   const [isDragging, setIsDragging] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | "">(
@@ -58,9 +64,14 @@ export const FoodCard: React.FC<FoodCardInfo> = ({ foodImg, foodName }) => {
     // 카드 스와이프 판단
     if (posX >= lineX) {
       console.log("like!!");
+      foodFeedBack(4);
     } else if (posX <= -lineX) {
       console.log("pass!!");
+      foodFeedBack(2);
     }
+
+    // x 좌표 이동 값 초기화
+    setPosX(0);
   };
 
   // 회전도 계산
@@ -81,6 +92,7 @@ export const FoodCard: React.FC<FoodCardInfo> = ({ foodImg, foodName }) => {
   const [modalOpen, setModalOpen] = useRecoilState(foodDetailModal);
   const detail = () => {
     setModalOpen({ modalOpen: true });
+    foodFeedBack(3);
   };
 
   return (
