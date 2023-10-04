@@ -84,7 +84,7 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
       category_group_code: "FD6",
       x: Number(`${coords.longitude}`),
       y: Number(`${coords.latitude}`),
-      radius: 1000,
+      radius: 2000,
       sort: kakao.maps.services.SortBy.DISTANCE,
     });
   }, [map]);
