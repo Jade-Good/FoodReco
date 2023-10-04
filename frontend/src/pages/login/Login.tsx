@@ -87,11 +87,21 @@ export const Login = () => {
             nickname: nickcname,
             email: email,
           }));
-
+          window.location.reload();
           navigate("/");
         })
         .catch((err) => {
-          // handleSilentRefresh(data);
+          // handleSilentRefresh(data)
+          toast.error("이메일과 비밀번호를 확인해주세요", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
 
           console.log("이메일 전송 오류:", err);
         });

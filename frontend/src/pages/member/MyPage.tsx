@@ -20,7 +20,7 @@ export const MyPage = () => {
   const [user, setUser] = useRecoilState(userState);
 
   useEffect(() => {
-    axios
+    api
       .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
@@ -100,17 +100,25 @@ export const MyPage = () => {
             marginBottom: "2rem",
           }}
         >
-          <img
-            src={profileURL}
-            alt="sds"
-            style={{ width: "15rem", height: "15rem" }}
-          />
+          {profileURL ? (
+            <img
+              src={profileURL}
+              alt="sds"
+              style={{ width: "15rem", height: "15rem" }}
+            />
+          ) : (
+            <img
+              src="/images/profileImg.png"
+              alt="sds"
+              style={{ width: "15rem", height: "15rem" }}
+            />
+          )}
         </div>
         <StyledButton
           background="#FFF6EC"
           color="#FE9D3A"
           border="1px solid #FE9D3A"
-          onClick={() => navigate("/mypage/edit/:memberId")}
+          onClick={() => navigate("/mypage/edit")}
         >
           프로필수정
         </StyledButton>
@@ -137,8 +145,9 @@ export const MyPage = () => {
           color="#FE9D3A"
           border="1px solid #FE9D3A"
           onClick={handleGoogleAuth}
+          fontSize="1rem"
         >
-          구글 연동하기 : Fitness
+          구글 연동하기
         </StyledButton>
         <FooterMypage />
       </div>

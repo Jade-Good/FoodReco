@@ -126,6 +126,14 @@ export const MyPageEdit = () => {
       2.5: 55250,
       3: 66300,
     },
+    운동안함: {
+      0.5: 0,
+      1: 0,
+      1.5: 0,
+      2: 0,
+      2.5: 0,
+      3: 0,
+    },
   };
 
   const {
@@ -190,9 +198,12 @@ export const MyPageEdit = () => {
       weight: weight,
       height: height,
     };
-    formData.append("request", new Blob([JSON.stringify(datas)]));
+    formData.append(
+      "request",
+      new Blob([JSON.stringify(datas)], { type: "application/json" })
+    );
     console.log(datas);
-    if (errors.nickname) {
+    if (errors) {
       console.log(errors);
       toast.error("정보를 다시 확인해주세요!", {
         position: "top-center",
@@ -209,6 +220,7 @@ export const MyPageEdit = () => {
         .patch(`${process.env.REACT_APP_BASE_URL}/mypage/info`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         })
         .then((res) => {
