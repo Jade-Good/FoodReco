@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 export const BigDiv = styled.div`
   display: flex; /* Flex 컨테이너로 설정 */
@@ -43,7 +43,7 @@ export const RightDiv = styled.div`
 
 export type MemberInfoProps = {
   leftValue: string;
-  rightValue: string;
+  rightValue: string | number;
   unit?: string;
 };
 
@@ -58,10 +58,10 @@ export const MemberInfo: React.FC<MemberInfoProps> = ({
       <RightDiv>{rightValue}</RightDiv>
       <span
         style={{
-          color: '#fe9d3a',
-          marginRight: '10px',
-          fontWeight: '700',
-          fontSize: '0.9375rem',
+          color: "#fe9d3a",
+          marginRight: "10px",
+          fontWeight: "700",
+          fontSize: "0.9375rem",
         }}
       >
         {unit}

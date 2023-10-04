@@ -364,7 +364,7 @@ export const MyPageEdit = () => {
           background="#FE9D3A"
           radius="10px"
         >
-          제출
+          적용
         </StyledButton>
       </form>
     </div>
