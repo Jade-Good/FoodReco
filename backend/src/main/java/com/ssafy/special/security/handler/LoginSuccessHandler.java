@@ -1,5 +1,6 @@
 package com.ssafy.special.security.handler;
 
+import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.repository.member.MemberRepository;
 import com.ssafy.special.security.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -32,11 +33,13 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken); // 응답 헤더에 AccessToken, RefreshToken 실어서 응답
 
-        memberRepository.findByEmail(email)
-                .ifPresent(member -> {
-                    member.updateRefreshToken(refreshToken);
-                    memberRepository.saveAndFlush(member);
-                });
+        Member member = memberRepository.findByEmail(email).orElse(null);
+        if(member != null){
+            member.updateRefreshToken(refreshToken);
+            memberRepository.saveAndFlush(member);
+            response.getWriter().write(member.getMemberSeq()+"");
+
+        }
         log.info("로그인에 성공하였습    니다. 이메일 : {}", email);
         log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
         log.info("발급된 AccessToken 만료 기간 : {}", accessTokenExpiration);
@@ -45,7 +48,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain;charset=UTF-8");
-        response.getWriter().write("로그인 성공!");
     }
 
     private String extractUsername(Authentication authentication) {
