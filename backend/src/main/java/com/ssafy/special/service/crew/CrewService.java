@@ -1,19 +1,20 @@
 package com.ssafy.special.service.crew;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ssafy.special.domain.crew.*;
 import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.member.Member;
-import com.ssafy.special.dto.request.CrewDto;
-import com.ssafy.special.dto.request.CrewJoinDto;
-import com.ssafy.special.dto.request.CrewSignUpDto;
-import com.ssafy.special.dto.request.VoteDto;
+import com.ssafy.special.dto.request.*;
 import com.ssafy.special.dto.response.*;
 import com.ssafy.special.repository.crew.*;
 import com.ssafy.special.repository.food.FoodRepository;
 import com.ssafy.special.repository.member.MemberRepository;
 import com.ssafy.special.service.etc.SseService;
+import com.ssafy.special.service.food.FoodService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,12 @@ public class CrewService {
     private final CrewRecommendRepository crewRecommendRepository;
     private final CrewRecommendVoteRepository crewRecommendVoteRepository;
     private final CrewRecommendFoodRepository crewRecommendFoodRepository;
+    private final FoodService foodService;
+    // S3 버킷 정보. (버킷 - S3 저장소 이름이라고 생각하면 됨)
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    private final AmazonS3Client amazonS3Client;
 
     /*
      * 사용자 Email으로 자신이 속한 crew List을 출력하는 메소드
@@ -246,16 +253,28 @@ public class CrewService {
     }
 
     @Transactional
-    public void updateCrew(CrewDto crewDto)
-            throws EntityNotFoundException, IllegalArgumentException {
-        crewRepository.findByCrewSeq(crewDto.getCrewSeq())
+    public void updateCrew(CrewUpdateDto crewUpdateDto)
+            throws EntityNotFoundException, IllegalArgumentException,IllegalStateException {
+        crewRepository.findByCrewSeq(crewUpdateDto.getCrewSeq())
                 .ifPresentOrElse(
                         selectCrew->{
                             if(!selectCrew.getStatus().equals("투표전")){
                                 throw new IllegalArgumentException(selectCrew.getStatus()+ "에는 변경이 불가 합니다.");
                             }
-                            selectCrew.setName(crewDto.getName());
-                            selectCrew.setImg(crewDto.getImg());
+                            selectCrew.setName(crewUpdateDto.getName());
+
+                            //s3 에 이미지 넣기
+                            String S3_fileName = foodService.getRandomFileName();
+                            ObjectMetadata metadata = new ObjectMetadata();
+                            metadata.setContentType(crewUpdateDto.getImg().getContentType());
+                            metadata.setContentLength(crewUpdateDto.getImg().getSize());
+                            try {
+                                amazonS3Client.putObject(bucket, S3_fileName, crewUpdateDto.getImg().getInputStream(), metadata);
+                                selectCrew.setImg(S3_fileName);
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                                throw new IllegalStateException("이미지 저장 중 에러 발생");
+                            }
                         },
                         () -> new EntityNotFoundException("해당 그룹을 찾을 수 없습니다.")
                 );

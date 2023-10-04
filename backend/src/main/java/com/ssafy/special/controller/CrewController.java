@@ -100,16 +100,19 @@ public class CrewController {
     }
 
     @PatchMapping ("/update")
-    public ResponseEntity<?> updateCrewInfo(@RequestBody CrewDto crewDto){
+    public ResponseEntity<?> updateCrewInfo(@RequestBody CrewUpdateDto CrewUpdateDto){
         log.info("updateCrewInfo() 메소드 시작");
         try{
-            crewService.updateCrew(crewDto);
+            crewService.updateCrew(CrewUpdateDto);
             return ResponseEntity.ok().body("정상적으로 수정되었습니다.");
         }catch (IllegalArgumentException e){
             log.info("변경 불가능한 투표 상태 : "+ e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (EntityNotFoundException e){
             log.info("Crew find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (IllegalStateException e){
+            log.info("이미지 업로드 에러 : "+ e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (Exception e){
             log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
