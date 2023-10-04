@@ -31,7 +31,10 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
   const [modal, setModalOpen] = useRecoilState(foodDetailModal);
 
   // -------------------------- 현위치 -------------------------
-  const [coords, setCoords] = useState<Coords>({ latitude: null, longitude: null });
+  const [coords, setCoords] = useState<Coords>({
+    latitude: null,
+    longitude: null,
+  });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -149,7 +152,10 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
   // 리스트 누르면 지도 위치 이동
   const moveToMap = (idx: number) => {
     // 이동할 위도 경도 위치를 생성합니다
-    const moveLatLon = new kakao.maps.LatLng(markers[idx].position.lat, markers[idx].position.lng);
+    const moveLatLon = new kakao.maps.LatLng(
+      markers[idx].position.lat,
+      markers[idx].position.lng
+    );
 
     // 지도 중심을 이동 시킵니다
     map.setCenter(moveLatLon);
@@ -178,7 +184,9 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
       shouldCloseOnOverlayClick={true}
     >
       <MapWrap>
-        <h4 style={{ margin: "1rem 0rem 1rem 1rem" }}>주변 '{foodName}' 가게</h4>
+        <h4 style={{ margin: "1rem 0rem 1rem 1rem" }}>
+          주변 '{foodName}' 가게
+        </h4>
 
         <SearchButtonLayout>
           <SearchButtonStyle
@@ -191,7 +199,10 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
               setClicked(false);
             }}
           >
-            <SearchIcon fontSize="small" style={{ transform: "translate(-5%, 25%)" }} />
+            <SearchIcon
+              fontSize="small"
+              style={{ transform: "translate(-5%, 25%)" }}
+            />
             <p style={{ display: "inline-block" }}>현 지도에서 검색</p>
           </SearchButtonStyle>
         </SearchButtonLayout>
@@ -209,7 +220,10 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
         >
           {/* 현위치 마커 */}
           <MapMarker
-            position={{ lat: Number(coords.latitude), lng: Number(coords.longitude) }}
+            position={{
+              lat: Number(coords.latitude),
+              lng: Number(coords.longitude),
+            }}
             image={{
               src: "/images/현위치 마커.png",
               size: {
@@ -236,7 +250,10 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
         </Map>
       </MapWrap>
 
-      <div ref={listRef} style={{ height: "46vh", overflowY: "scroll", marginTop: "6vh" }}>
+      <div
+        ref={listRef}
+        style={{ height: "46vh", overflowY: "scroll", marginTop: "6vh" }}
+      >
         {stores
           ? stores.map((result, idx) => {
               return (
@@ -258,21 +275,37 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
                 >
                   <hr style={{ border: "solid 1px #ececec", margin: "0" }} />
                   <div style={{ padding: "1vmin 3vmin 1vmin 3vmin" }}>
-                    <h3 style={{ margin: "1rem 0 0.5rem 0" }}>{result.place_name}</h3>
+                    <h3 style={{ margin: "1rem 0 0.5rem 0" }}>
+                      {result.place_name}
+                    </h3>
                     {result.address_name}
                     <p style={{ color: "gray", marginBottom: "0.5rem" }}>
                       (지번) {result.road_address_name}
                     </p>
                     {String(result.phone).length > 0 ? (
-                      <StoreTel href={`tel:${result.phone}}`}>{result.phone}</StoreTel>
+                      <StoreTel href={`tel:${result.phone}}`}>
+                        {result.phone}
+                      </StoreTel>
                     ) : (
-                      <p style={{ display: "inline", fontSize: "1rem", fontWeight: "100" }}>
+                      <p
+                        style={{
+                          display: "inline",
+                          fontSize: "1rem",
+                          fontWeight: "100",
+                        }}
+                      >
                         번호 미입력
                       </p>
                     )}
                     {"  "}|{"  "}
                     <StoreLink href={result.place_url}>상세보기</StoreLink>
-                    <p style={{ color: "#b8b8b8", marginTop: "0.5rem", marginBottom: "1rem" }}>
+                    <p
+                      style={{
+                        color: "#b8b8b8",
+                        marginTop: "0.5rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
                       {result.category_name}
                     </p>
                   </div>
