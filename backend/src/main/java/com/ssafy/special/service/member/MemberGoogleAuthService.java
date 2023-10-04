@@ -52,7 +52,7 @@ public class MemberGoogleAuthService {
         log.info(requestEntity.toString());
 
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
-        log.info("응답 완료");
+
         return response.getBody();
     }
     public void storeRefreshToken(String memberEmail, String tokens) throws EntityNotFoundException, JsonProcessingException {
@@ -136,7 +136,7 @@ public class MemberGoogleAuthService {
 
             FitnessDto fitnessDto = objectMapper.readValue(response.getBody(), FitnessDto.class);
 
-            log.info(fitnessDto
+            log.info("걸음정보"+fitnessDto
                     .getBucket().get(0)
                     .getDataset().get(0)
                     .getPoint().get(0)
@@ -167,7 +167,7 @@ public class MemberGoogleAuthService {
         Long memberSeq = member.get().getMemberSeq();
 
         String refreshToken = member.get().getGoogleRefreshToken();
-        String url = "https://oauth2.googleapis.com";
+        String url = "https://oauth2.googleapis.com/token";
 
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("client_id", "195561660115-6gse0lsa1ggdm3t9jplps3sodm7e735n.apps.googleusercontent.com");
@@ -189,7 +189,7 @@ public class MemberGoogleAuthService {
             GoogleTokenDto googleTokenDto = objectMapper.readValue(tokens, GoogleTokenDto.class);
 
             String accessToken = googleTokenDto.getAccess_token();
-            log.info(accessToken);
+            log.info("재발급된 엑세스 토큰"+accessToken);
             return accessToken;
         } catch (Exception e) {
             log.info("리프레시 토큰" + refreshToken);

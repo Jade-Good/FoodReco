@@ -254,7 +254,7 @@ public class MemberRecommendService {
 
         // 추천 음식 가져오기
         List<RecommendFoodDto> recommendFoodDtoList = getRecommendList(memberSeq, now, memberEmail, totalSteps);
-
+//        log.info("추천 음식: " + recommendFoodDtoList.get(0).getName());
 //        1. 첫 번째 음식은 추천받은 히스토리에 추가하기
         Optional<Long> foodSeqOptional = recommendFoodDtoList.stream()
                 .findFirst()
