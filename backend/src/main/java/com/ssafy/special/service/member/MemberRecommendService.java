@@ -152,7 +152,6 @@ public class MemberRecommendService {
 //        상세보기, 좋아요가 아니면서 마지막 추천 음식이 아닌 경우
         if ((feedback != 3 || feedback != 4) && !isLast) {
             Food nextFood = foodRepository.findFoodByFoodSeq(nextFoodSeq);
-            log.info("다음 음식 추천로그 추가");
             MemberRecommend memberRecommend1 = MemberRecommend.builder()
                     .member(memberOptional.get())
                     .food(nextFood)
@@ -162,6 +161,7 @@ public class MemberRecommendService {
                     .foodRating(1)
                     .build();
             memberRecommendRepository.save(memberRecommend1);
+            log.info("다음 음식 추천 히스토리 추가 완료");
         }
 //        피드백 반영
 //        패스할때 이전에 상세보기였는지, 좋아요였는지,
@@ -253,7 +253,8 @@ public class MemberRecommendService {
         Long memberSeq = memberOptional.get().getMemberSeq();
         LocalDateTime now = LocalDateTime.now();
         int steps = memberOptional.get().getActivity();
-        String weather = weatherStatus.getStatus();
+//        String weather = weatherStatus.getStatus();
+        String weather = "맑음";
 
         // 추천 음식 가져오기
         List<RecommendFoodDto> recommendFoodDtoList = getRecommendList(memberSeq,now,memberEmail);
@@ -319,6 +320,7 @@ public class MemberRecommendService {
     public List<RecommendFoodDto> getRecommendList(Long memberSeq,LocalDateTime now,String memberEmail){
 //        지난 1~2주 사이에 추천 받은 음식을 기반으로 추천
         List<RecentRecommendFoodDto> recentlyRecommendedFood = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
+
         if (recentlyRecommendedFood.size() == 0) {
 //            추천 받았던 적이 없는 경우 좋아하는 음식 리스트를 기반으로 추천
             List<UserTasteDto> userFavoriteList = memberService.getUserPreference(memberEmail, 0);
@@ -326,6 +328,7 @@ public class MemberRecommendService {
                     .map(RecentRecommendFoodDto::new)
                     .collect(Collectors.toList());
         }
+//        현재상황과 유사한 활동량과 날씨를 추출
 
         return sendPostRequestAndReceiveRecommendFoodList(recentlyRecommendedFood).block();
     }
