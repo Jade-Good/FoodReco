@@ -52,7 +52,7 @@ export const MyPage = () => {
           }}
         >
           <img
-            src="/images/이민정.jpg"
+            src={profileURL}
             alt="sds"
             style={{ width: "15rem", height: "15rem" }}
           />
@@ -73,13 +73,13 @@ export const MyPage = () => {
             alignItems: "center",
           }}
         >
-          <MemberInfo leftValue="키" rightValue="190" unit="CM" />
+          <MemberInfo leftValue="닉네임" rightValue={nickname} />
           <br />
-          <MemberInfo leftValue="키" rightValue="190" unit="CM" />
+          <MemberInfo leftValue="키" rightValue={height} unit="CM" />
           <br />
-          <MemberInfo leftValue="키" rightValue="190" unit="CM" />
+          <MemberInfo leftValue="몸무게" rightValue={weight} unit="kg" />
           <br />
-          <MemberInfo leftValue="키" rightValue="190" unit="CM" />
+          <MemberInfo leftValue="활동량" rightValue={activity} unit="걸음" />
         </div>
         <br />
         <StyledButton
@@ -92,7 +92,7 @@ export const MyPage = () => {
               "https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=https://j9b102.p.ssafy.io/test&prompt=consent&response_type=code&client_id=195561660115-6gse0lsa1ggdm3t9jplps3sodm7e735n.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.nutrition.read https://www.googleapis.com/auth/fitness.sleep.read")
           }
         >
-          구글인증
+          구글 연동하기 : Fitness
         </StyledButton>
         <FooterMypage />
       </div>
