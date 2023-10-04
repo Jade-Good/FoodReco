@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FooterMypage } from "../../components/footer/FooterMypage";
 import { MemberInfo } from "../../components/membercomponents/MemberInfo";
 import HeaderLogo from "../../components/header/HeaderLogo";
@@ -9,8 +9,18 @@ import axios from "axios";
 
 export const MyPage = () => {
   const navigate = useNavigate();
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [nickname, setNickname] = useState("");
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_BASE_URL}/member/login`);
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/member/login`)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   });
   return (
     <>
