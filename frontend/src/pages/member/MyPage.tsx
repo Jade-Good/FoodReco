@@ -11,6 +11,7 @@ export const MyPage = () => {
   const navigate = useNavigate();
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
+  const [nickname, setNickname] = useState("");
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}/member/login`)
