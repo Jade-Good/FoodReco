@@ -6,10 +6,14 @@ import { AiOutlineStar } from "react-icons/ai";
 import { BiWindows } from "react-icons/bi";
 import { Navigate, useNavigate } from "react-router-dom";
 import classes from "./Footer.module.css";
+import { useRecoilState } from "recoil";
+import { userState } from "../../recoil/atoms/userState";
 
 export const FooterMypage = () => {
+  const [user, setUser] = useRecoilState(userState);
+
   const navigate = useNavigate();
-  let memberId = 1;
+  let memberEmail = user.email;
 
   return (
     <div className={classes.footer}>
@@ -17,16 +21,13 @@ export const FooterMypage = () => {
         <AiOutlineHome className={classes.iconStyle} />
         <p className={classes.iconText}>홈</p>
       </div>
-      <div
-        className={classes.iconBtn}
-        onClick={() => navigate(`/friend/${memberId}`)}
-      >
+      <div className={classes.iconBtn} onClick={() => navigate(`/friend`)}>
         <BiGroup className={classes.iconStyle} />
         <p className={classes.iconText}>친구</p>
       </div>
       <div
         className={classes.iconBtn}
-        onClick={() => navigate(`/recommendation/${memberId}`)}
+        onClick={() => navigate(`/recommendation`)}
       >
         <div className={classes.circleStyle}>
           <AiOutlineStar className={classes.starIconStyle} />
@@ -35,16 +36,13 @@ export const FooterMypage = () => {
           추천
         </p>
       </div>
-      <div
-        className={classes.iconBtn}
-        onClick={() => navigate(`/crew/${memberId}`)}
-      >
+      <div className={classes.iconBtn} onClick={() => navigate(`/crew`)}>
         <BiWindows className={classes.iconStyle} />
         <p className={classes.iconText}>그룹</p>
       </div>
       <div
         className={`${classes.iconBtn} ${classes.iconBtnAtive}`}
-        onClick={() => navigate(`/mypage/${memberId}`)}
+        onClick={() => navigate(`/mypage`)}
       >
         <BsPersonCircle className={classes.iconStyle} />
         <p className={classes.iconText}>마이페이지</p>

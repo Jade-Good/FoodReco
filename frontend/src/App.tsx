@@ -21,10 +21,20 @@ import { SignUpComplete } from "./pages/singup/SignUpComplete";
 import { Test } from "./pages/Test";
 import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
+import { CheckLogin } from "./pages/PrivateRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => {
+  const accessToken = localStorage.getItem("accessToken");
+  console.log("sdf", accessToken);
+  let isLogin = 0;
+  if (accessToken) {
+    isLogin = 1;
+  } else {
+    isLogin = 0;
+  }
+
   function setScreenSize() {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -48,25 +58,94 @@ const App = () => {
               {/* 회원가입완료페이지 */}
               <Route path="/signup/complete" element={<SignUpComplete />} />
               {/* 마이페이지 */}
-              <Route path="/mypage/:memberId" element={<MyPage />} />
+              <Route
+                path="/mypage"
+                element={
+                  <CheckLogin authenticated={isLogin} component={<MyPage />} />
+                }
+              />
               {/* 마이페이지 수정페이지 */}
-              <Route path="/mypage/edit/:memberId" element={<MyPageEdit />} />
+              <Route
+                path="/mypage/edit"
+                element={
+                  <CheckLogin
+                    authenticated={isLogin}
+                    component={<MyPageEdit />}
+                  />
+                }
+              />
               {/* 개인 메뉴 추천페이지 */}
-              <Route path="/recommendation/:memberId" element={<MemberRecommendation />} />
+              <Route
+                path="/recommendation"
+                element={
+                  <CheckLogin
+                    authenticated={isLogin}
+                    component={<MemberRecommendation />}
+                  />
+                }
+              />
               {/* 자기 친구목록 페이지 */}
-              <Route path="/friend/:memberId" element={<FriendList />} />
+              <Route
+                path="/friend"
+                element={
+                  <CheckLogin
+                    authenticated={isLogin}
+                    component={<FriendList />}
+                  />
+                }
+              />
               {/* 친구 초대QR 초대하는사람의 ID, 초대받는사람의 ID 두개가 필요할까 고민*/}
               {/* <Route path="/friend/invite/:memberId" element={<FriendInvite />} /> */}
               {/* 그룹목록 페이지 */}
-              <Route path="/crew/:memberId" element={<CrewList />} />
+              <Route
+                path="/crew"
+                element={
+                  <CheckLogin
+                    authenticated={isLogin}
+                    component={<CrewList />}
+                  />
+                }
+              />
               {/* 특정 그룹 상세보기 */}
-              <Route path="/crew/:crewId" element={<CrewDetail />} />
+              <Route
+                path="/crew"
+                element={
+                  <CheckLogin
+                    authenticated={isLogin}
+                    component={<CrewDetail />}
+                  />
+                }
+              />
               {/* 그룹생성 - 그룹생성자의 친구목록 보여주기 */}
-              <Route path="/crew/make/:memberId" element={<CrewMake />} />
+              <Route
+                path="/crew/make"
+                element={
+                  <CheckLogin
+                    authenticated={isLogin}
+                    component={<CrewMake />}
+                  />
+                }
+              />
               {/* 그룹초대 QR */}
-              <Route path="/crew/invite/:crewId" element={<CrewInvite />} />
+              <Route
+                path="/crew/invite"
+                element={
+                  <CheckLogin
+                    authenticated={isLogin}
+                    component={<CrewInvite />}
+                  />
+                }
+              />
               {/* 그룹메뉴추천페이지 */}
-              <Route path="/crewrecommendation/:crewId" element={<CrewRecommendation />} />
+              <Route
+                path="/crewrecommendation"
+                element={
+                  <CheckLogin
+                    authenticated={isLogin}
+                    component={<CrewRecommendation />}
+                  />
+                }
+              />
               <Route path="/test" element={<Test />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
