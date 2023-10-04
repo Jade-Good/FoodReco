@@ -6,6 +6,7 @@ import com.ssafy.special.service.etc.FcmService;
 import com.ssafy.special.service.etc.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -140,7 +141,7 @@ public class CrewController {
     }
 
 
-    @GetMapping("/sse/{crewSeq}/{memberSeq}")
+    @GetMapping(value = "/sse/{crewSeq}/{memberSeq}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> sseSubscribe(@PathVariable Long crewSeq, @PathVariable Long memberSeq){
         log.info("sseSubscribe() 메소드 시작");
             return ResponseEntity.ok().body(sseService.connect(memberSeq));

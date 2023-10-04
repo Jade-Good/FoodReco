@@ -44,7 +44,7 @@ public class SecurityConfig {
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://j9b102.p.ssafy.io"));  // 허용할 출처 지정
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://j9b102.p.ssafy.io","http://localhost:3001"));  // 허용할 출처 지정
         configuration.setExposedHeaders(Arrays.asList("Authorization","Authorizationrefresh"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS","PATCH")); // 허용할 HTTP 메서드 지정
         configuration.setAllowedHeaders(Arrays.asList("*"));  // 허용할 헤더
@@ -83,7 +83,6 @@ public class SecurityConfig {
                         "/api/member/login",
                         "/api/jwt",
                         "/api/crew/sse/**"
-
                 )
                 .permitAll() // 회원가입 접근 가능
                 .anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
