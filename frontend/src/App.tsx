@@ -1,7 +1,13 @@
 import React, { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "./App.css";
-import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { Main } from "./pages/main/Main";
 import { Login } from "./pages/login/Login";
 import { SignUp } from "./pages/singup/SignUp";
@@ -50,9 +56,11 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               {/* 메인페이지 */}
-              <Route path="/" element={<Main />} />
+              <Route path="/" element={isLogin ? <Main /> : <Login />} />
+
               {/* 로그인페이지 */}
               <Route path="/login" element={<Login />} />
+
               {/* 회원가입페이지 */}
               <Route path="/signup" element={<SignUp />} />
               {/* 회원가입완료페이지 */}

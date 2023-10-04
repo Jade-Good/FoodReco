@@ -22,6 +22,7 @@ import com.ssafy.special.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,10 +50,15 @@ public class MemberRecommendService {
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
     private final FoodIngredientRepository foodIngredientRepository;
     private final MemberAllergyRepository memberAllergyRepository;
-    private final WeatherStatus weatherStatus;
+//    private final WeatherStatus weatherStatus;
 
     private List<RecommendFoodDto> GlobalrecommendFoodDtoList;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     /* 묵시적 피드백 반영 */
     /*
@@ -84,8 +90,8 @@ public class MemberRecommendService {
         int feedback = feedbackDto.getFeedback();
         int lastFoodRating = -1;
         int steps = memberOptional.get().getActivity();
-        String weather = weatherStatus.getStatus();
-
+//        String weather = weatherStatus.getStatus();
+        String weather = "맑음";
         List<MemberRecommend> memberRecommend = memberRecommendRepository
                 .findLatestMemberRecommend(memberSeq, foodSeq, PageRequest.of(0,1));
 
@@ -152,7 +158,6 @@ public class MemberRecommendService {
 //        상세보기, 좋아요가 아니면서 마지막 추천 음식이 아닌 경우
         if ((feedback != 3 || feedback != 4) && !isLast) {
             Food nextFood = foodRepository.findFoodByFoodSeq(nextFoodSeq);
-            log.info("다음 음식 추천로그 추가");
             MemberRecommend memberRecommend1 = MemberRecommend.builder()
                     .member(memberOptional.get())
                     .food(nextFood)
@@ -162,6 +167,7 @@ public class MemberRecommendService {
                     .foodRating(1)
                     .build();
             memberRecommendRepository.save(memberRecommend1);
+            log.info("다음 음식 추천 히스토리 추가 완료");
         }
 //        피드백 반영
 //        패스할때 이전에 상세보기였는지, 좋아요였는지,
@@ -226,7 +232,7 @@ public class MemberRecommendService {
             MemberRecommend memberRecommend2 = MemberRecommend.builder()
                     .member(memberOptional.get())
                     .food(nowFood)
-                    .weather("")
+                    .weather(weather)
                     .activityCalorie(memberOptional.get().getActivity())
                     .foodRating(lastFoodRating)
                     .recommendAt(LocalDateTime.now())
@@ -253,7 +259,8 @@ public class MemberRecommendService {
         Long memberSeq = memberOptional.get().getMemberSeq();
         LocalDateTime now = LocalDateTime.now();
         int steps = memberOptional.get().getActivity();
-        String weather = weatherStatus.getStatus();
+//        String weather = weatherStatus.getStatus();
+        String weather = "맑음";
 
         // 추천 음식 가져오기
         List<RecommendFoodDto> recommendFoodDtoList = getRecommendList(memberSeq,now,memberEmail);
@@ -306,7 +313,7 @@ public class MemberRecommendService {
                         .type(food.getType())
                         .category(food.getCategory())
                         .cookingMethod(food.getCookingMethod())
-                        .img(food.getImg())
+                        .img("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
                         .build();
                 RecommendFoodResultList.add(recommendFoodResultDto);
             }
@@ -319,6 +326,7 @@ public class MemberRecommendService {
     public List<RecommendFoodDto> getRecommendList(Long memberSeq,LocalDateTime now,String memberEmail){
 //        지난 1~2주 사이에 추천 받은 음식을 기반으로 추천
         List<RecentRecommendFoodDto> recentlyRecommendedFood = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
+
         if (recentlyRecommendedFood.size() == 0) {
 //            추천 받았던 적이 없는 경우 좋아하는 음식 리스트를 기반으로 추천
             List<UserTasteDto> userFavoriteList = memberService.getUserPreference(memberEmail, 0);
@@ -326,6 +334,7 @@ public class MemberRecommendService {
                     .map(RecentRecommendFoodDto::new)
                     .collect(Collectors.toList());
         }
+//        현재상황과 유사한 활동량과 날씨를 추출
 
         return sendPostRequestAndReceiveRecommendFoodList(recentlyRecommendedFood).block();
     }

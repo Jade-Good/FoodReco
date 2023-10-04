@@ -93,15 +93,17 @@ public class MypageController {
     }
 
 
-    @PatchMapping("/info")
+    @PatchMapping(path = "/info", consumes = {"multipart/form-data"})
     public ResponseEntity<Map<String, String>> updateUserInfo(UserInfoUpdateDto userInfoUpdateDto) {
 
         Map<String, String> resultMap = new HashMap<>();
         HttpStatus status = null;
         String message = "";
         try {
-            foodService.uploadImg(getEmail(), userInfoUpdateDto.getImg());
-            memberService.updateUserInfo(getEmail(),userInfoUpdateDto);
+            if (userInfoUpdateDto.getImg() != null) {
+                foodService.uploadImg(getEmail(), userInfoUpdateDto.getImg());
+            }
+            memberService.updateUserInfo(getEmail(), userInfoUpdateDto);
 
             status = HttpStatus.OK;
             message = "수정 완료";
