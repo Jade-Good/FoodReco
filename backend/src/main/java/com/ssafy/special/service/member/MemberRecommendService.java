@@ -8,9 +8,9 @@ import com.ssafy.special.domain.member.MemberAllergy;
 import com.ssafy.special.domain.member.MemberFoodPreference;
 import com.ssafy.special.domain.member.MemberRecommend;
 import com.ssafy.special.dto.RecentRecommendFoodDto;
-import com.ssafy.special.dto.RecommendFoodDto;
 import com.ssafy.special.dto.request.FeedbackDto;
 import com.ssafy.special.dto.request.UserTasteDto;
+import com.ssafy.special.dto.response.RecommendFoodDto;
 import com.ssafy.special.dto.response.RecommendFoodResultDto;
 import com.ssafy.special.repository.food.FoodIngredientRepository;
 import com.ssafy.special.repository.food.FoodRepository;
@@ -249,25 +249,14 @@ public class MemberRecommendService {
         Long memberSeq = memberOptional.get().getMemberSeq();
         LocalDateTime now = LocalDateTime.now();
 
-//        지난 1~2주 사이에 추천 받은 음식을 기반으로 추천
-        List<RecentRecommendFoodDto> recentlyRecommendedFood = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
-        if (recentlyRecommendedFood.size() == 0) {
-//            추천 받았던 적이 없는 경우 좋아하는 음식 리스트를 기반으로 추천
-            List<UserTasteDto> userFavoriteList = memberService.getUserPreference(memberEmail, 0);
-            recentlyRecommendedFood = userFavoriteList.stream()
-                    .map(RecentRecommendFoodDto::new)
-                    .collect(Collectors.toList());
-        }
+        // 추천 음식 가져오기
+        List<RecommendFoodDto> recommendFoodDtoList = getRecommendList(memberSeq,now,memberEmail);
 
-//        추천받은 리스트
-        List<RecommendFoodDto> recommendFoodDtoList = new ArrayList<>();
-        recommendFoodDtoList = sendPostRequestAndReceiveRecommendFoodList(recentlyRecommendedFood).block();
-
+//        1. 첫 번째 음식은 추천받은 히스토리에 추가하기
         Optional<Long> foodSeqOptional = recommendFoodDtoList.stream()
                 .findFirst()
                 .map(RecommendFoodDto::getFoodSeq);
 
-//        1. 첫 번째 음식은 추천받은 히스토리에 추가하기
         if (foodSeqOptional.isPresent()) {
             Food firstFood = foodRepository.findFoodByFoodSeq(recommendFoodDtoList.get(0).getFoodSeq());
 
@@ -280,14 +269,19 @@ public class MemberRecommendService {
                     .foodRating(1)
                     .build();
             memberRecommendRepository.save(memberRecommend);
+            
 //        2. 알러지 필터링
-            List<RecommendFoodDto> filteredbyAllergyList = filteringByAllergy(memberSeq, recommendFoodDtoList);
-
+            List<MemberAllergy> memberAllergyList = memberAllergyRepository.findMemberAllergiesByMember_MemberSeq(memberSeq);
+            recommendFoodDtoList = filteringByAllergy(memberAllergyList, recommendFoodDtoList);
 
 //        3. 차단 필터링
-            List<RecommendFoodDto> filteredByHateList = filteringByHate(memberSeq, filteredbyAllergyList);
+            List<MemberFoodPreference> memberFoodHateList = memberFoodPreferenceRepository
+                    .findMemberFoodPreferencesByMember_MemberSeqAndPreferenceType(memberSeq, 1);
+            recommendFoodDtoList = filteringByHate(memberFoodHateList, recommendFoodDtoList);
 //        4. 최근에 먹음 처리
-            List<RecommendFoodDto> filteredByRecentlyList = filteringByRecently(memberSeq, filteredByHateList);
+            List<Long> memberRecommendsWithinOneWeek = memberRecommendRepository.findMemberRecommendsWithinOneWeek(memberSeq, LocalDateTime.now());
+            recommendFoodDtoList = filteringByRecently(memberRecommendsWithinOneWeek, recommendFoodDtoList);
+
 //        5. 추천 리스트가 없는 경우 일단 보류
 
             GlobalrecommendFoodDtoList = new ArrayList<>(recommendFoodDtoList);
@@ -295,7 +289,7 @@ public class MemberRecommendService {
 //            추천된 음식에 해당하는 음식 상세정보 합쳐서 프론트로 넘겨주기
 //            foodRepository.findFoodByFoodSeq(foodSeq);
             List<RecommendFoodResultDto> RecommendFoodResultList = new ArrayList<>();
-            for (RecommendFoodDto recommendFoodDto : filteredByRecentlyList) {
+            for (RecommendFoodDto recommendFoodDto : recommendFoodDtoList) {
                 Food food = foodRepository.findFoodByFoodSeq(recommendFoodDto.getFoodSeq());
                 RecommendFoodResultDto recommendFoodResultDto = RecommendFoodResultDto.builder()
                         .recommendedFoodSeq(recommendFoodDto.getFoodSeq())
@@ -316,14 +310,25 @@ public class MemberRecommendService {
         return null;
     }
 
-    private List<RecommendFoodDto> filteringByAllergy(Long memberSeq, List<RecommendFoodDto> recommendFoodDtoList) {
-        List<MemberAllergy> memberAllergyList = memberAllergyRepository.findMemberAllergiesByMember_MemberSeq(memberSeq);
-
-        if (memberAllergyList.isEmpty()) {
-            log.info("알러지가 없는 사용자입니다.");
-            return recommendFoodDtoList;
+    public List<RecommendFoodDto> getRecommendList(Long memberSeq,LocalDateTime now,String memberEmail){
+//        지난 1~2주 사이에 추천 받은 음식을 기반으로 추천
+        List<RecentRecommendFoodDto> recentlyRecommendedFood = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
+        if (recentlyRecommendedFood.size() == 0) {
+//            추천 받았던 적이 없는 경우 좋아하는 음식 리스트를 기반으로 추천
+            List<UserTasteDto> userFavoriteList = memberService.getUserPreference(memberEmail, 0);
+            recentlyRecommendedFood = userFavoriteList.stream()
+                    .map(RecentRecommendFoodDto::new)
+                    .collect(Collectors.toList());
         }
 
+        return sendPostRequestAndReceiveRecommendFoodList(recentlyRecommendedFood).block();
+    }
+
+
+    public List<RecommendFoodDto> filteringByAllergy(List<MemberAllergy> memberAllergyList, List<RecommendFoodDto> recommendFoodDtoList) {
+        if (memberAllergyList.isEmpty()) {
+            return recommendFoodDtoList;
+        }
         Set<Long> allergyIngredients = memberAllergyList.stream()
                 .map(MemberAllergy::getIngredient) // Ingredient 객체를 얻습니다.
                 .map(Ingredient::getIngredientSeq) // Ingredient 객체에서 ingredientSeq를 얻습니다.
@@ -350,15 +355,10 @@ public class MemberRecommendService {
                 .collect(Collectors.toList());
     }
 
-    private List<RecommendFoodDto> filteringByHate(Long memberSeq, List<RecommendFoodDto> recommendFoodDtoList) {
-        List<MemberFoodPreference> memberFoodHateList = memberFoodPreferenceRepository
-                .findMemberFoodPreferencesByMember_MemberSeqAndPreferenceType(memberSeq, 1);
-
-        if (memberFoodHateList.isEmpty()) {
-            log.info("싫어하는 음식이 없는 사용자입니다.");
-            return recommendFoodDtoList; // 싫어하는 음식이 없는 경우 필터링 필요 없음
+    public List<RecommendFoodDto> filteringByHate(List<MemberFoodPreference> memberFoodHateList, List<RecommendFoodDto> recommendFoodDtoList) {
+        if (!memberFoodHateList.isEmpty()) {
+            return recommendFoodDtoList;
         }
-
         Set<Long> hatedFoodSeqs = memberFoodHateList.stream()
                 .map(memberFoodPreference -> memberFoodPreference.getFood().getFoodSeq())
                 .collect(Collectors.toSet());
@@ -367,12 +367,9 @@ public class MemberRecommendService {
                 .filter(recommendFoodDto -> !hatedFoodSeqs.contains(recommendFoodDto.getFoodSeq()))
                 .collect(Collectors.toList());
     }
-    private List<RecommendFoodDto> filteringByRecently(Long memberSeq, List<RecommendFoodDto> recommendFoodDtoList) {
-        List<Long> memberRecommendsWithinOneWeek = memberRecommendRepository.findMemberRecommendsWithinOneWeek(memberSeq, LocalDateTime.now());
-
+    public List<RecommendFoodDto> filteringByRecently(List<Long> memberRecommendsWithinOneWeek, List<RecommendFoodDto> recommendFoodDtoList) {
         if (memberRecommendsWithinOneWeek.isEmpty()) {
-            log.info("최근 추천된 음식이 없어요");
-            return recommendFoodDtoList; // 최근 추천이 없는 경우 필터링 필요 없음
+            return recommendFoodDtoList;
         }
 
         Set<Long> recentlyRecommendedFoodSeqs = new HashSet<>(memberRecommendsWithinOneWeek);

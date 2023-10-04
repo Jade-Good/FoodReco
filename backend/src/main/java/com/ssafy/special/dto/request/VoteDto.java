@@ -13,11 +13,13 @@ import java.util.Map;
 @NoArgsConstructor
 public class VoteDto {
     private Long crewSeq;
-    private Map<Food, List<Member>> voteList;
+    private Long crewRecommendSeq;
+    private Long foodSeq;
 
    @Builder
-    public VoteDto(Long crewSeq, Map<Food, List<Member>> voteList) {
+    public VoteDto(Long crewSeq, Long crewRecommendSeq, Long foodSeq) {
         this.crewSeq = crewSeq;
-        this.voteList = voteList;
+        this.crewRecommendSeq = crewRecommendSeq;
+        this.foodSeq = foodSeq;
     }
 }

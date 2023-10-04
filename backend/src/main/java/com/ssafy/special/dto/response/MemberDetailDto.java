@@ -1,7 +1,9 @@
 package com.ssafy.special.dto.response;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 public class MemberDetailDto {
@@ -20,4 +22,6 @@ public class MemberDetailDto {
         this.weight = weight;
         this.activity = activity;
     }
+
+
 }
