@@ -26,11 +26,11 @@ export const MemberRecommendation = () => {
   const [foodList, setFoodList] = useState<FoodList[]>([
     {
       recommendedFoodSeq: 3899,
-      recommendedFoodName: "짜장면",
+      recommendedFoodName: "잠시 기다려 주세요",
       cookingMethod: "굽기",
       type: "메인반찬",
       category: "중화요리",
-      img: "../images/짜장면.png",
+      img: "/favicon.ico",
       ingredientSimilarity: 0.776180681744197,
       foodNameSimilarity: 0.15384615384615385,
       originalFoodName: "짬뽕",
@@ -59,7 +59,7 @@ export const MemberRecommendation = () => {
 
   const foodfeedback = (point: number) => {
     let nowSeq = foodList[foodIdx].recommendedFoodSeq;
-    let nextIdx = (foodIdx + 1) % foodList.length;
+    let nextIdx = foodIdx + (1 % foodList.length);
 
     let nextSeq = foodList[nextIdx].recommendedFoodSeq;
     if (point === 3 || nextIdx === 0) nextSeq = 0;
