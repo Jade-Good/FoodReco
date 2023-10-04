@@ -204,7 +204,7 @@ public class CrewService {
                 );
             }
         }
-        crewMemberRepository.findByMember(member)
+        crewMemberRepository.findByMemberAndCrew(member,crew)
                 .ifPresent(crewmember->{
                     if(crewmember.getCheckVote() == 0){
                         crewmember.setCheckVote(1);
