@@ -1,24 +1,27 @@
 package com.ssafy.special.service.crew;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ssafy.special.domain.crew.*;
 import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.member.Member;
-import com.ssafy.special.dto.request.CrewDto;
-import com.ssafy.special.dto.request.CrewJoinDto;
-import com.ssafy.special.dto.request.CrewSignUpDto;
-import com.ssafy.special.dto.request.VoteDto;
+import com.ssafy.special.dto.request.*;
 import com.ssafy.special.dto.response.*;
 import com.ssafy.special.repository.crew.*;
 import com.ssafy.special.repository.food.FoodRepository;
 import com.ssafy.special.repository.member.MemberRepository;
 import com.ssafy.special.service.etc.SseService;
+import com.ssafy.special.service.food.FoodService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +40,12 @@ public class CrewService {
     private final CrewRecommendRepository crewRecommendRepository;
     private final CrewRecommendVoteRepository crewRecommendVoteRepository;
     private final CrewRecommendFoodRepository crewRecommendFoodRepository;
+    private final FoodService foodService;
+    // S3 버킷 정보. (버킷 - S3 저장소 이름이라고 생각하면 됨)
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    private final AmazonS3Client amazonS3Client;
 
     /*
      * 사용자 Email으로 자신이 속한 crew List을 출력하는 메소드
@@ -49,11 +58,26 @@ public class CrewService {
         // 회원이 속한 모든 크루를 가져옵니다.
         List<CrewDto> crews = new ArrayList<>();
         for (CrewMember c:member.getCrewMembers()) {
+            Crew memberCrew = c.getCrew();
+            int cnt = 0;
+            for(CrewMember m : memberCrew.getCrewMembers()){
+                if(m.getStatus()!=-1){cnt++;}
+            }
+            CrewRecommend crewRecommend = crewRecommendRepository.findFirstByCrewOrderByRecommendAtDesc(memberCrew);
+            LocalDateTime startDateTime = crewRecommend.getRecommendAt();
+
+            // LocalDate로 변환
+            LocalDate startDate = startDateTime.toLocalDate();
+            LocalDate endDate = LocalDate.now();
+            // 날짜 차이 계산
+            Long daysDifference = ChronoUnit.DAYS.between(startDate, endDate);
             CrewDto crew = CrewDto.builder()
                     .crewSeq(c.getCrew().getCrewSeq())
                     .name(c.getCrew().getName())
                     .img(c.getCrew().getImg())
                     .status(c.getStatus()==0?"미반응":(c.getStatus()==-1?"거절":"수락"))
+                    .crewCnt(cnt)
+                    .recentRecommend(daysDifference)
                     .build();
             crews.add(crew);
         }
@@ -68,10 +92,24 @@ public class CrewService {
         }
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+        String S3_fileName="";
+        if(crewSignUpDto.getCrewImg() != null){
+            S3_fileName = "crewImg/" + foodService.getRandomFileName();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(crewSignUpDto.getCrewImg().getContentType());
+            metadata.setContentLength(crewSignUpDto.getCrewImg().getSize());
+            try {
+                amazonS3Client.putObject(bucket, S3_fileName, crewSignUpDto.getCrewImg().getInputStream(), metadata);
+            }catch (Exception e) {
+                e.printStackTrace();
+                throw new IllegalStateException("이미지 저장 중 에러 발생");
+            }
+        }
+
         // Crew 생성
         Crew crew = Crew.builder()
                 .name(crewSignUpDto.getCrewName())
-                .img(crewSignUpDto.getCrewImg())
+                .img(S3_fileName)
                 .status("투표전")
                 .createdAt(LocalDateTime.now())
                 .lastModifiedAt(LocalDateTime.now())
@@ -246,16 +284,30 @@ public class CrewService {
     }
 
     @Transactional
-    public void updateCrew(CrewDto crewDto)
-            throws EntityNotFoundException, IllegalArgumentException {
-        crewRepository.findByCrewSeq(crewDto.getCrewSeq())
+    public void updateCrew(CrewUpdateDto crewUpdateDto)
+            throws EntityNotFoundException, IllegalArgumentException,IllegalStateException {
+        crewRepository.findByCrewSeq(crewUpdateDto.getCrewSeq())
                 .ifPresentOrElse(
                         selectCrew->{
                             if(!selectCrew.getStatus().equals("투표전")){
                                 throw new IllegalArgumentException(selectCrew.getStatus()+ "에는 변경이 불가 합니다.");
                             }
-                            selectCrew.setName(crewDto.getName());
-                            selectCrew.setImg(crewDto.getImg());
+                            selectCrew.setName(crewUpdateDto.getName());
+                            if(crewUpdateDto.getImg() != null){
+                                String S3_fileName = "crewImg/" + foodService.getRandomFileName();
+                                ObjectMetadata metadata = new ObjectMetadata();
+                                metadata.setContentType(crewUpdateDto.getImg().getContentType());
+                                metadata.setContentLength(crewUpdateDto.getImg().getSize());
+                                try {
+                                    amazonS3Client.putObject(bucket, S3_fileName, crewUpdateDto.getImg().getInputStream(), metadata);
+                                    selectCrew.setImg(S3_fileName);
+                                }catch (Exception e) {
+                                    e.printStackTrace();
+                                    throw new IllegalStateException("이미지 저장 중 에러 발생");
+                                }
+                            }
+                            crewRepository.save(selectCrew);
+
                         },
                         () -> new EntityNotFoundException("해당 그룹을 찾을 수 없습니다.")
                 );
@@ -294,8 +346,55 @@ public class CrewService {
                             .crewRecommendFood(crewRecommendFood)
                     .build());
         }
-        sseService.vote(voteDto.getCrewSeq(),member.getMemberSeq());
 
+        VoteRecommendDto voteRecommendDto = getVoteList(crewRecommend,crew);
+        sseService.vote(voteDto.getCrewSeq(),member.getMemberSeq(),voteRecommendDto);
+    }
+
+    @Transactional
+    public VoteRecommendDto getVoteList(CrewRecommend crewRecommend,Crew crew){
+        int crewMemberCount = 0;
+        for(CrewMember c : crew.getCrewMembers()){
+            if(c.getStatus() == 1) {
+                crewMemberCount++;
+            }
+        }
+        List<CrewRecommendHistoryByFoodDto> historiesByRecommend = new ArrayList<>();
+        List<CrewRecommendFood> crewFoods = crewRecommendFoodRepository.findAllByCrewRecommend(crewRecommend);
+        Map<Food, List<Member>> m = new HashMap<>();
+        for (CrewRecommendFood f: crewFoods) {
+            List<Member> memberList = m.getOrDefault(f.getFood(),new ArrayList<>());
+            List<CrewRecommendVote> votes = crewRecommendVoteRepository.findAllByCrewRecommendFood(f);
+            for (CrewRecommendVote v: votes) {
+                memberList.add(v.getMember());
+                crewMemberCount--;
+            }
+            m.put(f.getFood(),memberList);
+        }
+        for (Food food: m.keySet()) {
+            historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
+                    .foodSeq(food.getFoodSeq())
+                    .foodName(food.getName())
+                    .foodImg(food.getImg())
+                    .foodVoteCount(m.get(food).size())
+                    .build());
+        }
+        // 미응답 인원
+        historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
+                .foodSeq(0L)
+                .foodName("미투표")
+                .foodImg("")
+                .foodVoteCount(crewMemberCount)
+                .build());
+        VoteRecommendDto voteRecommendDto = null;
+        if(crew.getStatus().equals("투표중") && voteRecommendDto ==null){
+            voteRecommendDto = VoteRecommendDto.builder()
+                    .crewRecommendSeq(crewRecommend.getCrewRecommendSeq())
+                    .foodList(historiesByRecommend)
+                    .crewRecommendTime(crewRecommend.getRecommendAt())
+                    .build();
+        }
+        return voteRecommendDto;
 
     }
 }

@@ -4,6 +4,7 @@ import com.ssafy.special.domain.member.Member;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -11,11 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 public class CrewSignUpDto {
     private String crewName;
-    private String crewImg;
+    private MultipartFile crewImg;
     private List<Long> crewMembers;
 
     @Builder
-    public CrewSignUpDto(String crewName, String crewImg, List<Long> crewMembers) {
+    public CrewSignUpDto(String crewName, MultipartFile crewImg, List<Long> crewMembers) {
         this.crewName = crewName;
         this.crewImg = crewImg;
         this.crewMembers = crewMembers;
