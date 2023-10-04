@@ -4,6 +4,8 @@ import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.dto.RecommendFoodDto;
 import com.ssafy.special.dto.request.FeedbackDto;
 import com.ssafy.special.dto.response.RecommendFoodResultDto;
+import com.ssafy.special.dto.response.WeatherStatus;
+import com.ssafy.special.service.member.GoogleAuthService;
 import com.ssafy.special.service.member.MemberRecommendService;
 import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,9 @@ import java.util.List;
 @RequestMapping("/api/recommend")
 public class MemberRecommendController {
     private final MemberRecommendService memberRecommendService;
+    private final GoogleAuthService googleAuthService;
     private final SecurityUtils securityUtils;
+    private final WeatherStatus weatherStatus;
 
     @PatchMapping("/feedback/{nextFoodSeq}")
     public ResponseEntity<?> implicitFeedback(@RequestBody FeedbackDto feedbackRequestDto, @PathVariable Long nextFoodSeq ){
@@ -42,6 +46,7 @@ public class MemberRecommendController {
     public ResponseEntity<?> personalRecommendation(){
         String memberEmail = securityUtils.getEmail();
         try {
+            googleAuthService.getActivityFromGoogle(memberEmail);
             List<RecommendFoodResultDto> recommendFoodDtoList = memberRecommendService.recommendFood(memberEmail);
             log.info("추천 완료");
             return ResponseEntity.ok().body(recommendFoodDtoList);

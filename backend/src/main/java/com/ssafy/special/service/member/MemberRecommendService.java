@@ -12,6 +12,7 @@ import com.ssafy.special.dto.RecommendFoodDto;
 import com.ssafy.special.dto.request.FeedbackDto;
 import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.response.RecommendFoodResultDto;
+import com.ssafy.special.dto.response.WeatherStatus;
 import com.ssafy.special.repository.food.FoodIngredientRepository;
 import com.ssafy.special.repository.food.FoodRepository;
 import com.ssafy.special.repository.member.MemberAllergyRepository;
@@ -48,6 +49,7 @@ public class MemberRecommendService {
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
     private final FoodIngredientRepository foodIngredientRepository;
     private final MemberAllergyRepository memberAllergyRepository;
+    private final WeatherStatus weatherStatus;
 
     private List<RecommendFoodDto> GlobalrecommendFoodDtoList;
 
@@ -81,6 +83,8 @@ public class MemberRecommendService {
         Food nowFood = foodRepository.findFoodByFoodSeq(foodSeq);
         int feedback = feedbackDto.getFeedback();
         int lastFoodRating = -1;
+        int steps = memberOptional.get().getActivity();
+        String weather = weatherStatus.getStatus();
 
         List<MemberRecommend> memberRecommend = memberRecommendRepository
                 .findLatestMemberRecommend(memberSeq, foodSeq, PageRequest.of(0,1));
@@ -153,8 +157,8 @@ public class MemberRecommendService {
                     .member(memberOptional.get())
                     .food(nextFood)
                     .recommendAt(LocalDateTime.now())
-                    .weather("")
-                    .activityCalorie(memberOptional.get().getActivity())
+                    .weather(weather)
+                    .activityCalorie(steps)
                     .foodRating(1)
                     .build();
             memberRecommendRepository.save(memberRecommend1);
@@ -175,8 +179,8 @@ public class MemberRecommendService {
                         MemberRecommend memberRecommend2 = MemberRecommend.builder()
                                 .member(memberOptional.get())
                                 .food(nowFood)
-                                .weather("")
-                                .activityCalorie(memberOptional.get().getActivity())
+                                .weather(weather)
+                                .activityCalorie(steps)
                                 .foodRating(2)
                                 .recommendAt(LocalDateTime.now())
                                 .build();
@@ -191,8 +195,8 @@ public class MemberRecommendService {
                         MemberRecommend memberRecommend2 = MemberRecommend.builder()
                                 .member(memberOptional.get())
                                 .food(nowFood)
-                                .weather("")
-                                .activityCalorie(memberOptional.get().getActivity())
+                                .weather(weather)
+                                .activityCalorie(steps)
                                 .foodRating(4)
                                 .recommendAt(LocalDateTime.now())
                                 .build();
@@ -209,8 +213,8 @@ public class MemberRecommendService {
                     MemberRecommend memberRecommend2 = MemberRecommend.builder()
                             .member(memberOptional.get())
                             .food(nowFood)
-                            .weather("")
-                            .activityCalorie(memberOptional.get().getActivity())
+                            .weather(weather)
+                            .activityCalorie(steps)
                             .foodRating(lastFoodRating)
                             .recommendAt(LocalDateTime.now())
                             .build();
@@ -248,8 +252,11 @@ public class MemberRecommendService {
         }
         Long memberSeq = memberOptional.get().getMemberSeq();
         LocalDateTime now = LocalDateTime.now();
+        int steps = memberOptional.get().getActivity();
+        String weather = weatherStatus.getStatus();
 
-//        지난 1~2주 사이에 추천 받은 음식을 기반으로 추천
+//        지난 1~2주 사이에 추천 받은 음식을 기반으로 추천,
+//        날씨와 활동량 유사도도 비교
         List<RecentRecommendFoodDto> recentlyRecommendedFood = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
         if (recentlyRecommendedFood.size() == 0) {
 //            추천 받았던 적이 없는 경우 좋아하는 음식 리스트를 기반으로 추천
@@ -275,15 +282,13 @@ public class MemberRecommendService {
                     .member(memberOptional.get())
                     .food(firstFood)
                     .recommendAt(LocalDateTime.now())
-                    .weather("")
-                    .activityCalorie(memberOptional.get().getActivity())
+                    .weather(weather)
+                    .activityCalorie(steps)
                     .foodRating(1)
                     .build();
             memberRecommendRepository.save(memberRecommend);
 //        2. 알러지 필터링
             List<RecommendFoodDto> filteredbyAllergyList = filteringByAllergy(memberSeq, recommendFoodDtoList);
-
-
 //        3. 차단 필터링
             List<RecommendFoodDto> filteredByHateList = filteringByHate(memberSeq, filteredbyAllergyList);
 //        4. 최근에 먹음 처리

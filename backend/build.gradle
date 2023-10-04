@@ -64,6 +64,10 @@ dependencies {
 	// web client
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+	// jackson
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
+
 }
 
 tasks.named('test') {
