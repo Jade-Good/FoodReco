@@ -82,7 +82,8 @@ public class SecurityConfig {
                         "/api/member/checkEmail",
                         "/api/member/login",
                         "/api/jwt",
-                        "/api/crew/sse/**"
+                        "/api/crew/sse/**",
+                        "/api/mypage/**"
 
                 )
                 .permitAll() // 회원가입 접근 가능
