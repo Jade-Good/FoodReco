@@ -137,6 +137,7 @@ public class MemberService {
                 MemberAllergy memberAllergy = MemberAllergy.builder()
                         .member(member)
                         .ingredient(ingredient)
+                        .createdAt(LocalDateTime.now())
                         .build();
 
                 memberAllergyRepository.save(memberAllergy);
