@@ -903,7 +903,7 @@ export const SignUp = () => {
                       theme: "colored",
                     });
                   } else {
-                    if (progress < 5) {
+                    if (progress < 6) {
                       setProgress((prevProgress) => prevProgress + 1);
                     }
                   }
@@ -969,19 +969,9 @@ export const SignUp = () => {
                 background="#FE9D3A"
                 radius="10px"
                 onClick={() => {
-                  if (progress > 0 && likefood.length >= 5) {
+                  if (progress < 5) {
+                    console.log(progress);
                     setProgress((prevProgress) => prevProgress + 1);
-                  } else {
-                    toast.warn("최소 5개 이상의 음식을 선택해주세요", {
-                      position: "top-center",
-                      autoClose: 1000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                      theme: "colored",
-                    });
                   }
                 }}
               >

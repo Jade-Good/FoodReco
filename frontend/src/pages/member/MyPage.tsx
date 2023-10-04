@@ -12,11 +12,19 @@ export const MyPage = () => {
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [nickname, setNickname] = useState("");
+  const [activity, setActivicty] = useState(0);
+  const [profileURL, setProfileURL] = useState("");
+
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}/member/login`)
+      .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`)
       .then((res) => {
         console.log(res);
+        setHeight(res.data.height);
+        setWeight(res.data.weight);
+        setNickname(res.data.nickname);
+        setActivicty(res.data.activity);
+        setProfileURL(res.data.profileUrl);
       })
       .catch((err) => {
         console.log(err);
