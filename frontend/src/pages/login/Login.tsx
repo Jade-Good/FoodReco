@@ -26,6 +26,8 @@ export const Login = () => {
   // const dispatch = useDispatch();
   const [user, setUser] = useRecoilState(userState);
 
+  useEffect(() => {}, []);
+
   const {
     register,
     formState: { errors, isSubmitting, isSubmitted },
@@ -69,13 +71,14 @@ export const Login = () => {
           const nickcname = res.data.nickname;
           const accessToken = res.headers.authorization;
           const email = res.data.email;
-          const refreshToken = res.headers.authorizationRefresh;
+          const refreshToken = res.headers.authorizationrefresh;
 
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
-          localStorage.setItem("accesstoken", accessToken);
-          localStorage.setItem("refreshtoken", refreshToken);
+
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
 
           setUser((prevUser) => ({
             ...prevUser,

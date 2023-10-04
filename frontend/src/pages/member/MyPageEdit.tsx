@@ -19,6 +19,8 @@ import BasicSelect from "../../components/option/BasicSelect";
 import { useNavigate } from "react-router-dom";
 import StyledBasicInputUnit from "../../components/inputs/StyledBasicInputUnit";
 import { toast } from "react-toastify";
+import { useRecoilState } from "recoil";
+import { userState } from "../../recoil/atoms/userState";
 
 interface IForm {
   image: FileList | null;
@@ -26,8 +28,8 @@ interface IForm {
   nickname: string;
   age: string;
   sex: string;
-  height: number | undefined;
-  weight: number | undefined;
+  height: string | number | undefined;
+  weight: string | number | undefined;
   activity: string;
   time: number;
 }
@@ -47,6 +49,34 @@ export const MyPageEdit = () => {
   const timeList = [0.5, 1, 1.5, 2, 2.5, 3];
   // 걷기 1시간 6750 , 헬스 1시간 14700, 수영: 12850, 자전거:11050
   const [imageURL, setImageURL] = useState<string | undefined>();
+
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [activity, setActivicty] = useState(0);
+  const [profileURL, setProfileURL] = useState("");
+  const [user, setUser] = useRecoilState(userState);
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setHeight(res.data.memberDetailDto.height);
+        setWeight(res.data.memberDetailDto.weight);
+        setNickname(res.data.memberDetailDto.nickname);
+        setActivicty(res.data.memberDetailDto.activity);
+        setProfileURL(res.data.memberDetailDto.profileUrl);
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log(err.response.status);
+      });
+  }, []);
 
   // let imageURL: string;
 
@@ -111,8 +141,8 @@ export const MyPageEdit = () => {
       nickname: "",
       age: "",
       sex: "",
-      height: undefined,
-      weight: undefined,
+      height: height,
+      weight: weight,
       activity: "",
       time: undefined,
     },
@@ -265,34 +295,6 @@ export const MyPageEdit = () => {
           </div>
 
           <div className={classes.mB}>
-            <div className={classes.labelContainer}>
-              <div>
-                <label className={classes.labelStyle} htmlFor="age">
-                  연령
-                </label>
-
-                <BasicSelect
-                  control={control}
-                  {...register("age")}
-                  name="age"
-                  label="age"
-                  options={ageList}
-                />
-              </div>
-              <div>
-                <label className={classes.labelStyle} htmlFor="sex">
-                  성별
-                </label>
-
-                <BasicSelect
-                  control={control}
-                  {...register("sex")}
-                  name="sex"
-                  label="sex"
-                  options={sexList}
-                />
-              </div>
-            </div>
             <div className={classes.labelContainer}>
               <div>
                 <label className={classes.labelStyle} htmlFor="height">

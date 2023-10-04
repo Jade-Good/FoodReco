@@ -7,6 +7,8 @@ import StyledButton from "../../styles/StyledButton";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import api from "../../utils/axios";
+import { useRecoilState } from "recoil";
+import { userState } from "../../recoil/atoms/userState";
 
 export const MyPage = () => {
   const navigate = useNavigate();
@@ -15,17 +17,22 @@ export const MyPage = () => {
   const [nickname, setNickname] = useState("");
   const [activity, setActivicty] = useState(0);
   const [profileURL, setProfileURL] = useState("");
+  const [user, setUser] = useRecoilState(userState);
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`)
+      .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      })
       .then((res) => {
         console.log(res);
-        setHeight(res.data.height);
-        setWeight(res.data.weight);
-        setNickname(res.data.nickname);
-        setActivicty(res.data.activity);
-        setProfileURL(res.data.profileUrl);
+        setHeight(res.data.memberDetailDto.height);
+        setWeight(res.data.memberDetailDto.weight);
+        setNickname(res.data.memberDetailDto.nickname);
+        setActivicty(res.data.memberDetailDto.activity);
+        setProfileURL(res.data.memberDetailDto.profileUrl);
       })
       .catch((err) => {
         console.log(err);
