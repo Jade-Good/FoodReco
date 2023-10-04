@@ -9,7 +9,6 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.repository.member.MemberRepository;
-import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +16,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +41,6 @@ public class FoodService {
 
     private final AmazonS3Client amazonS3Client;
     private final MemberRepository memberRepository;
-    private final SecurityUtils securityUtils;
 
 
     @Transactional
@@ -110,7 +110,7 @@ public class FoodService {
 
         // download 받을거면 DB에서 original_fileName으로 S3_fileName을 조회하면 된다.
 
-        Member member = memberRepository.findByEmail(securityUtils.getEmail())
+        Member member = memberRepository.findByEmail(getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         // test Code
         String S3_fileName = member.getImg();
@@ -150,6 +150,12 @@ public class FoodService {
             default:
                 return MediaType.APPLICATION_OCTET_STREAM;
         }
+    }
+
+    // 사용자 Email 가져오는 Email
+    public String getEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 
 }

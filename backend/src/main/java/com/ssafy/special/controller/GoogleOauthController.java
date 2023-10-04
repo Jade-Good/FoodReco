@@ -2,15 +2,15 @@ package com.ssafy.special.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.special.service.member.GoogleAuthService;
-import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -19,10 +19,9 @@ import java.util.Map;
 @RequestMapping("/api/google")
 public class GoogleOauthController {
     private final GoogleAuthService googleAuthService;
-    private final SecurityUtils securityUtils;
     @PatchMapping("/auth")
     public ResponseEntity<?> getAuthTokens(@RequestBody Map<String, String> exchangeToken) {
-        String memberEmail = securityUtils.getEmail();
+        String memberEmail = getEmail();
 
         try{
             String tokens = googleAuthService.getAccessTokens(memberEmail, exchangeToken.get("exchangeToken"));
@@ -45,4 +44,9 @@ public class GoogleOauthController {
     }
 
 
+    // 사용자 Email 가져오는 Email
+    public String getEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
 }
