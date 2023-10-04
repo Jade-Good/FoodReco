@@ -32,7 +32,22 @@ public interface MemberRecommendRepository extends JpaRepository<MemberRecommend
 //    List<RecentRecommendFoodDto>
 //    findRecentlyRecommendedFood(@Param("memberSeq") Long memberSeq, @Param("now")LocalDateTime now);
 
-    @Query(value = "SELECT mr.food_seq FROM member_recommend mr where mr.member_seq = :memberSeq AND DATEDIFF(:now, mr.recommend_at) < 8 AND TIMESTAMPDIFF(MINUTE, mr.recommend_at, :now) > 1", nativeQuery = true)
+
+
+    @Query(value = "SELECT mr.food_seq FROM member_recommend mr where mr.member_seq = :memberSeq AND DATEDIFF(:now, mr.recommend_at) < 8 AND TIMESTAMPDIFF(MINUTE, mr.recommend_at, :now) >= 0", nativeQuery = true)
     List<Long>
     findMemberRecommendsWithinOneWeek(@Param("memberSeq") Long memberSeq, @Param("now") LocalDateTime now);
+
+    @Query("SELECT mr.food.foodSeq, mr.food.name FROM member_recommend mr WHERE mr.member.memberSeq = :memberSeq AND mr.weather = :weather AND mr.activityCalorie BETWEEN :activeCalorie-1000 and :activeCalorie+1000")
+    List<RecentRecommendFoodDto>
+    findSimilarRecommendedFood1000(@Param("memberSeq") Long memberSeq, @Param("weather") String weather, @Param("activeCalorie") int activeCalorie);
+
+    @Query("SELECT mr.food.foodSeq, mr.food.name FROM member_recommend mr WHERE mr.member.memberSeq = :memberSeq AND mr.weather = :weather AND mr.activityCalorie BETWEEN :activeCalorie-2000 and :activeCalorie+2000")
+    List<RecentRecommendFoodDto>
+    findSimilarRecommendedFood2000(@Param("memberSeq") Long memberSeq, @Param("weather") String weather, @Param("activeCalorie") int activeCalorie);
+
+    @Query("SELECT mr.food.foodSeq, mr.food.name FROM member_recommend mr WHERE mr.member.memberSeq = :memberSeq AND mr.weather = :weather AND mr.activityCalorie BETWEEN :activeCalorie-3000 and :activeCalorie+3000")
+    List<RecentRecommendFoodDto>
+    findSimilarRecommendedFood3000(@Param("memberSeq") Long memberSeq, @Param("weather") String weather, @Param("activeCalorie") int activeCalorie);
+
 }

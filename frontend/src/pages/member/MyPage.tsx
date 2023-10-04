@@ -20,7 +20,7 @@ export const MyPage = () => {
   const [user, setUser] = useRecoilState(userState);
 
   useEffect(() => {
-    axios
+    api
       .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
@@ -55,7 +55,7 @@ export const MyPage = () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/google/auth`,
-        new URLSearchParams(code)
+        new URLSearchParams(code),
       );
       console.log(response.data);
     } catch (error) {
@@ -72,7 +72,7 @@ export const MyPage = () => {
   }, [code, fetchAccessToken]);
 
   const handleGoogleAuth = () => {
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline&redirect_uri=${process.env.REACT_APP_BASE_URL}/mypage/1&response_type=code&client_id=195561660115-6gse0lsa1ggdm3t9jplps3sodm7e735n.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.nutrition.read https://www.googleapis.com/auth/fitness.sleep.read`;
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline&redirect_uri=${process.env.REACT_APP_BASE_URL}/mypage&response_type=code&client_id=195561660115-6gse0lsa1ggdm3t9jplps3sodm7e735n.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.nutrition.read https://www.googleapis.com/auth/fitness.sleep.read`;
     fetchAccessToken();
   };
 

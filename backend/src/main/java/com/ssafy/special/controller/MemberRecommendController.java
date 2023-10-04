@@ -2,7 +2,7 @@ package com.ssafy.special.controller;
 
 import com.ssafy.special.dto.request.FeedbackDto;
 import com.ssafy.special.dto.response.RecommendFoodResultDto;
-import com.ssafy.special.service.member.GoogleAuthService;
+import com.ssafy.special.service.member.MemberGoogleAuthService;
 import com.ssafy.special.service.crew.CrewRecommendService;
 import com.ssafy.special.service.member.MemberRecommendService;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,15 @@ import java.util.List;
 @RequestMapping("/api/recommend")
 public class MemberRecommendController {
     private final MemberRecommendService memberRecommendService;
-    private final GoogleAuthService googleAuthService;
+    private final MemberGoogleAuthService memberGoogleAuthService;
     private final CrewRecommendService crewRecommendService;
     @PatchMapping("/feedback/{nextFoodSeq}")
     public ResponseEntity<?> implicitFeedback(@RequestBody FeedbackDto feedbackRequestDto, @PathVariable Long nextFoodSeq ){
         String memberEmail = getEmail();
         try {
-            memberRecommendService.implicitFeedback(memberEmail, feedbackRequestDto, nextFoodSeq);
+            int googleSteps = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
+            log.info(Integer.toString(googleSteps));
+            memberRecommendService.implicitFeedback(memberEmail, feedbackRequestDto, nextFoodSeq, googleSteps);
             log.info("묵시적 피드백 업데이트 완료");
             return ResponseEntity.ok().body("묵시적 피드백 업데이트 완료");
         }catch (EntityNotFoundException e){
@@ -35,6 +37,7 @@ public class MemberRecommendController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (Exception e) {
             log.info("처리되지 않은 에러 발생");
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -43,8 +46,9 @@ public class MemberRecommendController {
     public ResponseEntity<?> personalRecommendation(){
         String memberEmail = getEmail();
         try {
-            googleAuthService.getActivityFromGoogle(memberEmail);
-            List<RecommendFoodResultDto> recommendFoodDtoList = memberRecommendService.recommendFood(memberEmail);
+            int googleCalorie = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
+            log.info(Integer.toString(googleCalorie));
+            List<RecommendFoodResultDto> recommendFoodDtoList = memberRecommendService.recommendFood(memberEmail, googleCalorie);
             log.info("추천 완료");
             return ResponseEntity.ok().body(recommendFoodDtoList);
         }catch (EntityNotFoundException e){
@@ -52,6 +56,7 @@ public class MemberRecommendController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (Exception e){
             log.info("처리되지 않은 에러 발생");
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

@@ -6,6 +6,7 @@ import com.ssafy.special.service.etc.FcmService;
 import com.ssafy.special.service.etc.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -100,16 +101,19 @@ public class CrewController {
     }
 
     @PatchMapping ("/update")
-    public ResponseEntity<?> updateCrewInfo(@RequestBody CrewDto crewDto){
+    public ResponseEntity<?> updateCrewInfo(@RequestBody CrewUpdateDto CrewUpdateDto){
         log.info("updateCrewInfo() 메소드 시작");
         try{
-            crewService.updateCrew(crewDto);
+            crewService.updateCrew(CrewUpdateDto);
             return ResponseEntity.ok().body("정상적으로 수정되었습니다.");
         }catch (IllegalArgumentException e){
             log.info("변경 불가능한 투표 상태 : "+ e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (EntityNotFoundException e){
             log.info("Crew find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (IllegalStateException e){
+            log.info("이미지 업로드 에러 : "+ e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch (Exception e){
             log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
@@ -137,7 +141,7 @@ public class CrewController {
     }
 
 
-    @GetMapping("/sse/{crewSeq}/{memberSeq}")
+    @GetMapping(value = "/sse/{crewSeq}/{memberSeq}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> sseSubscribe(@PathVariable Long crewSeq, @PathVariable Long memberSeq){
         log.info("sseSubscribe() 메소드 시작");
             return ResponseEntity.ok().body(sseService.connect(memberSeq));

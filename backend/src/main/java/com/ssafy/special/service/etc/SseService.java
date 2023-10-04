@@ -1,8 +1,10 @@
 package com.ssafy.special.service.etc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.special.domain.crew.Crew;
 import com.ssafy.special.domain.crew.CrewMember;
 import com.ssafy.special.domain.member.Member;
+import com.ssafy.special.dto.response.VoteRecommendDto;
 import com.ssafy.special.repository.EmitterRepository;
 import com.ssafy.special.repository.crew.CrewRepository;
 import com.ssafy.special.repository.member.MemberRepository;
@@ -23,6 +25,7 @@ public class SseService {
     private final EmitterRepository emitterRepository;
     private final MemberRepository memberRepository;
     private final CrewRepository crewRepository;
+    private final ObjectMapper objectMapper;
     public SseEmitter connect(Long memberSeq) throws EntityNotFoundException{
         memberRepository.findByMemberSeq(memberSeq)
                 .orElseThrow(() -> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다."));
@@ -50,7 +53,7 @@ public class SseService {
     }
 
     @Transactional
-    public void vote(Long crewSeq, Long memberSeq) {
+    public void vote(Long crewSeq, Long memberSeq, VoteRecommendDto voteRecommendDto) {
         Crew crew = crewRepository.findByCrewSeq(crewSeq)
                 .orElseThrow(() -> new EntityNotFoundException("해당 그룹을 찾을 수 없습니다."));
         for(CrewMember c : crew.getCrewMembers()){
@@ -59,7 +62,9 @@ public class SseService {
             SseEmitter sseEmitter = emitterRepository.get(crewMember.getMemberSeq());
             if (sseEmitter != null && !crewMember.getMemberSeq().equals(memberSeq)) {
                 try {
-                    sseEmitter.send(SseEmitter.event().id(crewSeq+"").name("vote").data("vote"));
+                    String voteValue = objectMapper.writeValueAsString(voteRecommendDto);
+                    sseEmitter.send(SseEmitter.event().id(crewSeq+"").name("vote")
+                            .data(voteRecommendDto));
                     log.info(c.getMember().getNickname()+"님 sse send2");
                 } catch (IOException exception) {
                     // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
