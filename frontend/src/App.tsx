@@ -50,7 +50,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               {/* 메인페이지 */}
-              <Route path="/" element={<Main />} />
+              <Route path="/" element={isLogin ? <Main /> : <Login />} />
               {/* 로그인페이지 */}
               <Route path="/login" element={<Login />} />
               {/* 회원가입페이지 */}

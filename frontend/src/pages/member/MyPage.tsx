@@ -36,7 +36,7 @@ export const MyPage = () => {
       })
       .catch((err) => {
         console.log(err);
-        console.log(err.response.status);
+        // console.log(err.response.status);
       });
   }, []);
 
@@ -49,7 +49,6 @@ export const MyPage = () => {
 
   const fetchAccessToken = useCallback(async () => {
     if (!code) {
-      console.log("코드 못읽어옴");
       return; // code가 없으면 함수를 종료합니다.
     }
 
@@ -82,12 +81,12 @@ export const MyPage = () => {
       <HeaderLogo />
       <div
         style={{
-          height: "60vh",
+          height: "80vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "column",
-          marginTop: "10rem",
+          marginTop: "10vh",
           overflow: "scroll",
         }}
       >
@@ -100,17 +99,25 @@ export const MyPage = () => {
             marginBottom: "2rem",
           }}
         >
-          <img
-            src={profileURL}
-            alt="sds"
-            style={{ width: "15rem", height: "15rem" }}
-          />
+          {profileURL ? (
+            <img
+              src={profileURL}
+              alt="sds"
+              style={{ width: "15rem", height: "15rem" }}
+            />
+          ) : (
+            <img
+              src="/images/profileImg.png"
+              alt="sds"
+              style={{ width: "15rem", height: "15rem" }}
+            />
+          )}
         </div>
         <StyledButton
           background="#FFF6EC"
           color="#FE9D3A"
           border="1px solid #FE9D3A"
-          onClick={() => navigate("/mypage/edit/:memberId")}
+          onClick={() => navigate("/mypage/edit")}
         >
           프로필수정
         </StyledButton>
@@ -137,8 +144,9 @@ export const MyPage = () => {
           color="#FE9D3A"
           border="1px solid #FE9D3A"
           onClick={handleGoogleAuth}
+          fontSize="1rem"
         >
-          구글 연동하기 : Fitness
+          구글 연동하기
         </StyledButton>
         <FooterMypage />
       </div>

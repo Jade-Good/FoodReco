@@ -87,7 +87,7 @@ export const Login = () => {
             nickname: nickcname,
             email: email,
           }));
-
+          window.location.reload();
           navigate("/");
         })
         .catch((err) => {

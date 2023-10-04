@@ -190,7 +190,10 @@ export const MyPageEdit = () => {
       weight: weight,
       height: height,
     };
-    formData.append("request", new Blob([JSON.stringify(datas)]));
+    formData.append(
+      "request",
+      new Blob([JSON.stringify(datas)], { type: "application/json" })
+    );
     console.log(datas);
     if (errors.nickname) {
       console.log(errors);
@@ -209,6 +212,7 @@ export const MyPageEdit = () => {
         .patch(`${process.env.REACT_APP_BASE_URL}/mypage/info`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: localStorage.getItem("accessToken"),
           },
         })
         .then((res) => {
