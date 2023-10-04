@@ -264,7 +264,7 @@ public class CrewService {
                             selectCrew.setName(crewUpdateDto.getName());
 
                             //s3 에 이미지 넣기
-                            String S3_fileName = foodService.getRandomFileName();
+                            String S3_fileName = "crewImg/" + foodService.getRandomFileName();
                             ObjectMetadata metadata = new ObjectMetadata();
                             metadata.setContentType(crewUpdateDto.getImg().getContentType());
                             metadata.setContentLength(crewUpdateDto.getImg().getSize());
