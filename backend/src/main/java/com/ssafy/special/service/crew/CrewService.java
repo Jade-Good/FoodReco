@@ -199,7 +199,7 @@ public class CrewService {
                         .memberSeq(m.getMemberSeq())
                         .memberName(m.getNickname())
                         .memberStatus(c.getStatus() == 0 ? "미응답" : (c.getStatus() == -1 ? "거절" : "수락"))
-                        .memberImg(m.getImg())
+                        .memberImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + m.getImg())
                         .build()
                 );
             }
@@ -243,7 +243,7 @@ public class CrewService {
                 historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
                         .foodSeq(food.getFoodSeq())
                         .foodName(food.getName())
-                        .foodImg(food.getImg())
+                        .foodImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
                         .foodVoteCount(m.get(food).size())
                         .build());
             }
@@ -278,7 +278,7 @@ public class CrewService {
         CrewDetailDto crewDetailDto = CrewDetailDto.builder()
                 .crewSeq(crew.getCrewSeq())
                 .crewName(crew.getName())
-                .crewImg(crew.getImg())
+                .crewImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + crew.getImg())
                 .crewStatus(crew.getStatus())
                 .memberStatus(memberStatus)
                 .crewMembers(crewMembers)
@@ -382,7 +382,7 @@ public class CrewService {
             historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
                     .foodSeq(food.getFoodSeq())
                     .foodName(food.getName())
-                    .foodImg(food.getImg())
+                    .foodImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
                     .foodVoteCount(m.get(food).size())
                     .build());
         }

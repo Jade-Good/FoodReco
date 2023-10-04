@@ -154,7 +154,7 @@ public class MemberService {
                 friends.add(MemberInfoDto.builder()
                         .memberSeq(friend.getMemberSeq())
                         .memberNickname(friend.getNickname())
-                        .memberImg(friend.getImg())
+                        .memberImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + friend.getImg())
                         .memberEmail(friend.getEmail())
                         .build());
             } else {
@@ -162,7 +162,7 @@ public class MemberService {
                 friends.add(MemberInfoDto.builder()
                         .memberSeq(friend.getMemberSeq())
                         .memberNickname(friend.getNickname())
-                        .memberImg(friend.getImg())
+                        .memberImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + friend.getImg())
                         .memberEmail(friend.getEmail())
                         .build());
             }
@@ -210,7 +210,7 @@ public class MemberService {
                 if (preference.getPreferenceType() == type) {
                     UserTasteDto userFavoriteDto = UserTasteDto.builder()
                             .foodSeq(preference.getFood().getFoodSeq())
-                            .foodUrl(preference.getFood().getImg())
+                            .foodUrl("https://" + bucket + ".s3." + region + ".amazonaws.com/" + preference.getFood().getImg())
                             .foodName(preference.getFood().getName())
                             .build();
                     userFavoriteList.add(userFavoriteDto);
@@ -273,7 +273,7 @@ public class MemberService {
                 friends.add(MemberInfoDto.builder()
                         .memberSeq(friend.getMemberSeq())
                         .memberNickname(friend.getNickname())
-                        .memberImg(friend.getImg())
+                        .memberImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + friend.getImg())
                         .memberEmail(friend.getEmail())
                         .build());
             } else {
@@ -282,7 +282,7 @@ public class MemberService {
                 friends.add(MemberInfoDto.builder()
                         .memberSeq(friend.getMemberSeq())
                         .memberNickname(friend.getNickname())
-                        .memberImg(friend.getImg())
+                        .memberImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + friend.getImg())
                         .memberEmail(friend.getEmail())
                         .build());
             }
