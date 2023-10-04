@@ -1,14 +1,15 @@
 package com.ssafy.special.controller;
 
-import com.ssafy.special.domain.food.Food;
-import com.ssafy.special.dto.RecommendFoodDto;
 import com.ssafy.special.dto.request.FeedbackDto;
 import com.ssafy.special.dto.response.RecommendFoodResultDto;
+import com.ssafy.special.service.crew.CrewRecommendService;
 import com.ssafy.special.service.member.MemberRecommendService;
 import com.ssafy.special.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api/recommend")
 public class MemberRecommendController {
     private final MemberRecommendService memberRecommendService;
+    private final CrewRecommendService crewRecommendService;
     private final SecurityUtils securityUtils;
 
     @PatchMapping("/feedback/{nextFoodSeq}")
@@ -53,6 +55,25 @@ public class MemberRecommendController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @GetMapping("/crew/{crewSeq}")
+    public ResponseEntity<?> crewRecommendation(@PathVariable Long crewSeq){
+        log.info("crewRecommendation() 메소드 시작");
+        try{
+            crewRecommendService.recommendFood(crewSeq);
+            return ResponseEntity.ok().body("그룹 투표 시작");
+        }catch (EntityNotFoundException e){
+            log.info("Crew find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (IllegalArgumentException e){
+            log.info("FCM 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 //    @GetMapping("/detail{foodSeq}")
 //    public ResponseEntity<?> foodDetail(@PathVariable Long foodSeq){
@@ -69,4 +90,8 @@ public class MemberRecommendController {
 //        }
 //    }
 
+    public String getEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
 }
