@@ -92,7 +92,7 @@ public class FoodService {
     }
 
 
-    private String getRandomFileName() {
+    public String getRandomFileName() {
 
         Random generator = new java.util.Random();
         generator.setSeed(System.currentTimeMillis());
