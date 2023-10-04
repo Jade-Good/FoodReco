@@ -18,59 +18,31 @@ export interface FoodList {
   originalFoodName: string;
 }
 
+export interface FoodFeedBackProps {
+  foodFeedBack: (point: number) => void;
+}
+
 export const MemberRecommendation = () => {
   const [foodList, setFoodList] = useState<FoodList[]>([
     {
       recommendedFoodSeq: 3899,
-      recommendedFoodName: "짜장면",
+      recommendedFoodName: "잠시 기다려 주세요",
       cookingMethod: "굽기",
       type: "메인반찬",
       category: "중화요리",
-      img: "../images/짜장면.png",
+      img: "/favicon.ico",
       ingredientSimilarity: 0.776180681744197,
       foodNameSimilarity: 0.15384615384615385,
       originalFoodName: "짬뽕",
     },
   ]);
 
-  let foodIdx = 0;
-
-  const [pos, setPos] = useState<string>("확인");
+  const [foodIdx, setFoodIdx] = useState(0);
 
   // 최초 1회 검색 및 지도 생성
   useEffect(() => {
     foodRecommend();
-    retryLocationRequest();
   }, []);
-
-  function retryLocationRequest() {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        // 위치 정보를 성공적으로 가져옴
-        setPos(
-          String(position.coords.latitude) +
-            " " +
-            String(position.coords.latitude)
-        );
-      },
-      (error) => {
-        // 위치 정보를 가져오지 못한 경우
-        switch (error.code) {
-          case 1:
-            setPos("사용자가 위치 정보 요청을 거부했습니다.");
-            break;
-          case 2:
-            setPos("위치 정보를 사용할 수 없습니다.");
-            break;
-          case 3:
-            setPos("요청 시간이 초과되었습니다.");
-            break;
-          default:
-            setPos("알 수 없는 오류가 발생했습니다.");
-        }
-      }
-    );
-  }
 
   const foodRecommend = () => {
     api
@@ -82,6 +54,31 @@ export const MemberRecommendation = () => {
       .catch((err) => {
         console.log("추천 메뉴 못가져옴:", err);
       });
+    setFoodIdx(0);
+  };
+
+  const foodfeedback = (point: number) => {
+    let nowSeq = foodList[foodIdx].recommendedFoodSeq;
+    let nextIdx = foodIdx + (1 % foodList.length);
+
+    let nextSeq = foodList[nextIdx].recommendedFoodSeq;
+    if (point === 3 || nextIdx === 0) nextSeq = 0;
+
+    console.log(nowSeq, nextIdx, nextSeq, point);
+    api
+      .patch(
+        `${process.env.REACT_APP_BASE_URL}/recommend/feedback/${nextSeq}`,
+        { foodSeq: nowSeq, feedback: point }
+      )
+      .then((res) => {
+        console.log("음식 피드백 성공:", res);
+        if (point !== 3) {
+          setFoodIdx(nextIdx);
+        }
+      })
+      .catch((err) => {
+        console.log("음식 피드백 실패:", err);
+      });
   };
 
   return (
@@ -91,13 +88,13 @@ export const MemberRecommendation = () => {
       <FoodCard
         foodImg={foodList[foodIdx].img}
         foodName={foodList[foodIdx].recommendedFoodName}
+        foodFeedBack={foodfeedback}
       />
 
       <FoodDetail foodName={foodList[foodIdx].recommendedFoodName} />
 
-      <FoodButton />
-      <button onClick={retryLocationRequest}>위치 정보 다시 요청</button>
-      {pos}
+      <FoodButton foodFeedBack={foodfeedback} />
+
       <FooterRecommendation />
     </div>
   );

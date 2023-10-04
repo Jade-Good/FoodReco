@@ -22,6 +22,7 @@ import com.ssafy.special.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,10 +50,15 @@ public class MemberRecommendService {
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
     private final FoodIngredientRepository foodIngredientRepository;
     private final MemberAllergyRepository memberAllergyRepository;
-    private final WeatherStatus weatherStatus;
+//    private final WeatherStatus weatherStatus;
 
     private List<RecommendFoodDto> GlobalrecommendFoodDtoList;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     /* 묵시적 피드백 반영 */
     /*
@@ -84,8 +90,8 @@ public class MemberRecommendService {
         int feedback = feedbackDto.getFeedback();
         int lastFoodRating = -1;
         int steps = memberOptional.get().getActivity();
-        String weather = weatherStatus.getStatus();
-
+//        String weather = weatherStatus.getStatus();
+        String weather = "맑음";
         List<MemberRecommend> memberRecommend = memberRecommendRepository
                 .findLatestMemberRecommend(memberSeq, foodSeq, PageRequest.of(0,1));
 
@@ -226,7 +232,7 @@ public class MemberRecommendService {
             MemberRecommend memberRecommend2 = MemberRecommend.builder()
                     .member(memberOptional.get())
                     .food(nowFood)
-                    .weather("")
+                    .weather(weather)
                     .activityCalorie(memberOptional.get().getActivity())
                     .foodRating(lastFoodRating)
                     .recommendAt(LocalDateTime.now())
@@ -307,7 +313,7 @@ public class MemberRecommendService {
                         .type(food.getType())
                         .category(food.getCategory())
                         .cookingMethod(food.getCookingMethod())
-                        .img(food.getImg())
+                        .img("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
                         .build();
                 RecommendFoodResultList.add(recommendFoodResultDto);
             }
