@@ -3,25 +3,17 @@ package com.ssafy.special.service.member;
 
 import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.food.Ingredient;
-import com.ssafy.special.domain.member.FriendList;
-import com.ssafy.special.domain.member.Member;
-import com.ssafy.special.domain.member.MemberAllergy;
-import com.ssafy.special.domain.member.MemberFoodPreference;
+import com.ssafy.special.domain.member.*;
 import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.request.UserInfoUpdateDto;
 import com.ssafy.special.dto.request.UserSignUpDto;
-import com.ssafy.special.dto.response.FriendListDto;
-import com.ssafy.special.dto.response.MemberDetailDto;
-import com.ssafy.special.dto.response.MemberInfoDto;
+import com.ssafy.special.dto.response.*;
 import com.ssafy.special.exception.DuplicateEmailException;
 import com.ssafy.special.exception.DuplicateNicknameException;
 import com.ssafy.special.exception.SignupFailedException;
 import com.ssafy.special.repository.food.FoodRepository;
 import com.ssafy.special.repository.food.IngredientRepository;
-import com.ssafy.special.repository.member.FriendListRepository;
-import com.ssafy.special.repository.member.MemberAllergyRepository;
-import com.ssafy.special.repository.member.MemberFoodPreferenceRepository;
-import com.ssafy.special.repository.member.MemberRepository;
+import com.ssafy.special.repository.member.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,9 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -42,6 +32,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberRecommendRepository memberRecommendRepository;
     private final FriendListRepository friendListRepository;
     private final PasswordEncoder passwordEncoder;
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
