@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StyledIdInputIcon from "../../components/inputs/StyledIdInputIcon";
 import StyledPwInputIcon from "../../components/inputs/StyledPwInputIcon";
 import StyledButton from "../../styles/StyledButton";
@@ -87,6 +87,8 @@ export const SignUp = () => {
   const [checkEmail, setCheckEmail] = useState(0);
   // 패스워드 체크확인
   const [checkPassword, setCheckPassword] = useState(0);
+  const [validEmail, setValidEmail] = useState(0);
+  // const [validPassword, setValidPassword] = useState(0);
 
   const [code, setCode] = useState("0");
   //개인정보 동의 1
@@ -142,6 +144,11 @@ export const SignUp = () => {
     "소고기갈비탕",
     "김치전",
   ];
+
+  // useEffect(() => {
+  //   if (error)
+  //   setValidEmail()
+  // })
 
   const sendEmailCode = async (sendEmail: EmailCheck): Promise<EmailCheck> => {
     const { data } = await axios.post<EmailCheck>(
@@ -251,6 +258,34 @@ export const SignUp = () => {
   const watchedEmail = watch("email");
   const sendEmail = getValues("email");
 
+  //이메일 중복체크
+  useEffect(() => {
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}/member/checkEmail`, {
+        email: sendEmail,
+      })
+      .then((res) => {
+        // console.log(res);
+        setValidEmail(1);
+      })
+      .catch((err) => {
+        // console.log(err);
+        setValidEmail(0);
+      });
+  }, [sendEmail]);
+  // console.log(validEmail);
+  const cantEmail = () => {
+    return toast.error("🦄 이미 가입된 회원입니다!", {
+      position: "top-center",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  };
   // 회원가입 로직
   const handleSignUp: SubmitHandler<IForm> = (data) => {
     console.log(data);
@@ -611,7 +646,13 @@ export const SignUp = () => {
                     setCheckEmail(0);
                   },
                 }}
-                onClick={() => mutate({ email: sendEmail })}
+                onClick={() => {
+                  if (validEmail) {
+                    mutate({ email: sendEmail });
+                  } else {
+                    cantEmail();
+                  }
+                }}
               />
 
               {/* 인증번호 확인 */}
@@ -758,7 +799,12 @@ export const SignUp = () => {
                     if (progress < 5) {
                       setProgress((prevProgress) => prevProgress + 1);
                     }
-                  } else {
+                  } else if (
+                    checkEmail !== 1 ||
+                    checkPassword !== 1 ||
+                    errors.email ||
+                    errors.password
+                  ) {
                     toast.error("🦄 이메일과 비밀번호를 다시 확인해주세요!", {
                       position: "top-center",
                       autoClose: 1000,
@@ -983,6 +1029,12 @@ export const SignUp = () => {
                   selected={allergyFood.includes(food)} // 버튼 선택 상태는 좋아요 목록에 음식이 있는지 여부에 따라 결정됩니다.
                   onClick={() => toggleAllergyFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
                   key={index}
+                  style={{
+                    backgroundColor: allergyFood.includes(food)
+                      ? "orange"
+                      : "transparent", // Change background color to orange when selected
+                    color: allergyFood.includes(food) ? "white" : "black",
+                  }}
                 >
                   # {food}
                 </CustomToggleButton>
@@ -1049,6 +1101,12 @@ export const SignUp = () => {
                   selected={likefood.includes(food)} // 버튼 선택 상태는 좋아요 목록에 음식이 있는지 여부에 따라 결정됩니다.
                   onClick={() => toggleLikeFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
                   key={index}
+                  style={{
+                    backgroundColor: likefood.includes(food)
+                      ? "orange"
+                      : "transparent", // Change background color to orange when selected
+                    color: likefood.includes(food) ? "white" : "black",
+                  }}
                 >
                   # {food}
                 </CustomToggleButton>
@@ -1125,6 +1183,12 @@ export const SignUp = () => {
                   selected={unlikeFood.includes(food)} // 버튼 선택 상태는 좋아요 목록에 음식이 있는지 여부에 따라 결정됩니다.
                   onClick={() => toggleUnlikeFood(food)} // 버튼을 클릭할 때 toggleFood 함수를 호출하여 음식을 추가하거나 제거합니다.
                   key={index}
+                  style={{
+                    backgroundColor: unlikeFood.includes(food)
+                      ? "orange"
+                      : "transparent", // Change background color to orange when selected
+                    color: unlikeFood.includes(food) ? "white" : "black",
+                  }}
                 >
                   # {food}
                 </CustomToggleButton>
@@ -1165,70 +1229,8 @@ export const SignUp = () => {
           </div>
         )}
         <br />
-        {/* 나중에 삭제해야함 */}
-        {/* <StyledButton
-          type="submit"
-          disabled={isSubmitting}
-          width="9.0rem"
-          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
-          color="white"
-          fontSize="1.25rem"
-          background="#FE9D3A"
-          radius="10px"
-        >
-          제출
-        </StyledButton> */}
       </form>
-      {/* <ToastContainer
-        position="top-center"
-        autoClose={1000}
-        limit={1}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      /> */}
-      {/* <div className={classes.inputContainer}> */}
-      {/* <StyledButton
-          disabled={isSubmitting}
-          type="submit"
-          width="9.0rem"
-          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
-          color="#7D7B7B;"
-          fontSize="1.25rem"
-          background="#F9F9F9"
-          radius="10px"
-          onClick={() => {
-            if (progress > 0) {
-              setProgress((prevProgress) => prevProgress - 1);
-            }
-          }}
-        >
-          이전
-        </StyledButton>
-        &nbsp;&nbsp;&nbsp;
-        <StyledButton
-          disabled={isSubmitting}
-          type="submit"
-          width="9.0rem"
-          boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
-          color="white"
-          fontSize="1.25rem"
-          background="#FE9D3A"
-          radius="10px"
-          onClick={() => {
-            if (progress < 5) {
-              setProgress((prevProgress) => prevProgress + 1);
-            }
-          }}
-        >
-          다음
-        </StyledButton> */}
-      {/* </div> */}
+
       <ToastContainer
         position="top-center"
         autoClose={1000}
