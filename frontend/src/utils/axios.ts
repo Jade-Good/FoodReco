@@ -52,6 +52,11 @@ api.interceptors.response.use(
           .catch((err) => {
             console.log(err);
             if (err.response.status === 404) {
+              localStorage.removeItem("refreshToken");
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("email");
+              localStorage.removeItem("memberSeq");
+
               toast.error("로그인이 필요합니다.", {
                 position: "top-center",
                 autoClose: 1000,
@@ -99,6 +104,11 @@ api.interceptors.response.use(
           .catch((err) => {
             console.log(err);
             if (err.response.status === 404) {
+              localStorage.removeItem("refreshToken");
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("email");
+              localStorage.removeItem("memberSeq");
+
               toast.error("로그인이 필요합니다.", {
                 position: "top-center",
                 autoClose: 1000,
@@ -119,6 +129,10 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     } else if (error.response.status === 404) {
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("email");
+      localStorage.removeItem("memberSeq");
       toast.error("로그인이 필요합니다.", {
         position: "top-center",
         autoClose: 1000,
