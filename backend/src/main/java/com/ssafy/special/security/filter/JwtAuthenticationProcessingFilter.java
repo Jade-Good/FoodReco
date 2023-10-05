@@ -58,7 +58,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         String refreshToken = jwtService.extractRefreshToken(request)
                 .filter(jwtService::isTokenValid)
                 .orElse(null);
-
+        log.info("jjjjj : " +refreshToken);
         // 리프레시 토큰이 요청 헤더에 존재했다면, 사용자가 AccessToken이 만료되어서
         // RefreshToken까지 보낸 것이므로 리프레시 토큰이 DB의 리프레시 토큰과 일치하는지 판단 후,
         // 일치한다면 AccessToken을 재발급해준다.
@@ -98,6 +98,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
      */
     private String reIssueRefreshToken(Member member) {
         String reIssuedRefreshToken = jwtService.createRefreshToken();
+
         member.updateRefreshToken(reIssuedRefreshToken);
         memberRepository.saveAndFlush(member);
         return reIssuedRefreshToken;
@@ -117,8 +118,11 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
                 .ifPresent(accessToken -> jwtService.extractEmail(accessToken)
-                        .ifPresent(email -> memberRepository.findByEmail(email)
-                                .ifPresent(this::saveAuthentication)));
+                        .ifPresent(email -> {
+                            log.info("email : " + email);
+                            memberRepository.findByEmail(email)
+                                    .ifPresent(this::saveAuthentication);
+                        }));
 
         filterChain.doFilter(request, response);
     }

@@ -12,12 +12,12 @@ public class LoginSuccessDto {
     private Long memberSeq;
     private String nickname;
     private String email;
-    private Date expAccessToken;
+    private String expAccessToken;
     private List<TypeRateDto> typeRates;
     private List<RecentFoodDto> recentFoods;
 
     @Builder
-    public LoginSuccessDto(Long memberSeq, String nickname, String email, Date expAccessToken, List<TypeRateDto> typeRates, List<RecentFoodDto> recentFoods) {
+    public LoginSuccessDto(Long memberSeq, String nickname, String email, String expAccessToken, List<TypeRateDto> typeRates, List<RecentFoodDto> recentFoods) {
         this.memberSeq = memberSeq;
         this.nickname = nickname;
         this.email = email;

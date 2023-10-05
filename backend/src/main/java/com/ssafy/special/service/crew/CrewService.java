@@ -61,6 +61,9 @@ public class CrewService {
         List<CrewDto> crews = new ArrayList<>();
         for (CrewMember c:member.getCrewMembers()) {
             Crew memberCrew = c.getCrew();
+            if(c.getStatus() != -1){
+                continue;
+            }
             int cnt = 0;
             for(CrewMember m : memberCrew.getCrewMembers()){
                 if(m.getStatus()!=-1){cnt++;}
@@ -78,11 +81,12 @@ public class CrewService {
             }else{
                 daysDifference = -1L;
             }
+
             CrewDto crew = CrewDto.builder()
                     .crewSeq(c.getCrew().getCrewSeq())
                     .name(c.getCrew().getName())
                     .img("https://" + bucket + ".s3." + region + ".amazonaws.com/" + c.getCrew().getImg())
-                    .status(c.getStatus()==0?"미반응":(c.getStatus()==-1?"거절":"수락"))
+                    .status(c.getStatus()==0?"미반응":"수락")
                     .crewCnt(cnt)
                     .recentRecommend(daysDifference)
                     .build();
@@ -191,8 +195,9 @@ public class CrewService {
         String memberCheckVote="";
         for (CrewMember c : crew.getCrewMembers()) {
             Member m = c.getMember();
+            if(c.getStatus() == -1){continue;}
             if (m.getEmail().equals(memberEmail)) {
-                memberStatus = c.getStatus() == 0 ? "미응답" : (c.getStatus() == -1 ? "거절" : "수락");
+                memberStatus = c.getStatus() == 0 ? "미응답" : "수락";
                 memberCheckVote = c.getCheckVote()==0 ?"미확인":"확인";
             }else{
                 crewMembers.add(CrewMembersDto.builder()

@@ -124,6 +124,7 @@ public class JwtService {
      */
     public Optional<String> extractAccessToken(HttpServletRequest request) {
         log.info("extractAccessToken() 호출");
+        log.info(request.getHeader(accessHeader));
         return Optional.ofNullable(request.getHeader(accessHeader))
                 .filter(accesstoken -> accesstoken.startsWith(BEARER))
                 .map(accesstoken -> accesstoken.replace(BEARER, ""));
@@ -179,6 +180,7 @@ public class JwtService {
     public boolean isTokenValid(String token) {
         try {
                 JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
+                log.info("토근 유효");
             return true;
         } catch (TokenExpiredException e) {
             log.info("액세스 토큰이 만료되었습니다. {}", e.getMessage());
@@ -189,19 +191,18 @@ public class JwtService {
         }
     }
 
-    public NewJwtTokenDto newToken(JwtTokenDto jwtTokenDto){
+    public NewJwtTokenDto newToken(JwtTokenDto jwtTokenDto) throws IllegalArgumentException{
         String newAccessToken = createAccessToken(jwtTokenDto.getEmail());
         String newRefeshToken = createRefreshToken();
-        Member member = memberRepository.findByEmail(jwtTokenDto.getEmail())
-                .orElse(null);
-        if(member != null){
+        Member member = memberRepository.findByJwtRefreshToken(jwtTokenDto.getRefreshToken())
+                .orElseThrow(()-> new IllegalArgumentException("토큰다름"));
             member.setJwtRefreshToken(newRefeshToken);
+            log.info("jwt : " + newRefeshToken);
             memberRepository.save(member);
-        }
-        return NewJwtTokenDto.builder()
-                .authorization(newAccessToken)
-                .authorizationRefresh(newRefeshToken)
-                .build();
+            return NewJwtTokenDto.builder()
+                    .authorization(newAccessToken)
+                    .authorizationRefresh(newRefeshToken)
+                    .build();
     }
 
     @Transactional
@@ -242,7 +243,7 @@ public class JwtService {
                 .memberSeq(member.getMemberSeq())
                 .nickname(member.getNickname())
                 .email(member.getEmail())
-                .expAccessToken(new Date(new Date().getTime() + (accessTokenExpiration - 600000L)))
+                .expAccessToken(new Date(new Date().getTime() + (accessTokenExpiration - 600000L)).toString())
                 .typeRates(typeRates)
                 .recentFoods(recentFoods)
                 .build();
