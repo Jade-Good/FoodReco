@@ -78,6 +78,7 @@ const CrewVoteModal: React.FC<voteModalProps> = ({
             if (key === 0) return;
             return (
               <VoteItem
+                check={food.vote}
                 onClick={() => {
                   check(food.foodSeq);
                 }}
@@ -144,13 +145,22 @@ const CrewVoteModal: React.FC<voteModalProps> = ({
 
 export default CrewVoteModal;
 
-const VoteItem = styled.div`
+const VoteItem = styled.div<{ check: boolean }>`
   margin: 1rem 0;
   overflow: scroll;
+  padding: 1rem;
   /* border: 1px solid orange; */
   &:active {
     background-color: #dcdcdc;
   }
+
+  ${(props) =>
+    props.check &&
+    css`
+      background-color: #fff0e7;
+      /* border: solid #fe9d3a 1px; */
+      /* color: #fe9d3a; */
+    `}
 `;
 
 const FoodImg = styled.img<{ src: string }>`
