@@ -94,7 +94,7 @@ export const Login = () => {
           }));
           navigate("/");
           window.location.reload();
-          toast.success("🦄 인증번호를 전송했습니다!", {
+          toast.success("🦄 로그인 완료!", {
             position: "top-center",
             autoClose: 1000,
             hideProgressBar: false,

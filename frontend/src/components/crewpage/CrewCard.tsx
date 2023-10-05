@@ -8,9 +8,10 @@ import { CrewProps } from "../../pages/crew/CrewList";
 interface CrewCardProps {
   key: number;
   crew?: CrewProps;
+  onClick?: () => void;
 }
 
-const CrewCard = ({ crew, key }: CrewCardProps) => {
+const CrewCard = ({ crew, key, onClick }: CrewCardProps) => {
   const navigate = useNavigate();
 
   const crewDetailNav = () => {
@@ -18,7 +19,9 @@ const CrewCard = ({ crew, key }: CrewCardProps) => {
 
     navigate(`/crew/detail/${crew.crewSeq}`);
   };
-
+  const makeCrew = () => {
+    navigate("/crew/make");
+  };
   return (
     <div className={classes.crewCardBox} key={key} onClick={crewDetailNav}>
       {crew ? (
@@ -40,7 +43,10 @@ const CrewCard = ({ crew, key }: CrewCardProps) => {
           </div>
         </>
       ) : (
-        <IoIosAddCircleOutline className={classes.crewAddBtn} />
+        <IoIosAddCircleOutline
+          onClick={makeCrew}
+          className={classes.crewAddBtn}
+        />
       )}
     </div>
   );

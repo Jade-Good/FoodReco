@@ -3,6 +3,7 @@ import { FooterCrew } from "../../components/footer/FooterCrew";
 import HeaderCrew from "../../components/header/HeaderCrew";
 import CrewCard from "../../components/crewpage/CrewCard";
 import api from "../../utils/axios";
+import { useNavigate } from "react-router-dom";
 
 export interface CrewProps {
   crewSeq: number;
@@ -25,7 +26,7 @@ export const CrewList = () => {
   //   "한국대 점심팟",
   // ];
   const [crewList, setCrewList] = useState<CrewProps[]>([]);
-
+  const navigate = useNavigate();
   // 최초 1회 검색 및 지도 생성
   useEffect(() => {
     getCrewList();
@@ -45,7 +46,7 @@ export const CrewList = () => {
 
   return (
     <>
-      <HeaderCrew />
+      <HeaderCrew onClick={() => navigate("/crew/make")} />
       <div
         style={{
           margin: "5.5rem 0",
