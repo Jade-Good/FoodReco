@@ -293,4 +293,46 @@ public class MemberService {
                 .friendList(friends)
                 .build();
     }
+
+    public HomeDto homeData(String memberEmail) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        List<MemberRecommend> recommends = memberRecommendRepository.findAllByMemberOrderByRecommendAtDesc(member);
+        List<RecentFoodDto> recentFoods= new ArrayList<>();
+        Map<String, Integer> m = new HashMap<>();
+        double maxCnt = 0;
+        for(MemberRecommend mr : recommends){
+            Food food = mr.getFood();
+            if(mr.getFoodRating()>=3 && recentFoods.size()<3){
+                recentFoods.add(RecentFoodDto.builder()
+                        .foodSeq(food.getFoodSeq())
+                        .foodName(food.getName())
+                        .foodImg(food.getImg())
+                        .build());
+            }
+            if(mr.getFoodRating()>0){
+                String type = food.getType();
+                int cnt = m.getOrDefault(type,0);
+                m.put(type,cnt+1);
+                maxCnt+=1;
+            }
+        }
+        List<TypeRateDto> typeRates = new ArrayList<>();
+        if(maxCnt >0){
+            log.info(maxCnt+"");
+            for(String type : m.keySet()){
+                typeRates.add(TypeRateDto.builder()
+                        .type(type)
+                        .rating(((int)((m.get(type)/maxCnt)*1000))/1000.0)
+                        .build());
+                log.info(type+" "+ m.get(type));
+            }
+        }
+
+        return HomeDto.builder()
+                .recentFoods(recentFoods)
+                .typeRates(typeRates)
+                .build();
+    }
 }
