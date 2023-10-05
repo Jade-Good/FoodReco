@@ -2,6 +2,8 @@ package com.ssafy.special.controller;
 
 import com.ssafy.special.dto.request.FeedbackDto;
 import com.ssafy.special.dto.response.RecommendFoodResultDto;
+import com.ssafy.special.dto.response.WeatherStatus;
+import com.ssafy.special.service.etc.WeatherService;
 import com.ssafy.special.service.member.MemberGoogleAuthService;
 import com.ssafy.special.service.crew.CrewRecommendService;
 import com.ssafy.special.service.member.MemberRecommendService;
@@ -23,13 +25,17 @@ public class MemberRecommendController {
     private final MemberRecommendService memberRecommendService;
     private final MemberGoogleAuthService memberGoogleAuthService;
     private final CrewRecommendService crewRecommendService;
-    @PatchMapping("/feedback/{nextFoodSeq}")
-    public ResponseEntity<?> implicitFeedback(@RequestBody FeedbackDto feedbackRequestDto, @PathVariable Long nextFoodSeq ){
+    private final WeatherService weatherService;
+
+    @PatchMapping("/feedback/{nextFoodSeq}/{lon}/{let}")
+    public ResponseEntity<?> implicitFeedback(@RequestBody FeedbackDto feedbackRequestDto, @PathVariable Long nextFoodSeq, @PathVariable Double lon, @PathVariable Double let ){
         String memberEmail = getEmail();
         try {
+            String weather = weatherService.getWeather(lon, let);
+            log.info("날씨 저장 완료");
             int googleSteps = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
             log.info(Integer.toString(googleSteps));
-            memberRecommendService.implicitFeedback(memberEmail, feedbackRequestDto, nextFoodSeq, googleSteps);
+            memberRecommendService.implicitFeedback(memberEmail, feedbackRequestDto, nextFoodSeq, googleSteps, weather);
             log.info("묵시적 피드백 업데이트 완료");
             return ResponseEntity.ok().body("묵시적 피드백 업데이트 완료");
         }catch (EntityNotFoundException e){
@@ -42,13 +48,15 @@ public class MemberRecommendController {
         }
     }
 
-    @GetMapping("/personal")
-    public ResponseEntity<?> personalRecommendation(){
+    @GetMapping("/personal/{lon}/{let}")
+    public ResponseEntity<?> personalRecommendation(@PathVariable Double lon, @PathVariable Double let){
         String memberEmail = getEmail();
         try {
+            String weather = weatherService.getWeather(lon, let);
+            log.info("날씨 저장 완료");
             int googleCalorie = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
             log.info(Integer.toString(googleCalorie));
-            List<RecommendFoodResultDto> recommendFoodDtoList = memberRecommendService.recommendFood(memberEmail, googleCalorie);
+            List<RecommendFoodResultDto> recommendFoodDtoList = memberRecommendService.recommendFood(memberEmail, googleCalorie, weather);
             log.info("추천 완료");
             return ResponseEntity.ok().body(recommendFoodDtoList);
         }catch (EntityNotFoundException e){

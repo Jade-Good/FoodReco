@@ -28,6 +28,7 @@ import { Test } from "./pages/Test";
 import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
 import { CheckLogin } from "./pages/PrivateRoute";
+import { FriendAdd } from "./pages/friend/FriendAdd";
 
 const queryClient = new QueryClient();
 
@@ -113,9 +114,20 @@ const App = () => {
                   />
                 }
               />
+              {/* 친구초대하기 */}
+              <Route
+                path="/friend/add/:memberSeq"
+                element={
+                  <CheckLogin
+                    authenticated={isLogin}
+                    component={<FriendAdd />}
+                  />
+                }
+              />
+
               {/* 특정 그룹 상세보기 */}
               <Route
-                path="/crew"
+                path="/crew/detail/:crewSeq"
                 element={
                   <CheckLogin
                     authenticated={isLogin}

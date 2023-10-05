@@ -70,14 +70,19 @@ export const Login = () => {
           const accessToken = res.headers.authorization;
           const email = res.data.email;
           const refreshToken = res.headers.authorizationrefresh;
+          const memberSeq = res.data.memberSeq;
 
           axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${accessToken}`;
+          api.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
 
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("refreshToken", refreshToken);
           localStorage.setItem("email", email);
+          localStorage.setItem("memberSeq", memberSeq);
 
           setUser((prevUser) => ({
             ...prevUser,
@@ -85,9 +90,20 @@ export const Login = () => {
             accessToken: accessToken,
             nickname: nickcname,
             email: email,
+            memberSeq: memberSeq,
           }));
           navigate("/");
           window.location.reload();
+          toast.success("🦄 인증번호를 전송했습니다!", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
         })
         .catch((err) => {
           // handleSilentRefresh(data)

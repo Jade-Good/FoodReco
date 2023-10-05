@@ -14,5 +14,5 @@ public interface CrewMemberRepository extends JpaRepository<CrewMember, CrewId> 
     List<CrewMember> findAllById(Iterable<CrewId> crewIds);
 
     Optional<CrewMember> findByCrew(Crew crew);
-    Optional<CrewMember> findByMember(Member member);
+    Optional<CrewMember> findByMemberAndCrew(Member member,Crew crew);
 }

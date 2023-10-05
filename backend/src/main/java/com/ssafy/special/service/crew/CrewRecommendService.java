@@ -72,7 +72,7 @@ public class CrewRecommendService {
         List<MemberFoodPreference> crewMemberPreferenceList = new ArrayList<>();
         List<Long> crewMemberRecommendFoodWithinOneWeekList = new ArrayList<>();
         for(CrewMember c : crew.getCrewMembers()){
-            crewRecommendFoodList.addAll(memberRecommendService.getRecommendList(c.getMember().getMemberSeq(),LocalDateTime.now(),c.getMember().getEmail(), c.getMember().getActivity()));
+            crewRecommendFoodList.addAll(memberRecommendService.getRecommendList(c.getMember().getMemberSeq(),LocalDateTime.now(),c.getMember().getEmail(), c.getMember().getActivity(), "맑음"));
             crewAllergyList.addAll(memberAllergyRepository.findMemberAllergiesByMember_MemberSeq(c.getMember().getMemberSeq()));
             crewMemberPreferenceList.addAll(memberFoodPreferenceRepository
                     .findMemberFoodPreferencesByMember_MemberSeqAndPreferenceType(c.getMember().getMemberSeq(), 1));

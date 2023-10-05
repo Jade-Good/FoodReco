@@ -3,20 +3,26 @@ package com.ssafy.special.security.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.member.Member;
+import com.ssafy.special.domain.member.MemberRecommend;
 import com.ssafy.special.dto.request.JwtTokenDto;
+import com.ssafy.special.dto.response.LoginSuccessDto;
 import com.ssafy.special.dto.response.NewJwtTokenDto;
+import com.ssafy.special.dto.response.RecentFoodDto;
+import com.ssafy.special.dto.response.TypeRateDto;
+import com.ssafy.special.repository.member.MemberRecommendRepository;
 import com.ssafy.special.repository.member.MemberRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +55,7 @@ public class JwtService {
     private static final String BEARER = "Bearer ";
 
     private final MemberRepository memberRepository;
+    private final MemberRecommendRepository memberRecommendRepository;
 
     /**
      * AccessToken 생성 메소드
@@ -117,6 +124,7 @@ public class JwtService {
      */
     public Optional<String> extractAccessToken(HttpServletRequest request) {
         log.info("extractAccessToken() 호출");
+        log.info(request.getHeader(accessHeader));
         return Optional.ofNullable(request.getHeader(accessHeader))
                 .filter(accesstoken -> accesstoken.startsWith(BEARER))
                 .map(accesstoken -> accesstoken.replace(BEARER, ""));
@@ -172,6 +180,7 @@ public class JwtService {
     public boolean isTokenValid(String token) {
         try {
                 JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
+                log.info("토근 유효");
             return true;
         } catch (TokenExpiredException e) {
             log.info("액세스 토큰이 만료되었습니다. {}", e.getMessage());
@@ -182,19 +191,62 @@ public class JwtService {
         }
     }
 
-    public NewJwtTokenDto newToken(JwtTokenDto jwtTokenDto){
+    public NewJwtTokenDto newToken(JwtTokenDto jwtTokenDto) throws IllegalArgumentException{
         String newAccessToken = createAccessToken(jwtTokenDto.getEmail());
         String newRefeshToken = createRefreshToken();
-        Member member = memberRepository.findByEmail(jwtTokenDto.getEmail())
-                .orElse(null);
-        if(member != null){
+        Member member = memberRepository.findByJwtRefreshToken(jwtTokenDto.getRefreshToken())
+                .orElseThrow(()-> new IllegalArgumentException("토큰다름"));
             member.setJwtRefreshToken(newRefeshToken);
+            log.info("jwt : " + newRefeshToken);
             memberRepository.save(member);
-        }
-        return NewJwtTokenDto.builder()
-                .authorization(newAccessToken)
-                .authorizationRefresh(newRefeshToken)
-                .build();
+            return NewJwtTokenDto.builder()
+                    .authorization(newAccessToken)
+                    .authorizationRefresh(newRefeshToken)
+                    .build();
     }
 
+    @Transactional
+    public LoginSuccessDto successLogin(Member member, Long accessTokenExpiration) {
+        List<MemberRecommend> recommends = memberRecommendRepository.findAllByMemberOrderByRecommendAtDesc(member);
+        List<RecentFoodDto> recentFoods= new ArrayList<>();
+        Map<String, Integer> m = new HashMap<>();
+        double maxCnt = 0;
+        for(MemberRecommend mr : recommends){
+            Food food = mr.getFood();
+            if(mr.getFoodRating()>=3 && recentFoods.size()<3){
+                recentFoods.add(RecentFoodDto.builder()
+                        .foodSeq(food.getFoodSeq())
+                        .foodName(food.getName())
+                        .foodImg(food.getImg())
+                        .build());
+            }
+            if(mr.getFoodRating()>0){
+                String type = food.getType();
+                int cnt = m.getOrDefault(type,0);
+                m.put(type,cnt+1);
+                maxCnt+=1;
+            }
+        }
+        List<TypeRateDto> typeRates = new ArrayList<>();
+        if(maxCnt >0){
+            log.info(maxCnt+"");
+            for(String type : m.keySet()){
+                typeRates.add(TypeRateDto.builder()
+                        .type(type)
+                        .rating(((int)((m.get(type)/maxCnt)*1000))/1000.0)
+                        .build());
+                log.info(type+" "+ m.get(type));
+            }
+        }
+
+        LoginSuccessDto loginSuccessDto = LoginSuccessDto.builder()
+                .memberSeq(member.getMemberSeq())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .expAccessToken(new Date(new Date().getTime() + (accessTokenExpiration - 600000L)).toString())
+                .typeRates(typeRates)
+                .recentFoods(recentFoods)
+                .build();
+        return loginSuccessDto;
+    }
 }

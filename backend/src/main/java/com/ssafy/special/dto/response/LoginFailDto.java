@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class LoginResponseDto {
+public class LoginFailDto {
     private int status;
     private String message;
 
     @Builder
-    public LoginResponseDto(int status, String message) {
+    public LoginFailDto(int status, String message) {
         this.status = status;
         this.message = message;
     }

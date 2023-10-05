@@ -198,7 +198,20 @@ public class MemberController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
+    @GetMapping("/home")
+    public ResponseEntity<?> getHome(){
+        log.info("getHome() 메소드 시작");
+        try{
+            return ResponseEntity.ok().body(memberService.homeData(getEmail()));
+        }catch (EntityNotFoundException e){
+            log.info("Member find 에러 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 
     // 사용자 Email 가져오는 Email
