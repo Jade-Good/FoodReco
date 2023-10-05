@@ -8,8 +8,10 @@ import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.domain.member.MemberAllergy;
 import com.ssafy.special.domain.member.MemberFoodPreference;
+import com.ssafy.special.dto.response.CrewRecommendHistoryByFoodDto;
 import com.ssafy.special.dto.response.RecommendFoodDto;
 import com.ssafy.special.dto.response.RecommendFoodResultDto;
+import com.ssafy.special.dto.response.VoteRecommendDto;
 import com.ssafy.special.repository.crew.CrewMemberRepository;
 import com.ssafy.special.repository.crew.CrewRecommendFoodRepository;
 import com.ssafy.special.repository.crew.CrewRecommendRepository;
@@ -23,6 +25,7 @@ import com.ssafy.special.service.etc.SseService;
 import com.ssafy.special.service.member.MemberRecommendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +50,12 @@ public class CrewRecommendService {
     private final FoodRepository foodRepository;
     private final TaskScheduler taskScheduler;
     private final SseService sseService;
+
+
+    @org.springframework.beans.factory.annotation.Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     public void recommendFood(Long crewSeq) throws EntityNotFoundException, Exception {
         Crew crew = crewRepository.findByCrewSeq(crewSeq)
@@ -101,6 +110,7 @@ public class CrewRecommendService {
             }
         });
         int foodCnt = 0;
+        List<CrewRecommendHistoryByFoodDto> recommendList = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : list) {
             if(foodCnt > 9) break;
             Food food = foodRepository.findFoodByFoodSeq(entry.getKey());
@@ -109,10 +119,26 @@ public class CrewRecommendService {
                             .crewRecommend(crewRecommend)
                     .build());
             foodCnt++;
+
+            CrewRecommendHistoryByFoodDto crewRecommendHistoryByFoodDto = CrewRecommendHistoryByFoodDto.builder()
+                    .foodSeq(food.getFoodSeq())
+                    .foodImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
+                    .foodName(food.getName())
+                    .foodVoteCount(0)
+                    .isVote(false)
+                    .build();
+            recommendList.add(crewRecommendHistoryByFoodDto);
         }
 
+        VoteRecommendDto voteRecommendDto =VoteRecommendDto.builder()
+                .crewRecommendSeq(crewRecommend.getCrewRecommendSeq())
+                .foodList(recommendList)
+                .crewRecommendTime(LocalDateTime.now())
+                .build();
+
+
         // sse로 투표 시작이라는 알림 전송 + FCM 으로 백그라운드의 그룹원들에게 제공
-        sseService.chageVote(crewSeq,"start");
+        sseService.chageVote(crewSeq,"start",voteRecommendDto);
         crew.setStatus("투표중");
         crewRepository.save(crew);
 
@@ -130,7 +156,7 @@ public class CrewRecommendService {
         }
         // 그룹원들에게 종료되었다는 sse 알림 + 백그라운 그룹원들에게 FCM 알림
 
-        sseService.chageVote(crew.getCrewSeq(),"end");
+        sseService.chageVote(crew.getCrewSeq(),"end",null);
 
     }
 
