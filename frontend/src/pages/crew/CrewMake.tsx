@@ -11,6 +11,8 @@ import StyledButton from "../../styles/StyledButton";
 import { useNavigate } from "react-router-dom";
 import { count } from "console";
 import { ToastContainer, toast } from "react-toastify";
+import CrewMemberProfile from "../../components/crewpage/CrewMemberProfile";
+import styled from "styled-components";
 interface CrewData {
   crewName: string;
   crewMembers: number[];
@@ -27,6 +29,7 @@ export const CrewMake = () => {
   const [crew, setCrew] = useState<number[]>([]);
   const [crewName, setCrewName] = useState("");
   const [crewImg, setCrewImg] = useState<File | null>(null);
+  const [crewDetailInfo, setCrewDetailInfo] = useState<any>(null);
 
   useEffect(() => {
     setFriendCount(crew.length);
@@ -54,6 +57,13 @@ export const CrewMake = () => {
       // 음식이 좋아요 목록에 없는 경우, 추가합니다.
       setCrew([...crew, friendSeq]);
     }
+  };
+
+  const handleCrewImgUpload = () => {
+    const input = document.getElementById(
+      "crewUploadInput"
+    ) as HTMLInputElement;
+    input?.click();
   };
 
   const handleFileChange = (
@@ -89,12 +99,7 @@ export const CrewMake = () => {
     );
     formData.append("crewMembers", crewMembersJSON);
 
-    // formData.append(
-    //   "request",
-    //   new Blob([JSON.stringify(crewDa)], { type: "application/json" })
-    // );
-
-    console.log("crewMembers", formData.get("crewMembers"));
+    // console.log("crewMembers", formData.get("crewMembers"));
     if (friendCount >= 2) {
       api
         .post(`${process.env.REACT_APP_BASE_URL}/crew/regist`, formData, {
@@ -104,7 +109,7 @@ export const CrewMake = () => {
           },
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           navigate("/crew");
         })
         .catch((err) => console.log(err));
@@ -129,7 +134,25 @@ export const CrewMake = () => {
   return (
     <>
       <HeaderCrewInviteBasic count={friendCount} />
-      <div style={{ margin: "5.5rem 0", overflow: "hidden" }}>
+      <div style={{ width: "90vw" }}>
+        <h1 style={{ margin: "0 0 2vmin 0", fontSize: "1.3rem" }}>그룹원</h1>
+      </div>
+      <div style={{ margin: "5.5vh", overflow: "hidden" }}>
+        <CrewMemberList>
+          {friendList
+            .filter((friend) => crew.includes(friend.memberSeq)) // Filter friends based on 'crew' array
+            .map((friend, key) => {
+              return (
+                <CrewMemberProfile
+                  name={friend.memberNickname}
+                  profileImg={friend.memberImg}
+                  key={friend.memberSeq}
+                  memberStatus={friend.memberNickname}
+                />
+              );
+            })}
+        </CrewMemberList>
+
         <form onSubmit={handleMakeCrew}>
           <input
             style={inputStyle}
@@ -137,22 +160,38 @@ export const CrewMake = () => {
             placeholder="그룹명을 적어주세요"
             onChange={handleCrewName}
           />
-          <input
-            accept="image/*"
-            type="file"
-            id="certificateUploadInput"
-            onChange={(e) => handleFileChange(e, setCrewImg)}
-          />
-          {crewImg && (
-            <img
-              src={URL.createObjectURL(crewImg)}
-              alt="Crew"
-              width="100"
-              height="100"
-              style={{ marginTop: "20px" }}
+          <div>
+            {crewImg && (
+              <img
+                src={URL.createObjectURL(crewImg)}
+                alt="Crew"
+                width="100"
+                height="100"
+                style={{ marginTop: "20px" }}
+              />
+            )}
+            <StyledButton
+              type="button"
+              width="25vw"
+              fontSize="10px"
+              onClick={handleCrewImgUpload}
+              background="#FFF6EC"
+              color="gray"
+            >
+              사진 업로드
+            </StyledButton>
+
+            <input
+              accept="image/*"
+              type="file"
+              hidden
+              id="crewUploadInput"
+              onChange={(e) => handleFileChange(e, setCrewImg)}
             />
-          )}
-          <StyledButton type="submit">생성하기</StyledButton>
+            <StyledButton fontSize="15px" type="submit">
+              생성하기
+            </StyledButton>
+          </div>
         </form>
 
         {friendList.map((friend, i) => {
@@ -197,3 +236,14 @@ const inputStyle = {
 
   margin: "0 auto",
 };
+
+const CrewMemberList = styled.div`
+  display: flex;
+  gap: 5vmin;
+  overflow-x: scroll;
+  padding: 1rem 1rem 0 1rem;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
