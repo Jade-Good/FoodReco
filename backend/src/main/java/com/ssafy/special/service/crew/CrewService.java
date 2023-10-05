@@ -375,13 +375,17 @@ public class CrewService {
                             .crewRecommendFood(crewRecommendFood)
                     .build());
         }
+        log.info("voteONE1");
+        for(CrewMember m : crew.getCrewMembers()){
+            log.info("voteONE2");
+            VoteRecommendDto voteRecommendDto = getVoteList(crewRecommend,crew,member);
+            sseService.voteToOne(m.getMember().getMemberSeq(),voteRecommendDto);
 
-        VoteRecommendDto voteRecommendDto = getVoteList(crewRecommend,crew);
-        sseService.vote(voteDto.getCrewSeq(),member.getMemberSeq(),voteRecommendDto);
+        }
     }
 
     @Transactional
-    public VoteRecommendDto getVoteList(CrewRecommend crewRecommend,Crew crew){
+    public VoteRecommendDto getVoteList(CrewRecommend crewRecommend,Crew crew,Member member){
         int crewMemberCount = 0;
         for(CrewMember c : crew.getCrewMembers()){
             if(c.getStatus() == 1) {
@@ -400,12 +404,19 @@ public class CrewService {
             }
             m.put(f.getFood(),memberList);
         }
+        boolean isF = true;
         for (Food food: m.keySet()) {
+            boolean isT = false;
+            if(isF && m.get(food).contains(member)){
+                isT = true;
+                isF = false;
+            }
             historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
                     .foodSeq(food.getFoodSeq())
                     .foodName(food.getName())
                     .foodImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
                     .foodVoteCount(m.get(food).size())
+                    .isVote(isT)
                     .build());
         }
         // 미응답 인원
@@ -413,6 +424,7 @@ public class CrewService {
                 .foodSeq(0L)
                 .foodName("미투표")
                 .foodImg("")
+                .isVote(isF)
                 .foodVoteCount(crewMemberCount)
                 .build());
         VoteRecommendDto voteRecommendDto = null;
