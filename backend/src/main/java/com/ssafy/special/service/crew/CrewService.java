@@ -61,7 +61,7 @@ public class CrewService {
         List<CrewDto> crews = new ArrayList<>();
         for (CrewMember c:member.getCrewMembers()) {
             Crew memberCrew = c.getCrew();
-            if(c.getStatus() != -1){
+            if(c.getStatus() == -1){
                 continue;
             }
             int cnt = 0;
