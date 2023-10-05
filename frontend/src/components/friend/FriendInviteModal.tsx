@@ -22,7 +22,7 @@ const addFriend = ({ memberSeq }: seqProps) => {
 export const FriendInviteModal = ({ exitModal }: ModalProps) => {
   const memberSeq = localStorage.getItem("memberSeq");
 
-  let url = `https://j9b102.p.ssafy.io/api/member/friend/${memberSeq}`;
+  let url = `https://j9b102.p.ssafy.io/friend/add/${memberSeq}`;
   // let url = `https://j9b102.p.ssafy.io/`;
 
   const copyURL = async () => {
