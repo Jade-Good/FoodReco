@@ -293,6 +293,9 @@ public class MemberRecommendService {
             List<RecommendFoodResultDto> RecommendFoodResultList = new ArrayList<>();
             for (RecommendFoodDto recommendFoodDto : recommendFoodDtoList) {
                 Food food = foodRepository.findFoodByFoodSeq(recommendFoodDto.getFoodSeq());
+
+                int ingredientSim = (int)(recommendFoodDto.getSimilarity()*100);
+//                int nameSim = (int) (recommendFoodDto.getNameSimilarity() * 100);
                 RecommendFoodResultDto recommendFoodResultDto = RecommendFoodResultDto.builder()
                         .recommendedFoodSeq(recommendFoodDto.getFoodSeq())
                         .ingredientSimilarity(recommendFoodDto.getSimilarity())
@@ -303,6 +306,11 @@ public class MemberRecommendService {
                         .category(food.getCategory())
                         .cookingMethod(food.getCookingMethod())
                         .img("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
+                        .reason(recommendFoodDto.getName()
+                                + "은(는) 지난번에 드신 "
+                                + recommendFoodDto.getOriginName()
+                                + "와(과) 재료 및 조리방식이 "
+                                + ingredientSim + "% 유사하여 추천합니다.")
                         .build();
                 RecommendFoodResultList.add(recommendFoodResultDto);
             }
@@ -332,11 +340,14 @@ public class MemberRecommendService {
                     .collect(Collectors.toList());
         }
 //        현재상황과 유사한 활동량과 날씨를 추출
-        List<RecentRecommendFoodDto> similarFoodList = memberRecommendRepository.findSimilarRecommendedFood1000(memberSeq, nowWeather, totalSteps);
-        if (similarFoodList.size() == 0) {
+        List<RecentRecommendFoodDto> similarFoodList = new ArrayList<>();
+        if(totalSteps >= 1000)
+            similarFoodList = memberRecommendRepository.findSimilarRecommendedFood1000(memberSeq, nowWeather, totalSteps);
+        if (similarFoodList.size() == 0 && totalSteps >= 2000) {
+
             similarFoodList = memberRecommendRepository.findSimilarRecommendedFood2000(memberSeq, nowWeather, totalSteps);
         }
-        if (similarFoodList.size() == 0) {
+        if (similarFoodList.size() == 0 && totalSteps >= 3000) {
             similarFoodList = memberRecommendRepository.findSimilarRecommendedFood3000(memberSeq, nowWeather, totalSteps);
         }
 
