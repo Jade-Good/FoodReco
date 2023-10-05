@@ -26,8 +26,6 @@ export const Login = () => {
   // const dispatch = useDispatch();
   const [user, setUser] = useRecoilState(userState);
 
-  useEffect(() => {}, []);
-
   const {
     register,
     formState: { errors, isSubmitting, isSubmitted },
@@ -79,6 +77,7 @@ export const Login = () => {
 
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("email", email);
 
           setUser((prevUser) => ({
             ...prevUser,
