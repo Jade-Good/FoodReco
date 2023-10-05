@@ -13,16 +13,12 @@ public class LoginSuccessDto {
     private String nickname;
     private String email;
     private String expAccessToken;
-    private List<TypeRateDto> typeRates;
-    private List<RecentFoodDto> recentFoods;
 
     @Builder
-    public LoginSuccessDto(Long memberSeq, String nickname, String email, String expAccessToken, List<TypeRateDto> typeRates, List<RecentFoodDto> recentFoods) {
+    public LoginSuccessDto(Long memberSeq, String nickname, String email, String expAccessToken) {
         this.memberSeq = memberSeq;
         this.nickname = nickname;
         this.email = email;
         this.expAccessToken = expAccessToken;
-        this.typeRates = typeRates;
-        this.recentFoods = recentFoods;
     }
 }
