@@ -1,14 +1,29 @@
 import React, { useState } from "react";
 import classes from "./FriendInviteModal.module.css";
 import QRCode from "qrcode.react";
+import axios from "axios";
 
 interface ModalProps {
   exitModal: (newState: boolean) => void;
 }
 
+interface seqProps {
+  memberSeq: string;
+}
+
+const addFriend = ({ memberSeq }: seqProps) => {
+  axios.get(`${process.env.REACT_APP_BASE_URL}/member/friend/${memberSeq}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
+};
+
 export const FriendInviteModal = ({ exitModal }: ModalProps) => {
-  let msg = "연결기간 : 2024년 8월 3일 오후 11:58 까지";
-  let url = "https://j9b102.p.ssafy.io/";
+  const memberSeq = localStorage.getItem("memberSeq");
+
+  let url = `https://j9b102.p.ssafy.io/api/member/friend/${memberSeq}`;
+  // let url = `https://j9b102.p.ssafy.io/`;
 
   const copyURL = async () => {
     try {
@@ -31,7 +46,7 @@ export const FriendInviteModal = ({ exitModal }: ModalProps) => {
         <hr></hr>
         <QRCode value={url} size={140} className={classes.qrCode} />
         <hr></hr>
-        <h6>{msg}</h6>
+        {/* <h6>{msg}</h6> */}
 
         <div className={classes.shareList}>
           <div>

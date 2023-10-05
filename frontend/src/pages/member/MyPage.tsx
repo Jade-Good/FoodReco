@@ -7,6 +7,7 @@ import StyledButton from "../../styles/StyledButton";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import api from "../../utils/axios";
+
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atoms/userState";
 
@@ -23,9 +24,10 @@ export const MyPage = () => {
     api
       .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       })
+
       .then((res) => {
         console.log(res);
         setHeight(res.data.memberDetailDto.height);
@@ -35,7 +37,8 @@ export const MyPage = () => {
         setProfileURL(res.data.memberDetailDto.profileUrl);
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error occurred:", err);
+
         // console.log(err.response.status);
       });
   }, []);
@@ -60,7 +63,7 @@ export const MyPage = () => {
           headers: {
             Authorization: `Bearer ${user.accessToken}`,
           },
-        },
+        }
       );
       console.log(response.data);
     } catch (error) {

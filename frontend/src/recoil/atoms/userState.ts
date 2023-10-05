@@ -11,6 +11,8 @@ type User = {
   email: string;
   nickname: string;
   accessToken: string;
+  memberSeq: number;
+  expAccessToken: number;
 };
 
 export const userState = atom<User>({
@@ -20,6 +22,8 @@ export const userState = atom<User>({
     nickname: "",
     email: "",
     accessToken: "",
+    memberSeq: 0,
+    expAccessToken: 0,
   },
   effects_UNSTABLE: [persistAtom],
 });
@@ -30,4 +34,4 @@ export const foodDetailModal = atom({
     modalOpen: false,
   },
   effects_UNSTABLE: [persistAtom],
-}); 
+});
