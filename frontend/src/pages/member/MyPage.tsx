@@ -87,7 +87,7 @@ export const MyPage = () => {
       <HeaderLogo />
       <div
         style={{
-          height: "80vh",
+          height: "75vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
