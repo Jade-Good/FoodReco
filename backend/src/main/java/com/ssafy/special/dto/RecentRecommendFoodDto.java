@@ -1,14 +1,13 @@
 package com.ssafy.special.dto;
 
 import com.ssafy.special.dto.request.UserTasteDto;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 //UserTasteDto가 이 클래스 상속받기
-public class RecentRecommendFoodDto {
+public class RecentRecommendFoodDto{
     Long foodSeq;
     String name;
     public RecentRecommendFoodDto(UserTasteDto userTasteDto){
@@ -16,4 +15,5 @@ public class RecentRecommendFoodDto {
         this.name = userTasteDto.getFoodName();
 
     }
+
 }

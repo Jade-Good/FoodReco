@@ -3,6 +3,7 @@ package com.ssafy.special.repository.member;
 import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.domain.member.MemberRecommend;
 import com.ssafy.special.dto.RecentRecommendFoodDto;
+import com.ssafy.special.dto.RecentRecommendFoodResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -40,16 +41,10 @@ public interface MemberRecommendRepository extends JpaRepository<MemberRecommend
     List<Long>
     findMemberRecommendsWithinOneWeek(@Param("memberSeq") Long memberSeq, @Param("now") LocalDateTime now);
 
-    @Query("SELECT mr.food.foodSeq, mr.food.name FROM member_recommend mr WHERE mr.member.memberSeq = :memberSeq AND mr.weather = :weather AND mr.activityCalorie BETWEEN :activeCalorie-1000 and :activeCalorie+1000")
-    List<RecentRecommendFoodDto>
-    findSimilarRecommendedFood1000(@Param("memberSeq") Long memberSeq, @Param("weather") String weather, @Param("activeCalorie") int activeCalorie);
 
-    @Query("SELECT mr.food.foodSeq, mr.food.name FROM member_recommend mr WHERE mr.member.memberSeq = :memberSeq AND mr.weather = :weather AND mr.activityCalorie BETWEEN :activeCalorie-2000 and :activeCalorie+2000")
-    List<RecentRecommendFoodDto>
-    findSimilarRecommendedFood2000(@Param("memberSeq") Long memberSeq, @Param("weather") String weather, @Param("activeCalorie") int activeCalorie);
+    @Query(value = "SELECT mr.food_seq as foodSeq, f.name FROM member_recommend mr join food f on mr.food_seq = f.food_seq WHERE mr.member_seq = :member_seq AND mr.weather = :weather AND mr.activity_calorie BETWEEN :active_calorie1 and :active_calorie2", nativeQuery = true)
+    List<RecentRecommendFoodResult>
+    findSimilarRecommendedFood(@Param("member_seq") Long member_seq, @Param("weather") String weather, @Param("active_calorie1") int active_calorie1, @Param("active_calorie2") int active_calorie2);
 
-    @Query("SELECT mr.food.foodSeq, mr.food.name FROM member_recommend mr WHERE mr.member.memberSeq = :memberSeq AND mr.weather = :weather AND mr.activityCalorie BETWEEN :activeCalorie-3000 and :activeCalorie+3000")
-    List<RecentRecommendFoodDto>
-    findSimilarRecommendedFood3000(@Param("memberSeq") Long memberSeq, @Param("weather") String weather, @Param("activeCalorie") int activeCalorie);
 
 }

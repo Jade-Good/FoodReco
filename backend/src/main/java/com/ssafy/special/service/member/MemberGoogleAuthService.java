@@ -163,20 +163,28 @@ public class MemberGoogleAuthService {
             ObjectMapper objectMapper = new ObjectMapper();
 
             FitnessDto fitnessDto = objectMapper.readValue(response.getBody(), FitnessDto.class);
+            log.info(fitnessDto.toString());
+            if(fitnessDto.getBucket().size() > 0
+                && fitnessDto.getBucket().get(0).getDataset().size() > 0
+                    && fitnessDto.getBucket().get(0).getDataset().get(0).getPoint().size() > 0
+                        && fitnessDto.getBucket().get(0).getDataset().get(0).getPoint().get(0).getValue().size() > 0
+                            && fitnessDto.getBucket().get(0).getDataset().get(0).getPoint().get(0).getValue().get(0).getIntVal() >= 0) {
+                log.info("걸음정보" + fitnessDto
+                        .getBucket().get(0)
+                        .getDataset().get(0)
+                        .getPoint().get(0)
+                        .getValue().get(0)
+                        .getIntVal().toString());
 
-            log.info("걸음정보"+fitnessDto
-                    .getBucket().get(0)
-                    .getDataset().get(0)
-                    .getPoint().get(0)
-                    .getValue().get(0)
-                    .getIntVal().toString());
-
-            return fitnessDto
-                    .getBucket().get(0)
-                    .getDataset().get(0)
-                    .getPoint().get(0)
-                    .getValue().get(0)
-                    .getIntVal();
+                return fitnessDto
+                        .getBucket().get(0)
+                        .getDataset().get(0)
+                        .getPoint().get(0)
+                        .getValue().get(0)
+                        .getIntVal();
+            }else{
+                return 3000;
+            }
 
         } catch (HttpClientErrorException e) {
             log.info("활동량 받아오기 실패");
