@@ -2,6 +2,9 @@ package com.ssafy.special.service.crew;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.special.domain.crew.*;
 import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.member.Member;
@@ -100,10 +103,22 @@ public class CrewService {
 
     @Transactional
     public void registCrewforMember(CrewSignUpDto crewSignUpDto, String memberEmail)
-            throws IllegalArgumentException, EntityNotFoundException {
+            throws IllegalArgumentException, EntityNotFoundException, JsonProcessingException {
         if(crewSignUpDto.getCrewMembers().isEmpty()) {
             throw new IllegalArgumentException("그룹은 최소 2명 이상이여야 합니다.");
         }
+        log.info(crewSignUpDto.getCrewName());
+        log.info("testDTod" + crewSignUpDto.getCrewMembers());
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(crewSignUpDto.getCrewMembers());
+
+        List<Long> memberSeqs = new ArrayList<>();
+        // JsonNode를 순회하며 데이터 추출
+        for (JsonNode node : jsonNode) {
+            Long memberSeq = node.get("memberSeq").asLong();
+            memberSeqs.add(memberSeq);
+        }
+
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         String S3_fileName="";
@@ -130,7 +145,7 @@ public class CrewService {
                 .build();
         crew = crewRepository.save(crew);
 
-        for (Long memberSeq:crewSignUpDto.getCrewMembers()) {
+        for (Long memberSeq:memberSeqs) {
             CrewMember crewMember = CrewMember.builder()
                     .crew(crew)
                     .member(
