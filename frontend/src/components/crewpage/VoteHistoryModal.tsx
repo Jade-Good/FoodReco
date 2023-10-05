@@ -4,7 +4,7 @@ import api from "../../utils/axios";
 
 import Modal from "react-modal";
 import { useRecoilState } from "recoil";
-import { crewVoteModal } from "../../recoil/atoms/modalState";
+import { crewVoteHistorylModal } from "../../recoil/atoms/modalState";
 
 import { voteRecommend, foodList } from "../../pages/crew/CrewDetail";
 import ProgressBar from "./ProgressBar";
@@ -14,7 +14,7 @@ interface voteModalProps extends voteRecommend {
   crewSeq?: number;
 }
 
-const CrewVoteModal: React.FC<voteModalProps> = ({
+const VoteHistoryModal: React.FC<voteModalProps> = ({
   crewRecommendSeq,
   crewRecommendTime,
   foodList,
@@ -38,7 +38,7 @@ const CrewVoteModal: React.FC<voteModalProps> = ({
   }, [foodList]);
 
   // -------------------------- 모달 --------------------------
-  const [modal, setModalOpen] = useRecoilState(crewVoteModal);
+  const [modal, setModalOpen] = useRecoilState(crewVoteHistorylModal);
 
   console.log(foodList);
 
@@ -70,79 +70,73 @@ const CrewVoteModal: React.FC<voteModalProps> = ({
       {/* 메뉴 투표 창 */}
       <div style={{ padding: "1rem" }}>
         <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.5rem" }}>메뉴 투표</h1>
-        <h6 style={{ textAlign: "right" }}>
-          미투표 : {foodList ? foodList[0].foodVoteCount : 0}명
-        </h6>
         <div style={{ textAlign: "center" }}>
-          {foodList?.map((food, key) => {
-            if (key === 0) return;
-            return (
-              <VoteItem
-                onClick={() => {
-                  check(food.foodSeq);
+          {foodList?.map((food, key) => (
+            <VoteItem
+              onClick={() => {
+                check(food.foodSeq);
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-end",
+                  userSelect: "none",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-end",
-                    userSelect: "none",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "flex-end" }}>
-                    <FoodImg src={food.foodImg} />
-                    <div
+                <div style={{ display: "flex", alignItems: "flex-end" }}>
+                  <FoodImg src={food.foodImg} />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      marginLeft: "3vmin",
+                    }}
+                  >
+                    <h5
                       style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "flex-start",
-                        marginLeft: "3vmin",
+                        margin: "0 0 1vmin 0",
+                        fontSize: "1.2rem",
+                        textAlign: "left",
                       }}
                     >
-                      <h5
-                        style={{
-                          margin: "0 0 1vmin 0",
-                          fontSize: "1.2rem",
-                          textAlign: "left",
-                        }}
-                      >
-                        {food.foodName}
-                      </h5>
-                      <div
-                        style={{
-                          display: "inline",
-                          textAlign: "center",
-                          width: "6rem",
-                          padding: "0.2rem 0.2rem",
-                          border: "1px solid #fe9d3a",
-                          color: "#fe9d3a",
-                          borderRadius: "1rem",
-                          fontSize: "0.8rem",
-                        }}
-                        onClick={() => {
-                          console.log("클릭");
-                        }}
-                      >
-                        상세보기 버튼
-                      </div>
+                      {food.foodName}
+                    </h5>
+                    <div
+                      style={{
+                        display: "inline",
+                        textAlign: "center",
+                        width: "6rem",
+                        padding: "0.2rem 0.2rem",
+                        border: "1px solid #fe9d3a",
+                        color: "#fe9d3a",
+                        borderRadius: "1rem",
+                        fontSize: "0.8rem",
+                      }}
+                      onClick={() => {
+                        console.log("클릭");
+                      }}
+                    >
+                      상세보기 버튼
                     </div>
                   </div>
-                  <p style={{ fontSize: "1rem" }}>
-                    {foodList[key].foodVoteCount}명
-                  </p>
                 </div>
-                <ProgressBar percentage={progress[key]} />
-              </VoteItem>
-            );
-          })}
+                <p style={{ fontSize: "1rem" }}>
+                  {foodList[key].foodVoteCount}명
+                </p>
+              </div>
+              <ProgressBar percentage={progress[key]} />
+            </VoteItem>
+          ))}
         </div>
       </div>
     </Modal>
   );
 };
 
-export default CrewVoteModal;
+export default VoteHistoryModal;
 
 const VoteItem = styled.div`
   margin: 1rem 0;

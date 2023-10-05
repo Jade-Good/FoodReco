@@ -9,8 +9,12 @@ import HeaderCrewDetail from "../../components/header/HeaderCrewDetail";
 import CrewMemberProfile from "../../components/crewpage/CrewMemberProfile";
 
 import CrewVoteModal from "../../components/crewpage/CrewVoteModal";
+import VoteHistoryModal from "../../components/crewpage/VoteHistoryModal";
 import { useRecoilState } from "recoil";
-import { crewVoteModal } from "../../recoil/atoms/modalState";
+import {
+  crewVoteModal,
+  crewVoteHistorylModal,
+} from "../../recoil/atoms/modalState";
 
 interface CrewDetailProps {
   memberSeq: number;
@@ -63,6 +67,9 @@ export const CrewDetail = () => {
 
   // 모달
   const [modalOpen, setModalOpen] = useRecoilState(crewVoteModal);
+  const [openHistoryModal, setHistoryModal] = useRecoilState(
+    crewVoteHistorylModal
+  );
 
   let eventSource: EventSource;
 
@@ -124,6 +131,7 @@ export const CrewDetail = () => {
         setBtnState("투표전");
         setBtnText("메뉴 투표를 시작하세요!");
         console.log("투표종료 : ", btnState, btnText);
+        setModalOpen({ modalOpen: false });
       });
 
       eventSource.addEventListener("vote", (e) => {
@@ -184,6 +192,12 @@ export const CrewDetail = () => {
     }
   };
 
+  const [history, setHistory] = useState<history>();
+  const openHistory = (history: history) => {
+    setHistory(history);
+    setHistoryModal({ modalOpen: true });
+  };
+
   return (
     <>
       <HeaderCrewDetail />
@@ -236,8 +250,24 @@ export const CrewDetail = () => {
           <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.3rem" }}>
             투표 기록
           </h1>
-          <div>메뉴 버튼이나 투표 리스트~</div>
-          <div>메뉴 버튼이나 투표 리스트~</div>
+          {crewDetailInfo?.histories.map((history, key) => {
+            const dateString = history.crewRecommendTime;
+            const date = new Date(dateString);
+            const formattedDate = `${date.getFullYear()}-${
+              date.getMonth() + 1
+            }-${date.getDate()} ${date.getHours()}시 ${date.getMinutes()}분`;
+
+            return (
+              <VoteHistory
+                key={key}
+                onClick={() => {
+                  openHistory(history);
+                }}
+              >
+                {key + 1}번째 투표 : {formattedDate}
+              </VoteHistory>
+            );
+          })}
         </div>
       </CrewFrame>
       <FooterCrew />
@@ -248,9 +278,27 @@ export const CrewDetail = () => {
         memberCnt={crewDetailInfo?.crewMembers.length}
         crewSeq={crewDetailInfo?.crewSeq}
       />
+      <VoteHistoryModal
+        crewRecommendSeq={history?.crewRecommendSeq}
+        crewRecommendTime={history?.crewRecommendTime}
+        foodList={history?.foodList}
+        memberCnt={crewDetailInfo?.crewMembers.length}
+        crewSeq={crewDetailInfo?.crewSeq}
+      />
     </>
   );
 };
+
+const VoteHistory = styled.div`
+  display: flex;
+  gap: 5vmin;
+  overflow-x: scroll;
+  padding: 1rem;
+  border-bottom: 1px solid #dcdcdc;
+  &:active {
+    background-color: #dcdcdc;
+  }
+`;
 
 const VoteStartBtn = styled.button<{ status: string | undefined }>`
   font-size: 1.2rem;
