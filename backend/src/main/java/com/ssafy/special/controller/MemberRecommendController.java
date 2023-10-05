@@ -31,8 +31,13 @@ public class MemberRecommendController {
     public ResponseEntity<?> implicitFeedback(@RequestBody FeedbackDto feedbackRequestDto, @PathVariable Long nextFoodSeq, @PathVariable Double let, @PathVariable Double lon){
         String memberEmail = getEmail();
         try {
-            String weather = weatherService.getWeather(let, lon);
-            log.info("날씨 저장 완료");
+            String weather;
+            try {
+                weather = weatherService.getWeather(let, lon);
+                log.info("날씨 저장 완료");
+            }catch (Exception e){
+                weather = "맑음";
+            }
             int googleSteps = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
             log.info(Integer.toString(googleSteps));
             memberRecommendService.implicitFeedback(memberEmail, feedbackRequestDto, nextFoodSeq, googleSteps, weather);
@@ -52,8 +57,13 @@ public class MemberRecommendController {
     public ResponseEntity<?> personalRecommendation(@PathVariable Double let, @PathVariable Double lon){
         String memberEmail = getEmail();
         try {
-            String weather = weatherService.getWeather(let, lon);
-            log.info("날씨 저장 완료");
+            String weather;
+            try {
+                weather = weatherService.getWeather(let, lon);
+                log.info("날씨 저장 완료");
+            }catch (Exception e){
+                weather = "맑음";
+            }
             int googleCalorie = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
             log.info(Integer.toString(googleCalorie));
             List<RecommendFoodResultDto> recommendFoodDtoList = memberRecommendService.recommendFood(memberEmail, googleCalorie, weather);
