@@ -91,7 +91,7 @@ public class WeatherService {
         conn.disconnect();
         String data = sb.toString();
 
-        System.out.println(data);
+//        System.out.println(data);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> weatherData = objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {
         });
