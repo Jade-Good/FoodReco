@@ -49,88 +49,129 @@ interface history {
 }
 
 export const CrewDetail = () => {
-  const [crewDetailInfo, setCrewDetailInfo] = useState<CrewDetailProps | null>(
-    null
-  );
-  const [btnState, setBtnState] = useState("메뉴 투표를 시작하세요!");
+  const [crewDetailInfo, setCrewDetailInfo] = useState<CrewDetailProps>();
+  const [btnState, setBtnState] = useState("투표전");
+  const [btnText, setBtnText] = useState("메뉴 투표를 시작하세요!");
   const { crewSeq } = useParams();
 
   let eventSource: EventSource;
 
-  useEffect(() => {
-    async function getCrewInfo() {
-      try {
-        if (eventSource) eventSource.close();
-
-        const crewInfoResponse = await api.get(
-          `${process.env.REACT_APP_BASE_URL}/crew/detail/${crewSeq}`
-        );
-        const crewInfoData = crewInfoResponse.data;
-        setCrewDetailInfo(crewInfoData);
-
-        if (crewDetailInfo?.crewStatus) setBtnState(crewDetailInfo.crewStatus);
-
-        console.log("크루 상세 정보 조회 완료:", crewInfoData);
-
-        if (crewInfoData?.memberSeq) {
-          connectSSE(crewInfoData.memberSeq);
-          eventSource.addEventListener("connect", (e) => {
-            console.log("connect");
-          });
-          eventSource.addEventListener("start", (e) => {
-            console.log("start", e);
-            setBtnState(">> 메뉴 투표중<<");
-          });
-          eventSource.addEventListener("end", (e) => {
-            console.log("end", e);
-            setBtnState("메뉴 투표를 시작하세요!");
-          });
-
-          eventSource.addEventListener("vote", (e) => {
-            console.log("vote", JSON.parse(e.data));
-            if (crewDetailInfo) {
-              let copy = { ...crewDetailInfo };
-
-              copy.voteRecommend = JSON.parse(e.data);
-
-              setCrewDetailInfo(copy);
-            }
-          });
-
-          eventSource.onerror = (error) => {
-            console.error("SSE Error:", error);
-            console.error("투표 SSE 종료");
-            eventSource.close();
-
-            setTimeout(() => {
-              console.log("연결 재시도");
-              getCrewInfo();
-              // connectSSE(crewInfoData.memberSeq);
-            }, 3000); // 5초 후 재시도
-          };
-        } else {
-          console.log("회원 번호 없음 - SSE 연결 취소");
-        }
-      } catch (err) {
-        console.error("그룹 상세 정보 못가져옴:", err);
-      }
+  const getCrewDetailInfo = async () => {
+    try {
+      const res = await api.get(
+        `${process.env.REACT_APP_BASE_URL}/crew/detail/${crewSeq}`
+      );
+      console.log("그룹 상세 정보 조회 성공 : ", res);
+      return res.data;
+    } catch (err) {
+      console.error("그룹 상세 정보 못가져옴:", err);
+      setTimeout(getCrewDetailInfo, 1000); // 1초 후 재시도
+      throw err; // 에러를 다시 throw하여 오류 핸들링을 위임합니다.
     }
+  };
 
-    getCrewInfo();
+  const connectSSE = async () => {
+    try {
+      const info = await getCrewDetailInfo();
+
+      if (!info) {
+        throw new Error("그룹 상세 정보 없음");
+      }
+
+      setCrewDetailInfo(info);
+      setBtnState(info.crewStatus);
+
+      if (info.crewStatus === "투표전") setBtnText("메뉴 투표를 시작하세요!");
+      else if (info.crewStatus === "분석중")
+        setBtnText("그룹 메뉴 분석 중입니다");
+      else if (info.crewStatus === "투표중")
+        setBtnText(">> 메뉴 투표에 참여하세요 <<");
+
+      console.log("투표 SSE 연결 시도! / 멤버 시퀀스 : ", info.memberSeq);
+
+      eventSource = new EventSource(
+        `${process.env.REACT_APP_BASE_URL}/crew/sse/${crewSeq}/${info.memberSeq}`
+      );
+
+      eventSource.addEventListener("connect", (e) => {
+        console.log("connect");
+      });
+      eventSource.addEventListener("start", (e) => {
+        console.log("start", e);
+
+        let copy = { ...info };
+        copy.voteRecommend = e.data;
+        setCrewDetailInfo(copy);
+
+        setBtnState("투표중");
+        setBtnText(">> 메뉴 투표에 참여하세요 <<");
+        console.log("투표시작 : ", btnState, btnText);
+        console.log("투표목록 : ", copy.voteRecommend);
+      });
+      eventSource.addEventListener("end", (e) => {
+        console.log("end", e);
+        setBtnState("투표전");
+        setBtnText("메뉴 투표를 시작하세요!");
+        console.log("투표종료 : ", btnState, btnText);
+      });
+
+      eventSource.addEventListener("vote", (e) => {
+        console.log("vote", JSON.parse(e.data));
+        let copy = { ...info };
+        copy.voteRecommend = JSON.parse(e.data);
+        setCrewDetailInfo(copy);
+      });
+
+      eventSource.onerror = (error) => {
+        console.error("SSE Error:", error);
+        eventSource.close();
+
+        setTimeout(() => {
+          console.log("연결 재시도");
+          connectSSE();
+        }, 3000); // 3초 후 재시도
+      };
+    } catch (err) {
+      console.error(err);
+      setTimeout(connectSSE, 2000); // 2초 후 재시도
+    }
+  };
+
+  useEffect(() => {
+    if (eventSource) eventSource.close();
+
+    connectSSE();
 
     return () => {
       console.log("투표 SSE 종료");
-      eventSource.close();
+      if (eventSource) eventSource.close();
     };
   }, []);
 
-  const connectSSE = (memberSeq: number) => {
-    console.log("투표 SSE 연결 시도! / 멤버 시퀀스 : ", memberSeq);
+  const voteStartBtnHandler = () => {
+    if (!crewDetailInfo) return;
 
-    eventSource = new EventSource(
-      `${process.env.REACT_APP_BASE_URL}/crew/sse/${crewSeq}/${memberSeq}`
-      // `http://192.168.31.202:8080/api/crew/sse/${crewSeq}/${memberSeq}`
-    );
+    switch (btnState) {
+      case "투표전":
+        console.log("투표 시작 누름!!!");
+        setBtnState("분석중");
+        setBtnText("그룹 메뉴 분석 중입니다");
+        api
+          .get(`${process.env.REACT_APP_BASE_URL}/recommend/crew/${crewSeq}`)
+          .then((res) => {
+            console.log(res.data); // 그룹 투표 시작
+          })
+          .catch((err) => {
+            console.error("투표 시작 실패", err);
+          });
+        break;
+      case "분석중":
+        console.log("분석중이라 무시~~");
+        break;
+      case "투표중":
+        console.log("투표 모달창 떠야함!!");
+        break;
+    }
   };
 
   return (
@@ -174,7 +215,9 @@ export const CrewDetail = () => {
             메뉴투표
           </h1>
           <div style={{ textAlign: "center" }}>
-            <VoteStartBtn>{btnState}</VoteStartBtn>
+            <VoteStartBtn status={btnState} onClick={voteStartBtnHandler}>
+              {btnText}
+            </VoteStartBtn>
           </div>
         </div>
 
@@ -192,7 +235,7 @@ export const CrewDetail = () => {
   );
 };
 
-const VoteStartBtn = styled.button`
+const VoteStartBtn = styled.button<{ status: string | undefined }>`
   font-size: 1.2rem;
   font-weight: bold;
   color: white;
@@ -203,10 +246,19 @@ const VoteStartBtn = styled.button`
   }
   user-select: none;
 
-  width: 80vw;
+  /* width: 80vw; */
+  padding: 0 1rem;
   height: 8vh;
   border-radius: 1rem;
   border: 0;
+
+  ${(props) =>
+    props.status === "분석중" &&
+    css`
+      background-color: white;
+      border: solid #fe9d3a 1px;
+      color: #fe9d3a;
+    `}
 `;
 
 const CrewMemberList = styled.div`
