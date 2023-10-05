@@ -38,7 +38,9 @@ const CrewCard = ({ crew, key, onClick }: CrewCardProps) => {
           <div className={classes.crewCardBtns}>
             <div className={classes.memberCnt}>{crew.crewCnt}명</div>
             <div className={classes.crewLastTime}>
-              {crew.recentRecommend}일전
+              {crew.recentRecommend === -1
+                ? `신규그룹`
+                : `${crew.recentRecommend}일전`}
             </div>
           </div>
         </>
