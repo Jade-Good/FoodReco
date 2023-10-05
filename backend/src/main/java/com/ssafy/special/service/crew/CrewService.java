@@ -287,6 +287,7 @@ public class CrewService {
                 .crewStatus(crew.getStatus())
                 .memberStatus(memberStatus)
                 .crewMembers(crewMembers)
+                .memberSeq(member.getMemberSeq())
                 .memberCheckVote(memberCheckVote)
                 .histories(histories)
                 .voteRecommend(voteRecommendDto)
