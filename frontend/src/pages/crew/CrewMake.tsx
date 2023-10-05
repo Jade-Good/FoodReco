@@ -9,6 +9,8 @@ import { CrewAdd } from "../../components/crewpage/CrewAdd";
 import axios from "axios";
 import StyledButton from "../../styles/StyledButton";
 import { useNavigate } from "react-router-dom";
+import { count } from "console";
+import { ToastContainer, toast } from "react-toastify";
 interface CrewData {
   crewName: string;
   crewMembers: number[];
@@ -93,19 +95,31 @@ export const CrewMake = () => {
     // );
 
     console.log("crewMembers", formData.get("crewMembers"));
-
-    api
-      .post(`${process.env.REACT_APP_BASE_URL}/crew/regist`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        navigate("/crew");
-      })
-      .catch((err) => console.log(err));
+    if (friendCount >= 3) {
+      api
+        .post(`${process.env.REACT_APP_BASE_URL}/crew/regist`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          navigate("/crew");
+        })
+        .catch((err) => console.log(err));
+    } else {
+      toast.error("이메일과 비밀번호를 확인해주세요", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
   };
 
   const handleCrewName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -154,6 +168,18 @@ export const CrewMake = () => {
         })}
       </div>
       <FooterCrew />
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 };
