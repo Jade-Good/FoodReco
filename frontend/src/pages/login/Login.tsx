@@ -26,8 +26,6 @@ export const Login = () => {
   // const dispatch = useDispatch();
   const [user, setUser] = useRecoilState(userState);
 
-  useEffect(() => {}, []);
-
   const {
     register,
     formState: { errors, isSubmitting, isSubmitted },
