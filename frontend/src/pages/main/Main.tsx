@@ -6,6 +6,7 @@ import { Login } from "../login/Login";
 import api from "../../utils/axios";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atoms/userState";
+import { ToastContainer } from "react-toastify";
 
 interface IForm {
   email: string;
@@ -44,6 +45,18 @@ export const Main: React.FC = () => {
   return (
     <>
       <FooterHome />
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 };
