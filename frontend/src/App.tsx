@@ -115,7 +115,7 @@ const App = () => {
               />
               {/* 특정 그룹 상세보기 */}
               <Route
-                path="/crew"
+                path="/crew/detail/:crewSeq"
                 element={
                   <CheckLogin
                     authenticated={isLogin}
