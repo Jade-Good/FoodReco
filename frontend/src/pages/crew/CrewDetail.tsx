@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
+import api from "../../utils/axios";
 
 import { FooterCrew } from "../../components/footer/FooterCrew";
 import HeaderCrewDetail from "../../components/header/HeaderCrewDetail";
@@ -7,8 +8,7 @@ import HeaderCrewDetail from "../../components/header/HeaderCrewDetail";
 import { CrewProps } from "../../pages/crew/CrewList";
 import { useRecoilState } from "recoil";
 import { crewDetail } from "../../recoil/atoms/crewState";
-
-import api from "../../utils/axios";
+import CrewMemberProfile from "../../components/crewpage/CrewMemberProfile";
 
 interface CrewDetailProps {
   crewSeq: number;
@@ -16,27 +16,31 @@ interface CrewDetailProps {
   crewImg: string;
   crewStatus: "투표중" | "분석중" | "투표중";
   memberStatus: "미응답" | "수락" | "거절"; // 본인의 그룹 가입 여부
-  crewMembers: {
-    memberSeq: number;
-    memberName: string;
-    memberImg: string;
-    memberStatus: "미응답" | "수락" | "거절"; // 해당 사용자의 가입 여부
-  };
+  crewMembers: crewMembers[];
 
   // 투표 중인경우만 존재(아닌경우 null)
   voteRecommend: {
     crewRecommendSeq: number;
     crewRecommendTime: Date;
-    foodList: {
-      foodSeq: number;
-      foodName: string;
-      foodImg: string;
-      foodVoteCount: number;
-    };
+    foodList: foodList[];
   } | null;
 
   //분석 중인 경우 []
   histories: history[];
+}
+
+interface foodList {
+  foodSeq: number;
+  foodName: string;
+  foodImg: string;
+  foodVoteCount: number;
+}
+
+interface crewMembers {
+  memberSeq: number;
+  memberName: string;
+  memberImg: string;
+  memberStatus: "미응답" | "수락"; // 해당 사용자의 가입 여부
 }
 
 interface history {
@@ -51,7 +55,9 @@ interface history {
 }
 
 export const CrewDetail = () => {
-  const [crewDetailInfo, setCrewDetailInfo] = useState<CrewDetailProps>();
+  const [crewDetailInfo, setCrewDetailInfo] = useState<CrewDetailProps | null>(
+    null
+  );
   const [crewDetails, setCrewDetail] = useRecoilState(crewDetail);
 
   useEffect(() => {
@@ -83,8 +89,28 @@ export const CrewDetail = () => {
         />
         <h1 style={{ margin: "0", fontSize: "4vmax" }}>{crewDetails.name}</h1>
         <div style={{ width: "90vw", margin: "10vw" }}>
-          <h1 style={{ margin: "0 0 5vmin 0", fontSize: "3vmax" }}>그룹원</h1>
-          <div>사진 및 이름 프로필~~</div>
+          <h1 style={{ margin: "0 0 2vmin 0", fontSize: "3vmax" }}>그룹원</h1>
+          <div
+            style={{
+              display: "flex",
+              gap: "8vmin",
+              overflowX: "scroll",
+              padding: "1rem",
+            }}
+          >
+            {crewDetailInfo
+              ? crewDetailInfo.crewMembers.map((member, key) => {
+                  return (
+                    <CrewMemberProfile
+                      name={member.memberName}
+                      profileImg={member.memberImg}
+                      memberStatus={member.memberStatus}
+                      key={key}
+                    />
+                  );
+                })
+              : null}
+          </div>
         </div>
         <div style={{ width: "90vw" }}>
           <h1 style={{ margin: "0 0 5vmin 0", fontSize: "3vmax" }}>메뉴투표</h1>
