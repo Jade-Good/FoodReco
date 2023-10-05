@@ -47,8 +47,8 @@ public class CrewController {
         }
     }
 
-    @PostMapping("/regist")
-    public ResponseEntity<?> registCrew(@RequestBody CrewSignUpDto registCrewDto){
+    @PostMapping(path = "/regist", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> registCrew(CrewSignUpDto registCrewDto){
         log.info("registCrew() 메소드 시작");
         try{
             crewService.registCrewforMember(registCrewDto,getEmail());

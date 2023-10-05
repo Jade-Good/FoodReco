@@ -9,6 +9,7 @@ import { userState } from "../../recoil/atoms/userState";
 import { ToastContainer } from "react-toastify";
 import HeaderLogo from "../../components/header/HeaderLogo";
 import StyledButton from "../../styles/StyledButton";
+import { useNavigate } from "react-router-dom";
 
 interface IForm {
   email: string;
@@ -17,6 +18,7 @@ interface IForm {
 
 export const Main: React.FC = () => {
   const [user, setUser] = useRecoilState(userState);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -46,7 +48,14 @@ export const Main: React.FC = () => {
   return (
     <>
       <HeaderLogo />
-      <div style={{ marginTop: "17vh", display: "flex", flexWrap: "wrap" }}>
+      <div
+        style={{
+          marginTop: "17vh",
+          display: "flex",
+          flexWrap: "wrap",
+          overflow: "scroll",
+        }}
+      >
         <button
           style={{
             flex: "1 0 50%",
@@ -58,6 +67,7 @@ export const Main: React.FC = () => {
             width: "5vh",
             height: "30vh",
             fontSize: "20px",
+            fontWeight: "bold",
           }}
         >
           서비스 소개
@@ -71,8 +81,9 @@ export const Main: React.FC = () => {
             border: "none", // 테두리 제거
             padding: "10px 20px", // 내용과 버튼 크기 조절
             opacity: 0.9, // 투명도 조절
+            width: "5vh",
+            height: "30vh",
             fontSize: "20px",
-
             fontWeight: "bold",
           }}
         >
@@ -105,14 +116,16 @@ export const Main: React.FC = () => {
             border: "none", // 테두리 제거
             padding: "10px 20px", // 내용과 버튼 크기 조절
             opacity: 0.9, // 투명도 조절
+            width: "5vh",
+            height: "30vh",
             fontSize: "20px",
-
             fontWeight: "bold",
           }}
         >
-          버튼 텍스트
+          데이터분석
         </button>
       </div>
+      <p onClick={() => navigate("/login")}>로그인하기</p>
       <FooterHome />
 
       <ToastContainer

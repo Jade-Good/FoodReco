@@ -2,6 +2,9 @@ package com.ssafy.special.service.crew;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.special.domain.crew.*;
 import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.member.Member;
@@ -100,10 +103,22 @@ public class CrewService {
 
     @Transactional
     public void registCrewforMember(CrewSignUpDto crewSignUpDto, String memberEmail)
-            throws IllegalArgumentException, EntityNotFoundException {
+            throws IllegalArgumentException, EntityNotFoundException, JsonProcessingException {
         if(crewSignUpDto.getCrewMembers().isEmpty()) {
             throw new IllegalArgumentException("그룹은 최소 2명 이상이여야 합니다.");
         }
+        log.info(crewSignUpDto.getCrewName());
+        log.info("testDTod" + crewSignUpDto.getCrewMembers());
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(crewSignUpDto.getCrewMembers());
+
+        List<Long> memberSeqs = new ArrayList<>();
+        // JsonNode를 순회하며 데이터 추출
+        for (JsonNode node : jsonNode) {
+            Long memberSeq = node.get("memberSeq").asLong();
+            memberSeqs.add(memberSeq);
+        }
+
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
         String S3_fileName="";
@@ -130,7 +145,7 @@ public class CrewService {
                 .build();
         crew = crewRepository.save(crew);
 
-        for (Long memberSeq:crewSignUpDto.getCrewMembers()) {
+        for (Long memberSeq:memberSeqs) {
             CrewMember crewMember = CrewMember.builder()
                     .crew(crew)
                     .member(
@@ -228,13 +243,14 @@ public class CrewService {
         VoteRecommendDto voteRecommendDto = null;
         // 추천 받은 기록 내역에서 리스트 가져오기
         for (CrewRecommend crewRecommend: crewRecommends) {
-
+            boolean isF = true;
             int crewMemberCount = 0;
             for(CrewMember c : crew.getCrewMembers()){
                 if(c.getStatus() == 1) {
                     crewMemberCount++;
                 }
             }
+            Food fff=null;
             List<CrewRecommendHistoryByFoodDto> historiesByRecommend = new ArrayList<>();
             List<CrewRecommendFood> crewFoods = crewRecommendFoodRepository.findAllByCrewRecommend(crewRecommend);
             Map<Food, List<Member>> m = new HashMap<>();
@@ -242,18 +258,27 @@ public class CrewService {
                 List<Member> memberList = m.getOrDefault(f.getFood(),new ArrayList<>());
                 List<CrewRecommendVote> votes = crewRecommendVoteRepository.findAllByCrewRecommendFood(f);
                 for (CrewRecommendVote v: votes) {
+                    if(v.getMember().getEmail().equals(memberEmail)){
+                        fff = v.getCrewRecommendFood().getFood();
+                    }
                     memberList.add(v.getMember());
                     crewMemberCount--;
                 }
                 m.put(f.getFood(),memberList);
             }
+            boolean isT = false;
             for (Food food: m.keySet()) {
+                isT = food.equals(fff);
                 historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
                         .foodSeq(food.getFoodSeq())
                         .foodName(food.getName())
                         .foodImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
                         .foodVoteCount(m.get(food).size())
+                        .isVote(isT)
                         .build());
+                if(isT){
+                    isF = false;
+                }
             }
             // 미응답 인원
             historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
@@ -261,6 +286,7 @@ public class CrewService {
                     .foodName("미투표")
                     .foodImg("")
                     .foodVoteCount(crewMemberCount)
+                    .isVote(isF)
                     .build());
             if(crew.getStatus().equals("투표중") && voteRecommendDto ==null){
                 voteRecommendDto = VoteRecommendDto.builder()
@@ -364,13 +390,17 @@ public class CrewService {
                             .crewRecommendFood(crewRecommendFood)
                     .build());
         }
+        log.info("voteONE1");
+        for(CrewMember m : crew.getCrewMembers()){
+            log.info("voteONE2");
+            VoteRecommendDto voteRecommendDto = getVoteList(crewRecommend,crew,member);
+            sseService.voteToOne(m.getMember().getMemberSeq(),voteRecommendDto);
 
-        VoteRecommendDto voteRecommendDto = getVoteList(crewRecommend,crew);
-        sseService.vote(voteDto.getCrewSeq(),member.getMemberSeq(),voteRecommendDto);
+        }
     }
 
     @Transactional
-    public VoteRecommendDto getVoteList(CrewRecommend crewRecommend,Crew crew){
+    public VoteRecommendDto getVoteList(CrewRecommend crewRecommend,Crew crew,Member member){
         int crewMemberCount = 0;
         for(CrewMember c : crew.getCrewMembers()){
             if(c.getStatus() == 1) {
@@ -389,12 +419,19 @@ public class CrewService {
             }
             m.put(f.getFood(),memberList);
         }
+        boolean isF = true;
         for (Food food: m.keySet()) {
+            boolean isT = false;
+            if(isF && m.get(food).contains(member)){
+                isT = true;
+                isF = false;
+            }
             historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
                     .foodSeq(food.getFoodSeq())
                     .foodName(food.getName())
                     .foodImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
                     .foodVoteCount(m.get(food).size())
+                    .isVote(isT)
                     .build());
         }
         // 미응답 인원
@@ -402,6 +439,7 @@ public class CrewService {
                 .foodSeq(0L)
                 .foodName("미투표")
                 .foodImg("")
+                .isVote(isF)
                 .foodVoteCount(crewMemberCount)
                 .build());
         VoteRecommendDto voteRecommendDto = null;

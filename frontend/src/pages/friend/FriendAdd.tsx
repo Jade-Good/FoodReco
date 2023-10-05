@@ -1,14 +1,12 @@
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../utils/axios";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 export const FriendAdd = () => {
   const navigate = useNavigate();
   const { memberSeq } = useParams();
 
-  {
-  }
   useEffect(() => {
     if (localStorage.getItem("memberSeq") !== memberSeq) {
       api
@@ -50,6 +48,18 @@ export const FriendAdd = () => {
   return (
     <>
       <p>친구 추가 중</p>
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 };
