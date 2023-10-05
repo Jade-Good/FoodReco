@@ -147,7 +147,11 @@ public class CrewController {
         try{
             SseEmitter sse = sseService.connect(memberSeq);
             return ResponseEntity.ok().body(sse);
-        }catch (Exception e){
+        }catch (IllegalArgumentException e){
+            log.info(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
+        }
+        catch (Exception e){
             return ResponseEntity.badRequest().body(null);
         }
     }

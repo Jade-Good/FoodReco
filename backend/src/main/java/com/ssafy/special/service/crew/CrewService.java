@@ -7,6 +7,7 @@ import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.member.Member;
 import com.ssafy.special.dto.request.*;
 import com.ssafy.special.dto.response.*;
+import com.ssafy.special.repository.EmitterRepository;
 import com.ssafy.special.repository.crew.*;
 import com.ssafy.special.repository.food.FoodRepository;
 import com.ssafy.special.repository.member.MemberRepository;
@@ -40,6 +41,8 @@ public class CrewService {
     private final CrewRecommendRepository crewRecommendRepository;
     private final CrewRecommendVoteRepository crewRecommendVoteRepository;
     private final CrewRecommendFoodRepository crewRecommendFoodRepository;
+    private final EmitterRepository emitterRepository;
+
     private final FoodService foodService;
     // S3 버킷 정보. (버킷 - S3 저장소 이름이라고 생각하면 됨)
     @Value("${cloud.aws.s3.bucket}")
@@ -293,6 +296,8 @@ public class CrewService {
                 .voteRecommend(voteRecommendDto)
                 .build();
         crewDetailDto.setCrewMembers(crewMembers);
+
+        emitterRepository.delete(member.getMemberSeq());
         return crewDetailDto;
     }
 

@@ -16,6 +16,7 @@ public class EmitterRepository {
     public void save(Long memberSeq, SseEmitter sseEmitter) {
         // 이미 해당 memberSeq의 SseEmitter가 존재하는 경우 이전 SseEmitter를 삭제
         if (emitterMap.containsKey(memberSeq)) {
+            System.out.println("sse이 ㅇㅆ음");
             SseEmitter previousEmitter = emitterMap.get(memberSeq);
             try {
                 previousEmitter.complete(); // 이전 SseEmitter를 종료
