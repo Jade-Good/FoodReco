@@ -143,7 +143,7 @@ public class CrewRecommendService {
         crewRepository.save(crew);
 
         // 5분뒤 종료하는 스케줄러 실행
-        taskScheduler.schedule(() -> endVote(crew), Instant.now().plusSeconds(600));
+        taskScheduler.schedule(() -> endVote(crew), Instant.now().plusSeconds(60));
     }
 
     public void endVote(Crew crew) {
