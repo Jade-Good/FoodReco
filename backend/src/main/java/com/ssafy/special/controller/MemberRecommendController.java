@@ -35,7 +35,7 @@ public class MemberRecommendController {
             try {
                 weather = weatherService.getWeather(let, lon);
                 log.info("날씨 저장 완료");
-            }catch (NullPointerException e){
+            }catch (Exception e){
                 weather = "맑음";
             }
             int googleSteps = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
@@ -61,7 +61,7 @@ public class MemberRecommendController {
             try {
                 weather = weatherService.getWeather(let, lon);
                 log.info("날씨 저장 완료");
-            }catch (NullPointerException e){
+            }catch (Exception e){
                 weather = "맑음";
             }
             int googleCalorie = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
