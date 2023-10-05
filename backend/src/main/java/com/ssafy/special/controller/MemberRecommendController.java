@@ -27,11 +27,11 @@ public class MemberRecommendController {
     private final CrewRecommendService crewRecommendService;
     private final WeatherService weatherService;
 
-    @PatchMapping("/feedback/{nextFoodSeq}/{lon}/{let}")
-    public ResponseEntity<?> implicitFeedback(@RequestBody FeedbackDto feedbackRequestDto, @PathVariable Long nextFoodSeq, @PathVariable Double lon, @PathVariable Double let ){
+    @PatchMapping("/feedback/{nextFoodSeq}/{let}/{lon}")
+    public ResponseEntity<?> implicitFeedback(@RequestBody FeedbackDto feedbackRequestDto, @PathVariable Long nextFoodSeq, @PathVariable Double let, @PathVariable Double lon){
         String memberEmail = getEmail();
         try {
-            String weather = weatherService.getWeather(lon, let);
+            String weather = weatherService.getWeather(let, lon);
             log.info("날씨 저장 완료");
             int googleSteps = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
             log.info(Integer.toString(googleSteps));
@@ -48,11 +48,11 @@ public class MemberRecommendController {
         }
     }
 
-    @GetMapping("/personal/{lon}/{let}")
-    public ResponseEntity<?> personalRecommendation(@PathVariable Double lon, @PathVariable Double let){
+    @GetMapping("/personal/{let}/{lon}")
+    public ResponseEntity<?> personalRecommendation(@PathVariable Double let, @PathVariable Double lon){
         String memberEmail = getEmail();
         try {
-            String weather = weatherService.getWeather(lon, let);
+            String weather = weatherService.getWeather(let, lon);
             log.info("날씨 저장 완료");
             int googleCalorie = memberGoogleAuthService.getActivityFromGoogle(memberEmail);
             log.info(Integer.toString(googleCalorie));

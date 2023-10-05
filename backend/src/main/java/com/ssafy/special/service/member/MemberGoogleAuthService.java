@@ -18,7 +18,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Slf4j
@@ -76,6 +79,7 @@ public class MemberGoogleAuthService {
         if(member.get().getGoogleRefreshToken() == null){
             int hour = LocalDateTime.now().getHour();
             int noneGoogleMemberActivity = 0;
+
             if (21 < hour && hour <=24 || 0<= hour && hour <=4){
 //            야식
 //            일일 활동량
@@ -111,35 +115,14 @@ public class MemberGoogleAuthService {
         long duration = 0L;
         long startTimeMillis = -1;
         long endTimeMillis = -1;
-        if (21 < hour && hour <=24 || 0<= hour && hour <=4){
-//            야식 및 아침
-//            일일 활동량
-            duration = 86_400_000L;
-            startTimeMillis = System.currentTimeMillis() - duration;
-            endTimeMillis = System.currentTimeMillis();
-        } else if( 4 < hour && hour <= 8 ){
 
-            startTimeMillis = System.currentTimeMillis();
-            endTimeMillis = System.currentTimeMillis();
-        }else if (8 < hour && hour <= 15) {
-//            점심
-//            오전 활동량(4시간)
-            duration = 14_400_000L;
-            startTimeMillis = System.currentTimeMillis() - duration;
-            endTimeMillis = System.currentTimeMillis();
-        } else if (15 < hour && hour <= 21) {
-//            저녁
-//            오후 활동량
-            duration = 21_600_000L;
-            startTimeMillis = System.currentTimeMillis() - duration;
-            endTimeMillis = System.currentTimeMillis();
-        } else{
-//            일일 활동량
-            duration = 86_400_000L;
-            startTimeMillis = System.currentTimeMillis() - duration;
-            endTimeMillis = System.currentTimeMillis();
-        }
+        duration = 86_400_000L;
+        LocalDate today = LocalDate.now();
+        ZonedDateTime midnight = today.atStartOfDay(ZoneId.systemDefault());
 
+        long millis = midnight.toInstant().toEpochMilli();
+        startTimeMillis = millis;
+        endTimeMillis = startTimeMillis + duration;
 
         Map<String, String> aggregateBy = new HashMap<>();
         aggregateBy.put("dataTypeName", "com.google.step_count.delta");
