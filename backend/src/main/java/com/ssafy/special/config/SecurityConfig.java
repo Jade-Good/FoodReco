@@ -80,6 +80,8 @@ public class SecurityConfig {
                         "/api/member/verification/email/code",
                         "/api/member/checkNickname",
                         "/api/member/checkEmail",
+                        "/api/member/checkEmail",
+                        "/api/member/checkNickname",
                         "/api/member/login",
                         "/api/jwt",
                         "/api/crew/sse/**"
