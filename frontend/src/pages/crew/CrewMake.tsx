@@ -24,12 +24,11 @@ export const CrewMake = () => {
   const [friendList, setFriendList] = useState<
     { memberNickname: string; memberImg: string; memberSeq: number }[]
   >([]);
-  const [search, setSearch] = useState("");
-  const [isInputFocused, setIsInputFocused] = useState(false);
+  // const [search, setSearch] = useState("");
+  // const [isInputFocused, setIsInputFocused] = useState(false);
   const [crew, setCrew] = useState<number[]>([]);
   const [crewName, setCrewName] = useState("");
   const [crewImg, setCrewImg] = useState<File | null>(null);
-  const [crewDetailInfo, setCrewDetailInfo] = useState<any>(null);
 
   useEffect(() => {
     setFriendCount(crew.length);
@@ -100,7 +99,7 @@ export const CrewMake = () => {
     formData.append("crewMembers", crewMembersJSON);
 
     // console.log("crewMembers", formData.get("crewMembers"));
-    if (friendCount >= 2) {
+    if (friendCount >= 1) {
       api
         .post(`${process.env.REACT_APP_BASE_URL}/crew/regist`, formData, {
           headers: {
@@ -114,7 +113,7 @@ export const CrewMake = () => {
         })
         .catch((err) => console.log(err));
     } else {
-      toast.error("최소 2명이상의 친구를 골라주세요.", {
+      toast.error("최소 1명이상의 친구를 골라주세요.", {
         position: "top-center",
         autoClose: 1000,
         hideProgressBar: false,
