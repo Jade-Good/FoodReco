@@ -16,6 +16,8 @@ import {
   crewVoteHistorylModal,
 } from "../../recoil/atoms/modalState";
 
+import { useNavigate } from "react-router-dom";
+
 interface CrewDetailProps {
   memberSeq: number;
   crewSeq: number;
@@ -37,6 +39,7 @@ export interface foodList {
   foodName: string;
   foodImg: string;
   foodVoteCount: number;
+  vote: boolean;
 }
 
 interface crewMembers {
@@ -198,6 +201,26 @@ export const CrewDetail = () => {
     setHistoryModal({ modalOpen: true });
   };
 
+  // 가입 승인 거절
+  const navigate = useNavigate();
+  const joinHandler = (req: number) => {
+    if (!crewSeq) return;
+
+    api
+      .post(`${process.env.REACT_APP_BASE_URL}/crew/join`, {
+        crewSeq: crewSeq,
+        crewJoinType: req,
+      })
+      .then((res) => {
+        console.log("가입 응답 성공 : ", res.data);
+        if (req === -1) navigate(`/crew`);
+        else window.location.reload();
+      })
+      .catch((err) => {
+        console.error("가입 응답 실패", err);
+      });
+  };
+
   return (
     <>
       <HeaderCrewDetail />
@@ -216,59 +239,82 @@ export const CrewDetail = () => {
           </h1>
         </div>
 
-        {/* 그룹원 목록 */}
-        <div style={{ width: "90vw" }}>
-          <h1 style={{ margin: "0 0 2vmin 0", fontSize: "1.3rem" }}>그룹원</h1>
-          <CrewMemberList>
-            {crewDetailInfo?.crewMembers.map((member, key) => {
-              return (
-                <CrewMemberProfile
-                  name={member.memberName}
-                  profileImg={member.memberImg}
-                  memberStatus={member.memberStatus}
-                  key={key}
-                />
-              );
-            })}
-          </CrewMemberList>
-        </div>
-
-        {/* 메뉴 투표 창 */}
-        <div style={{ width: "90vw" }}>
-          <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.3rem" }}>
-            메뉴투표
-          </h1>
-          <div style={{ textAlign: "center" }}>
-            <VoteStartBtn status={btnState} onClick={voteStartBtnHandler}>
-              {btnText}
-            </VoteStartBtn>
+        {crewDetailInfo && crewDetailInfo.memberStatus === "미응답" ? (
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <JoinBtn
+              onClick={() => {
+                joinHandler(1);
+              }}
+            >
+              승인
+            </JoinBtn>
+            <RejectBtn
+              onClick={() => {
+                joinHandler(-1);
+              }}
+            >
+              거절
+            </RejectBtn>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* 그룹원 목록 */}
+            <div style={{ width: "90vw" }}>
+              <h1 style={{ margin: "0 0 2vmin 0", fontSize: "1.3rem" }}>
+                그룹원
+              </h1>
+              <CrewMemberList>
+                {crewDetailInfo?.crewMembers.map((member, key) => {
+                  return (
+                    <CrewMemberProfile
+                      name={member.memberName}
+                      profileImg={member.memberImg}
+                      memberStatus={member.memberStatus}
+                      key={key}
+                    />
+                  );
+                })}
+              </CrewMemberList>
+            </div>
 
-        {/* 투표 기록 */}
-        <div style={{ width: "90vw" }}>
-          <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.3rem" }}>
-            투표 기록
-          </h1>
-          {crewDetailInfo?.histories.map((history, key) => {
-            const dateString = history.crewRecommendTime;
-            const date = new Date(dateString);
-            const formattedDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()} ${date.getHours()}시 ${date.getMinutes()}분`;
+            {/* 메뉴 투표 창 */}
+            <div style={{ width: "90vw" }}>
+              <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.3rem" }}>
+                메뉴투표
+              </h1>
+              <div style={{ textAlign: "center" }}>
+                <VoteStartBtn status={btnState} onClick={voteStartBtnHandler}>
+                  {btnText}
+                </VoteStartBtn>
+              </div>
+            </div>
 
-            return (
-              <VoteHistory
-                key={key}
-                onClick={() => {
-                  openHistory(history);
-                }}
-              >
-                {key + 1}번째 투표 : {formattedDate}
-              </VoteHistory>
-            );
-          })}
-        </div>
+            {/* 투표 기록 */}
+            <div style={{ width: "90vw" }}>
+              <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.3rem" }}>
+                투표 기록
+              </h1>
+              {crewDetailInfo?.histories.map((history, key) => {
+                const dateString = history.crewRecommendTime;
+                const date = new Date(dateString);
+                const formattedDate = `${date.getFullYear()}-${
+                  date.getMonth() + 1
+                }-${date.getDate()} ${date.getHours()}시 ${date.getMinutes()}분`;
+
+                return (
+                  <VoteHistory
+                    key={key}
+                    onClick={() => {
+                      openHistory(history);
+                    }}
+                  >
+                    {key + 1}번째 투표 : {formattedDate}
+                  </VoteHistory>
+                );
+              })}
+            </div>
+          </>
+        )}
       </CrewFrame>
       <FooterCrew />
       <CrewVoteModal
@@ -288,6 +334,35 @@ export const CrewDetail = () => {
     </>
   );
 };
+
+const JoinBtn = styled.div`
+  /* width: 3rem; */
+  /* height: 2rem; */
+  padding: 0.5rem 2rem;
+  border-radius: 2rem;
+  background-color: #fe9d3a;
+  color: white;
+  font-size: 2rem;
+
+  &:active {
+    background-color: #cf7f2f;
+  }
+`;
+
+const RejectBtn = styled.div`
+  /* width: 3rem; */
+  /* height: 2rem; */
+  padding: 0.5rem 2rem;
+  border-radius: 2rem;
+  background-color: white;
+  color: #fe9d3a;
+  border: 1px solid #fe9d3a;
+  font-size: 2rem;
+
+  &:active {
+    background-color: #dcdcdc;
+  }
+`;
 
 const VoteHistory = styled.div`
   display: flex;
