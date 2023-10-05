@@ -28,7 +28,6 @@ import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
 import { CheckLogin } from "./pages/PrivateRoute";
 import { FriendAdd } from "./pages/friend/FriendAdd";
-import Test from "./pages/Test";
 
 const queryClient = new QueryClient();
 
@@ -165,7 +164,6 @@ const App = () => {
                   />
                 }
               />
-              <Route path="/test" element={<Test />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
