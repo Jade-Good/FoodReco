@@ -281,7 +281,7 @@ public class CrewService {
             historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
                     .foodSeq(0L)
                     .foodName("미투표")
-                    .foodImg("")
+                    .foodImg("/favicon.ico")
                     .foodVoteCount(crewMemberCount)
                     .isVote(isF)
                     .build());
@@ -437,7 +437,7 @@ public class CrewService {
         historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
                 .foodSeq(0L)
                 .foodName("미투표")
-                .foodImg("")
+                .foodImg("/favicon.ico")
                 .isVote(isF)
                 .foodVoteCount(crewMemberCount)
                 .build());
