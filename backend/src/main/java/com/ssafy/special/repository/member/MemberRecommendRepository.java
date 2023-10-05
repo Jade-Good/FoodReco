@@ -42,7 +42,7 @@ public interface MemberRecommendRepository extends JpaRepository<MemberRecommend
     findMemberRecommendsWithinOneWeek(@Param("memberSeq") Long memberSeq, @Param("now") LocalDateTime now);
 
 
-    @Query(value = "SELECT mr.food_seq as foodSeq, f.name FROM member_recommend mr join food f on mr.food_seq = f.food_seq WHERE mr.member_seq = :member_seq AND mr.weather = :weather AND mr.activity_calorie BETWEEN :active_calorie1 and :active_calorie2", nativeQuery = true)
+    @Query(value = "SELECT mr.food_seq as foodSeq, f.name FROM member_recommend mr join food f on mr.food_seq = f.food_seq WHERE mr.member_seq = :member_seq AND mr.weather = :weather AND mr.activity_calorie BETWEEN :active_calorie1 and :active_calorie2 AND mr.food_rating > 2", nativeQuery = true)
     List<RecentRecommendFoodResult>
     findSimilarRecommendedFood(@Param("member_seq") Long member_seq, @Param("weather") String weather, @Param("active_calorie1") int active_calorie1, @Param("active_calorie2") int active_calorie2);
 

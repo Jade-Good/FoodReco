@@ -25,7 +25,6 @@ public class SseService {
     private final EmitterRepository emitterRepository;
     private final MemberRepository memberRepository;
     private final CrewRepository crewRepository;
-    private final ObjectMapper objectMapper;
     public SseEmitter connect(Long memberSeq) throws EntityNotFoundException{
         memberRepository.findByMemberSeq(memberSeq)
                 .orElseThrow(() -> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다."));
@@ -76,7 +75,7 @@ public class SseService {
     }
 
     @Transactional
-    public void chageVote(Long crewSeq, String status){
+    public void chageVote(Long crewSeq, String status, VoteRecommendDto voteRecommendDto){
         Crew crew = crewRepository.findByCrewSeq(crewSeq)
                 .orElseThrow(() -> new EntityNotFoundException("해당 그룹을 찾을 수 없습니다."));
         for(CrewMember c : crew.getCrewMembers()){
@@ -84,7 +83,11 @@ public class SseService {
             SseEmitter sseEmitter = emitterRepository.get(crewMember.getMemberSeq());
             if(sseEmitter !=null){
                 try {
-                    sseEmitter.send(SseEmitter.event().id(crewSeq+"").name(status).data("Vote completed"));
+                    if(voteRecommendDto != null){
+                        sseEmitter.send(SseEmitter.event().id(crewSeq+"").name(status).data(voteRecommendDto));
+                    }else{
+                        sseEmitter.send(SseEmitter.event().id(crewSeq+"").name(status).data("그룹 상태 변경"));
+                    }
                 } catch (IOException exception) {
                     // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
                     emitterRepository.delete(crewMember.getMemberSeq());
@@ -95,5 +98,23 @@ public class SseService {
                 log.info("No emitter");
             }
         }
+    }
+
+    @Transactional
+    public void voteToOne(Long memberSeq,VoteRecommendDto voteRecommendDto) {
+        SseEmitter sseEmitter = emitterRepository.get(memberSeq);
+        if (sseEmitter != null) {
+            try {
+                sseEmitter.send(SseEmitter.event().id(memberSeq+"").name("vote")
+                        .data(voteRecommendDto));
+                log.info("voteToOne");
+            } catch (IOException exception) {
+                // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
+                emitterRepository.delete(memberSeq);
+                log.info("IOException 발생 crewSeq emitter delete");
+                throw new IllegalStateException("sse 알림 중 에러 발생");
+            }
+        }
+
     }
 }

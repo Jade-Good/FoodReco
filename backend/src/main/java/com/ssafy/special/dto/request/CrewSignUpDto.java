@@ -13,10 +13,10 @@ import java.util.List;
 public class CrewSignUpDto {
     private String crewName;
     private MultipartFile crewImg;
-    private List<Long> crewMembers;
+    private String crewMembers;
 
     @Builder
-    public CrewSignUpDto(String crewName, MultipartFile crewImg, List<Long> crewMembers) {
+    public CrewSignUpDto(String crewName, MultipartFile crewImg, String crewMembers) {
         this.crewName = crewName;
         this.crewImg = crewImg;
         this.crewMembers = crewMembers;
