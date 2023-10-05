@@ -10,6 +10,9 @@ import { ToastContainer } from "react-toastify";
 import HeaderLogo from "../../components/header/HeaderLogo";
 import StyledButton from "../../styles/StyledButton";
 import { useNavigate } from "react-router-dom";
+import Chart from "react-apexcharts";
+import Donut from "./Donut";
+import WordCloudCustom from "./WordCloudCustom";
 
 interface IForm {
   email: string;
@@ -50,82 +53,22 @@ export const Main: React.FC = () => {
       <HeaderLogo />
       <div
         style={{
-          marginTop: "17vh",
+          marginTop: "13vh",
           display: "flex",
           flexWrap: "wrap",
           overflow: "scroll",
+          marginBottom: "10vh",
+          height: "100vh",
         }}
       >
-        <button
-          style={{
-            flex: "1 0 50%",
-            marginBottom: "1rem",
-            background: "linear-gradient(90deg, orange, yellow)",
-            color: "white", // 글자 색상을 흰색으로 설정
-            border: "none", // 테두리 제거
-            padding: "10px 20px", // 내용과 버튼 크기 조절
-            width: "5vh",
-            height: "30vh",
-            fontSize: "20px",
-            fontWeight: "bold",
-          }}
-        >
-          서비스 소개
-        </button>
-        <button
-          style={{
-            flex: "1 0 50%",
-            marginBottom: "1rem",
-            background: "linear-gradient(90deg, green, black)",
-            color: "white", // 글자 색상을 흰색으로 설정
-            border: "none", // 테두리 제거
-            padding: "10px 20px", // 내용과 버튼 크기 조절
-            opacity: 0.9, // 투명도 조절
-            width: "5vh",
-            height: "30vh",
-            fontSize: "20px",
-            fontWeight: "bold",
-          }}
-        >
-          알고리즘 소개
-        </button>
-        <button
-          style={{
-            flex: "1 0 50%",
-            marginBottom: "1rem",
-            background: "linear-gradient(90deg, red, yellow)",
-            color: "white", // 글자 색상을 흰색으로 설정
-            border: "none", // 테두리 제거
-            padding: "10px 20px", // 내용과 버튼 크기 조절
-            opacity: 0.9, // 투명도 조절
-            width: "5vh",
-            height: "30vh",
-            fontSize: "20px",
-            fontWeight: "bold",
-          }}
-        >
-          버튼 텍스트
-        </button>
-
-        <button
-          style={{
-            flex: "1 0 50%",
-            marginBottom: "1rem",
-            background: "linear-gradient(90deg, blue, skyblue)",
-            color: "white", // 글자 색상을 흰색으로 설정
-            border: "none", // 테두리 제거
-            padding: "10px 20px", // 내용과 버튼 크기 조절
-            opacity: 0.9, // 투명도 조절
-            width: "5vh",
-            height: "30vh",
-            fontSize: "20px",
-            fontWeight: "bold",
-          }}
-        >
-          데이터분석
-        </button>
+        <div>
+          <p style={{ fontSize: "20px" }}>추천 받은 음식</p>
+          <WordCloudCustom />
+          <p style={{ fontSize: "20px" }}>음식 비율</p>
+          <Donut />
+        </div>
       </div>
-      <p onClick={() => navigate("/login")}>로그인하기</p>
+
       <FooterHome />
 
       <ToastContainer

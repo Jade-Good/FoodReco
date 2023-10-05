@@ -24,7 +24,6 @@ import NotFound from "./pages/notfound/NotFound";
 import MediaQueryProvider from "react-responsive";
 import { SignUpComplete } from "./pages/singup/SignUpComplete";
 
-import { Test } from "./pages/Test";
 import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
 import { CheckLogin } from "./pages/PrivateRoute";
@@ -165,7 +164,6 @@ const App = () => {
                   />
                 }
               />
-              <Route path="/test" element={<Test />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
