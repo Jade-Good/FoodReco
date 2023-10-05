@@ -83,6 +83,7 @@ export const MemberRecommendation = () => {
         const response = await api.get<FoodList[]>(
           `${process.env.REACT_APP_BASE_URL}/recommend/personal/${pos.longitude}/${pos.latitude}`
         );
+        console.log(response.data);
         setFoodList(response.data);
       } catch (err) {
         console.error("추천 메뉴 못가져옴:", err);
