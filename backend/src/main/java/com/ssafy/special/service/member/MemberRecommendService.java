@@ -349,10 +349,10 @@ public class MemberRecommendService {
         recommendedSet.addAll(favoriteList);
 
         recentlyRecommendedFood = recommendedSet.stream().distinct().collect(Collectors.toList());
-        for (RecentRecommendFoodDto recentRecommendFoodDto : recentlyRecommendedFood) {
-            System.out.println("recentRecommendFoodDto.getName() = " + recentRecommendFoodDto.getName());
-
-        }
+//        for (RecentRecommendFoodDto recentRecommendFoodDto : recentlyRecommendedFood) {
+//            System.out.println("recentRecommendFoodDto.getName() = " + recentRecommendFoodDto.getName());
+//
+//        }
 //        현재상황과 유사한 활동량과 날씨를 추출
         List<RecentRecommendFoodResult> resultList = new ArrayList<>();
 
