@@ -68,26 +68,38 @@ const Donut: React.FC<DonutProps> = () => {
         // Add the type label to the labels array
         labels.push(type);
       });
-
+      console.log(labels);
+      console.log(series);
       // Update the state with custom series and labels
+      // setState({ series: customSeries, labels: customLabels });
       setCustomSeries(series);
       setCustomLabels(labels);
+      setState({
+        options: {
+          labels: {
+            customLabels: labels,
+          },
+        },
+        series: series,
+        labels: labels,
+      });
     }
   }, [typeRates]);
 
   const [state, setState] = useState<DonutState>({
-    options: {},
-    //   series: customSeries,
-    //   labels: customLabels,
+    options: { labels: { customLabels } },
+    series: customSeries,
+    labels: customLabels,
   });
 
+  console.log(customLabels[0]);
   return (
     <div className="donut" style={{ zIndex: "-99" }}>
       {customSeries && customLabels ? (
         <Chart
-          options={state.options}
+          options={state}
           series={customSeries}
-          labels={customLabels}
+          // label={customLabels}
           type="donut"
           width="380"
         />
