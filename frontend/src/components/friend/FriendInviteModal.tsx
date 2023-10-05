@@ -8,23 +8,22 @@ interface ModalProps {
 }
 
 interface seqProps {
-  friendSeq: string;
+  memberSeq: string;
 }
 
-const addFriend = ({ friendSeq }: seqProps) => {
-  axios.get(`${process.env.REACT_APP_BASE_URL}/member/friend/${friendSeq}`, {
+const addFriend = ({ memberSeq }: seqProps) => {
+  axios.get(`${process.env.REACT_APP_BASE_URL}/member/friend/${memberSeq}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
   });
 };
 
-export const FriendInviteModal = (
-  { exitModal }: ModalProps,
-  { friendSeq }: seqProps
-) => {
-  // let msg = "연결기간 : 2024년 8월 3일 오후 11:58 까지";
-  let url = `https://j9b102.p.ssafy.io/member/friend/${friendSeq}`;
+export const FriendInviteModal = ({ exitModal }: ModalProps) => {
+  const memberSeq = localStorage.getItem("memberSeq");
+
+  let url = `https://j9b102.p.ssafy.io/api/member/friend/${memberSeq}`;
+  // let url = `https://j9b102.p.ssafy.io/`;
 
   const copyURL = async () => {
     try {
