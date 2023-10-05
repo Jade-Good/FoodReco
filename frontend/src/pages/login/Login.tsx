@@ -76,6 +76,9 @@ export const Login = () => {
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
+          api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${accessToken}`;
 
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("refreshToken", refreshToken);
@@ -88,7 +91,7 @@ export const Login = () => {
             email: email,
           }));
           navigate("/");
-          window.location.reload();
+          // window.location.reload();
         })
         .catch((err) => {
           // handleSilentRefresh(data)

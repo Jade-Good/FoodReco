@@ -24,7 +24,7 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    // console.log("error", error);
+    console.log("error", error);
 
     const { config } = error;
 
@@ -32,28 +32,27 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       try {
         const refreshToken = localStorage.getItem("refreshToken");
-        api
-          .post(`${process.env.REACT_APP_BASE_URL}/jwt`, {
-            refreshToken: refreshToken,
-          })
-          .then((res) => {
-            const accessToken = res.headers.authorization;
-            const refreshToken = res.headers.authorizationRefresh;
+        const res = await api.post(
+          `${process.env.REACT_APP_BASE_URL}/member/login`,
+          {
+            headers: {
+              AuthorizationRefresh: `Bearer ${refreshToken}`,
+            },
+          }
+        );
 
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
+        const accessToken = res.headers.authorization;
+        const newRefreshToken = res.headers.authorizationRefresh;
 
-            // Update user state here if needed
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
 
-            // Retry the original request with the new access token
-            config.headers["Authorization"] = `Bearer ${accessToken}`;
-            return api(config);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        // Update user state here if needed
+
+        // Retry the original request with the new access token
+        config.headers["Authorization"] = `Bearer ${accessToken}`;
+        return api(config);
       } catch (refreshError) {
-        // console.log("refresherror", refreshError);
         // Handle the refresh error appropriately
         return Promise.reject(refreshError);
       }
@@ -74,5 +73,3 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export default api;

@@ -7,6 +7,7 @@ import StyledButton from "../../styles/StyledButton";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import api from "../../utils/axios";
+
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atoms/userState";
 
@@ -55,7 +56,7 @@ export const MyPage = () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}/google/auth`,
-        new URLSearchParams(code),
+        new URLSearchParams(code)
       );
       console.log(response.data);
     } catch (error) {
