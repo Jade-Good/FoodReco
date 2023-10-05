@@ -95,7 +95,7 @@ export const CrewMake = () => {
     // );
 
     console.log("crewMembers", formData.get("crewMembers"));
-    if (friendCount >= 3) {
+    if (friendCount >= 2) {
       api
         .post(`${process.env.REACT_APP_BASE_URL}/crew/regist`, formData, {
           headers: {
@@ -109,7 +109,7 @@ export const CrewMake = () => {
         })
         .catch((err) => console.log(err));
     } else {
-      toast.error("이메일과 비밀번호를 확인해주세요", {
+      toast.error("최소 2명이상의 친구를 골라주세요.", {
         position: "top-center",
         autoClose: 1000,
         hideProgressBar: false,

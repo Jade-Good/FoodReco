@@ -7,6 +7,8 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { BsSquare } from "react-icons/bs";
 import { BsFillCheckSquareFill } from "react-icons/bs";
 import StyledBasicInput from "../../components/inputs/StyledBasicInput";
+import Stack from "@mui/material/Stack";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import StyledEmailInput from "../../components/inputs/StyledEmailInput";
 import {
@@ -31,6 +33,7 @@ import { ChooseLikeFood } from "./ChooseLikeFood";
 import ToggleButton from "@mui/material/ToggleButton";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../../utils/axios";
+import { useMutation } from "react-query";
 
 interface IForm {
   email: string;
@@ -48,13 +51,16 @@ interface IForm {
   unlikeFood: string[];
   allergyFood: string[];
 }
+interface EmailCheck {
+  email: string;
+}
+interface codeCheck {
+  code: string;
+}
 interface ExerciseRates {
   [exercise: string]: {
     [time: number]: number;
   };
-}
-interface EmailCheck {
-  email: string;
 }
 
 const ToggleButtonContainer = styled.div`
@@ -136,6 +142,17 @@ export const SignUp = () => {
     "소고기갈비탕",
     "김치전",
   ];
+
+  const sendEmailCode = async (sendEmail: EmailCheck): Promise<EmailCheck> => {
+    const { data } = await axios.post<EmailCheck>(
+      `${process.env.REACT_APP_BASE_URL}/member/verification/email`,
+      sendEmail
+    );
+    return data;
+  };
+  const { mutate, isLoading, isError, error, isSuccess } =
+    useMutation(sendEmailCode);
+
   const exerciseRates: ExerciseRates = {
     걷기: {
       0.5: 6750,
@@ -401,6 +418,39 @@ export const SignUp = () => {
       });
   };
 
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center", // Use alignItems instead of alignContent
+          height: "100vh", // Set the height to 100vh to center vertically
+        }}
+      >
+        <Stack sx={{ color: "grey.500" }} spacing={2} direction="row">
+          <CircularProgress color="secondary" />
+          <CircularProgress color="success" />
+          <CircularProgress color="inherit" />
+        </Stack>
+      </div>
+    );
+  }
+
+  if (isError) {
+    console.log(error);
+    toast.error("에러가 발생했습니다. 재요청해주세요", {
+      position: "top-center",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  }
+
   return (
     <div className={classes.container}>
       <br />
@@ -561,7 +611,7 @@ export const SignUp = () => {
                     setCheckEmail(0);
                   },
                 }}
-                onClick={handleSendEmail}
+                onClick={() => mutate({ email: sendEmail })}
               />
 
               {/* 인증번호 확인 */}
@@ -571,7 +621,7 @@ export const SignUp = () => {
 
               {checkEmail ? (
                 <StyledEmailInput
-                  type="button"
+                  // type="button"
                   children="인증확인"
                   name="emailValidation"
                   placeholder="인증번호를 입력하세요"
@@ -579,7 +629,6 @@ export const SignUp = () => {
                   rules={{
                     onChange(e: any) {
                       setCode(e.target.value);
-                      console.log("codeChange 적용");
                     },
                   }}
                   onClick={handleCheckEmail}
@@ -596,7 +645,6 @@ export const SignUp = () => {
                       target: { value: React.SetStateAction<string> };
                     }) {
                       setCode(e.target.value);
-                      console.log("codeChange 적용");
                     },
                   }}
                   onClick={handleCheckEmail}
