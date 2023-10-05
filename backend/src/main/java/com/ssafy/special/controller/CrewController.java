@@ -144,7 +144,12 @@ public class CrewController {
     @GetMapping(value = "/sse/{crewSeq}/{memberSeq}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> sseSubscribe(@PathVariable Long crewSeq, @PathVariable Long memberSeq){
         log.info("sseSubscribe() 메소드 시작");
-            return ResponseEntity.ok().body(sseService.connect(memberSeq));
+        try{
+            SseEmitter sse = sseService.connect(memberSeq);
+            return ResponseEntity.ok().body(sse);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PostMapping("/vote")
