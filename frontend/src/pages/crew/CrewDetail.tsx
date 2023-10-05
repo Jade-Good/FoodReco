@@ -8,6 +8,14 @@ import HeaderCrewDetail from "../../components/header/HeaderCrewDetail";
 
 import CrewMemberProfile from "../../components/crewpage/CrewMemberProfile";
 
+import CrewVoteModal from "../../components/crewpage/CrewVoteModal";
+import VoteHistoryModal from "../../components/crewpage/VoteHistoryModal";
+import { useRecoilState } from "recoil";
+import {
+  crewVoteModal,
+  crewVoteHistorylModal,
+} from "../../recoil/atoms/modalState";
+
 interface CrewDetailProps {
   memberSeq: number;
   crewSeq: number;
@@ -18,17 +26,13 @@ interface CrewDetailProps {
   crewMembers: crewMembers[];
 
   // 투표 중인경우만 존재(아닌경우 null)
-  voteRecommend: {
-    crewRecommendSeq: number;
-    crewRecommendTime: Date;
-    foodList: foodList[];
-  } | null;
+  voteRecommend: voteRecommend | null;
 
   //분석 중인 경우 []
   histories: history[];
 }
 
-interface foodList {
+export interface foodList {
   foodSeq: number;
   foodName: string;
   foodImg: string;
@@ -44,15 +48,28 @@ interface crewMembers {
 
 interface history {
   crewRecommendSeq: number;
-  crewRecommendTime: Date;
+  crewRecommendTime: string;
   foodList: foodList[];
+}
+
+export interface voteRecommend {
+  crewRecommendSeq?: number;
+  crewRecommendTime?: string;
+  foodList?: foodList[];
 }
 
 export const CrewDetail = () => {
   const [crewDetailInfo, setCrewDetailInfo] = useState<CrewDetailProps>();
   const [btnState, setBtnState] = useState("투표전");
   const [btnText, setBtnText] = useState("메뉴 투표를 시작하세요!");
+  const [vote, setVote] = useState<voteRecommend>();
   const { crewSeq } = useParams();
+
+  // 모달
+  const [modalOpen, setModalOpen] = useRecoilState(crewVoteModal);
+  const [openHistoryModal, setHistoryModal] = useRecoilState(
+    crewVoteHistorylModal
+  );
 
   let eventSource: EventSource;
 
@@ -80,6 +97,7 @@ export const CrewDetail = () => {
 
       setCrewDetailInfo(info);
       setBtnState(info.crewStatus);
+      setVote(info.voteRecommend);
 
       if (info.crewStatus === "투표전") setBtnText("메뉴 투표를 시작하세요!");
       else if (info.crewStatus === "분석중")
@@ -113,13 +131,12 @@ export const CrewDetail = () => {
         setBtnState("투표전");
         setBtnText("메뉴 투표를 시작하세요!");
         console.log("투표종료 : ", btnState, btnText);
+        setModalOpen({ modalOpen: false });
       });
 
       eventSource.addEventListener("vote", (e) => {
         console.log("vote", JSON.parse(e.data));
-        let copy = { ...info };
-        copy.voteRecommend = JSON.parse(e.data);
-        setCrewDetailInfo(copy);
+        setVote(JSON.parse(e.data));
       });
 
       eventSource.onerror = (error) => {
@@ -170,8 +187,15 @@ export const CrewDetail = () => {
         break;
       case "투표중":
         console.log("투표 모달창 떠야함!!");
+        setModalOpen({ modalOpen: true });
         break;
     }
+  };
+
+  const [history, setHistory] = useState<history>();
+  const openHistory = (history: history) => {
+    setHistory(history);
+    setHistoryModal({ modalOpen: true });
   };
 
   return (
@@ -226,14 +250,55 @@ export const CrewDetail = () => {
           <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.3rem" }}>
             투표 기록
           </h1>
-          <div>메뉴 버튼이나 투표 리스트~</div>
-          <div>메뉴 버튼이나 투표 리스트~</div>
+          {crewDetailInfo?.histories.map((history, key) => {
+            const dateString = history.crewRecommendTime;
+            const date = new Date(dateString);
+            const formattedDate = `${date.getFullYear()}-${
+              date.getMonth() + 1
+            }-${date.getDate()} ${date.getHours()}시 ${date.getMinutes()}분`;
+
+            return (
+              <VoteHistory
+                key={key}
+                onClick={() => {
+                  openHistory(history);
+                }}
+              >
+                {key + 1}번째 투표 : {formattedDate}
+              </VoteHistory>
+            );
+          })}
         </div>
       </CrewFrame>
       <FooterCrew />
+      <CrewVoteModal
+        crewRecommendSeq={vote?.crewRecommendSeq}
+        crewRecommendTime={vote?.crewRecommendTime}
+        foodList={vote?.foodList}
+        memberCnt={crewDetailInfo?.crewMembers.length}
+        crewSeq={crewDetailInfo?.crewSeq}
+      />
+      <VoteHistoryModal
+        crewRecommendSeq={history?.crewRecommendSeq}
+        crewRecommendTime={history?.crewRecommendTime}
+        foodList={history?.foodList}
+        memberCnt={crewDetailInfo?.crewMembers.length}
+        crewSeq={crewDetailInfo?.crewSeq}
+      />
     </>
   );
 };
+
+const VoteHistory = styled.div`
+  display: flex;
+  gap: 5vmin;
+  overflow-x: scroll;
+  padding: 1rem;
+  border-bottom: 1px solid #dcdcdc;
+  &:active {
+    background-color: #dcdcdc;
+  }
+`;
 
 const VoteStartBtn = styled.button<{ status: string | undefined }>`
   font-size: 1.2rem;

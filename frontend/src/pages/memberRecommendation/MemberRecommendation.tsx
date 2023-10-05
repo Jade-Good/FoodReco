@@ -82,6 +82,7 @@ export const MemberRecommendation = () => {
       try {
         const response = await api.get<FoodList[]>(
           `${process.env.REACT_APP_BASE_URL}/recommend/personal/${pos.longitude}/${pos.latitude}`
+          // `${process.env.REACT_APP_BASE_URL}/recommend/personal/${pos.latitude}/${pos.longitude}`
         );
         console.log(response.data);
         setFoodList(response.data);
