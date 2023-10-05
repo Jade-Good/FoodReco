@@ -24,11 +24,11 @@ import NotFound from "./pages/notfound/NotFound";
 import MediaQueryProvider from "react-responsive";
 import { SignUpComplete } from "./pages/singup/SignUpComplete";
 
-import { Test } from "./pages/Test";
 import { Provider } from "react-redux";
 import { store } from "./redux/store/store";
 import { CheckLogin } from "./pages/PrivateRoute";
 import { FriendAdd } from "./pages/friend/FriendAdd";
+import Test from "./pages/Test";
 
 const queryClient = new QueryClient();
 
