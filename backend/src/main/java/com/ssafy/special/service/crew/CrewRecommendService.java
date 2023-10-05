@@ -129,7 +129,7 @@ public class CrewRecommendService {
                     .build();
             recommendList.add(crewRecommendHistoryByFoodDto);
         }
-
+        Collections.sort(recommendList, Comparator.comparingLong(CrewRecommendHistoryByFoodDto::getFoodSeq));
         VoteRecommendDto voteRecommendDto =VoteRecommendDto.builder()
                 .crewRecommendSeq(crewRecommend.getCrewRecommendSeq())
                 .foodList(recommendList)
