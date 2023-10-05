@@ -51,6 +51,67 @@ api.interceptors.response.use(
           })
           .catch((err) => {
             console.log(err);
+            if (err.response.status === 404) {
+              toast.error("로그인이 필요합니다.", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+              window.location.replace(`https://j9b102.p.ssafy.io/login`);
+            }
+            return;
+          });
+      } catch (refreshError) {
+        // console.log("refresherror", refreshError);
+        // Handle the refresh error appropriately
+        return Promise.reject(refreshError);
+      }
+    } else if (error.response.status === 403) {
+      try {
+        const refreshToken = localStorage.getItem("refreshToken");
+        const email = localStorage.getItem("email");
+        console.log(email);
+        api
+          .post(`${process.env.REACT_APP_BASE_URL}/jwt`, {
+            refreshToken: refreshToken,
+            email: email,
+          })
+          .then((res) => {
+            console.log("refresh token 받기", res);
+            const accessToken = res.data.authorization;
+            const refreshToken = res.data.authorizationRefresh;
+
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+
+            // Update user state here if needed
+
+            // Retry the original request with the new access token
+            config.headers["Authorization"] = `Bearer ${accessToken}`;
+
+            return api(config);
+          })
+          .catch((err) => {
+            console.log(err);
+            if (err.response.status === 404) {
+              toast.error("로그인이 필요합니다.", {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+              window.location.replace(`https://j9b102.p.ssafy.io/login`);
+            }
+            return;
           });
       } catch (refreshError) {
         // console.log("refresherror", refreshError);

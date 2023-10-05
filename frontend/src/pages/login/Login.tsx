@@ -82,6 +82,7 @@ export const Login = () => {
 
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("email", email);
 
           setUser((prevUser) => ({
             ...prevUser,

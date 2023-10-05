@@ -24,9 +24,10 @@ export const MyPage = () => {
     api
       .get(`${process.env.REACT_APP_BASE_URL}/mypage/info`, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       })
+
       .then((res) => {
         console.log(res);
         setHeight(res.data.memberDetailDto.height);
@@ -36,7 +37,8 @@ export const MyPage = () => {
         setProfileURL(res.data.memberDetailDto.profileUrl);
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error occurred:", err);
+
         // console.log(err.response.status);
       });
   }, []);
