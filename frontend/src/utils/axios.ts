@@ -109,9 +109,9 @@ api.interceptors.response.use(
                 progress: undefined,
                 theme: "colored",
               });
-              window.location.replace(
-                `${process.env.REACT_APP_BASE_URL}/login`
-              );
+              // window.location.replace(
+              //   `${process.env.REACT_APP_BASE_URL}/login`
+              // );
             }
             return;
           });
@@ -131,7 +131,7 @@ api.interceptors.response.use(
         progress: undefined,
         theme: "colored",
       });
-      window.location.replace(`${process.env.REACT_APP_BASE_URL}/login`);
+      // window.location.replace(`${process.env.REACT_APP_BASE_URL}/login`);
     }
 
     return Promise.reject(error);
