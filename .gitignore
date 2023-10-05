@@ -549,3 +549,5 @@ sketch
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,visualstudiocode,python,eclipse,node,react
+
+.env.*

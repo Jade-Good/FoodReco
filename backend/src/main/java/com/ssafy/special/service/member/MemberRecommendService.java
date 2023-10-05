@@ -334,14 +334,25 @@ public class MemberRecommendService {
         int steps = optionalMember.get().getActivity();
         int totalSteps = steps + googleSteps;
 
+        List<RecentRecommendFoodDto> favoriteList = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
 
         if (recentlyRecommendedFood.size() == 0) {
 //            추천 받았던 적이 없는 경우 좋아하는 음식 리스트를 기반으로 추천
             List<UserTasteDto> userFavoriteList = memberService.getUserPreference(memberEmail, 0);
-            recentlyRecommendedFood = userFavoriteList.stream()
+            favoriteList = userFavoriteList.stream()
                     .map(RecentRecommendFoodDto::new)
                     .collect(Collectors.toList());
         }
+
+        Set<RecentRecommendFoodDto> recommendedSet = new HashSet<>();
+        recommendedSet.addAll(recentlyRecommendedFood);
+        recommendedSet.addAll(favoriteList);
+
+        recentlyRecommendedFood = recommendedSet.stream().distinct().collect(Collectors.toList());
+//        for (RecentRecommendFoodDto recentRecommendFoodDto : recentlyRecommendedFood) {
+//            System.out.println("recentRecommendFoodDto.getName() = " + recentRecommendFoodDto.getName());
+//
+//        }
 //        현재상황과 유사한 활동량과 날씨를 추출
         List<RecentRecommendFoodResult> resultList = new ArrayList<>();
 

@@ -62,7 +62,7 @@ api.interceptors.response.use(
                 progress: undefined,
                 theme: "colored",
               });
-              window.location.replace(`https://j9b102.p.ssafy.io/login`);
+              window.location.replace(`${process.env.REACT_APP_BASE_URL2}`);
             }
             return;
           });

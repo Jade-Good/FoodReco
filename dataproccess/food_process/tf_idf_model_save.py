@@ -14,6 +14,7 @@ df = pd.read_excel(file_path)
 df.fillna('', inplace=True)
 columns = df.columns[2:]
 df['combined'] = df[columns].apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
+print(df['combined'])
 
 # TF-IDF 변환을 수행합니다.
 vectorizer = TfidfVectorizer()
