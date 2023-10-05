@@ -26,8 +26,6 @@ export const Login = () => {
   // const dispatch = useDispatch();
   const [user, setUser] = useRecoilState(userState);
 
-  useEffect(() => {}, []);
-
   const {
     register,
     formState: { errors, isSubmitting, isSubmitted },
@@ -96,6 +94,16 @@ export const Login = () => {
           }));
           navigate("/");
           window.location.reload();
+          toast.success("🦄 인증번호를 전송했습니다!", {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
         })
         .catch((err) => {
           // handleSilentRefresh(data)
