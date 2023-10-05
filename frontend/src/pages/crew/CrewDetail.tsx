@@ -8,6 +8,10 @@ import HeaderCrewDetail from "../../components/header/HeaderCrewDetail";
 
 import CrewMemberProfile from "../../components/crewpage/CrewMemberProfile";
 
+import CrewVoteModal from "../../components/crewpage/CrewVoteModal";
+import { useRecoilState } from "recoil";
+import { crewVoteModal } from "../../recoil/atoms/modalState";
+
 interface CrewDetailProps {
   memberSeq: number;
   crewSeq: number;
@@ -18,17 +22,13 @@ interface CrewDetailProps {
   crewMembers: crewMembers[];
 
   // 투표 중인경우만 존재(아닌경우 null)
-  voteRecommend: {
-    crewRecommendSeq: number;
-    crewRecommendTime: Date;
-    foodList: foodList[];
-  } | null;
+  voteRecommend: voteRecommend | null;
 
   //분석 중인 경우 []
   histories: history[];
 }
 
-interface foodList {
+export interface foodList {
   foodSeq: number;
   foodName: string;
   foodImg: string;
@@ -44,15 +44,25 @@ interface crewMembers {
 
 interface history {
   crewRecommendSeq: number;
-  crewRecommendTime: Date;
+  crewRecommendTime: string;
   foodList: foodList[];
+}
+
+export interface voteRecommend {
+  crewRecommendSeq?: number;
+  crewRecommendTime?: string;
+  foodList?: foodList[];
 }
 
 export const CrewDetail = () => {
   const [crewDetailInfo, setCrewDetailInfo] = useState<CrewDetailProps>();
   const [btnState, setBtnState] = useState("투표전");
   const [btnText, setBtnText] = useState("메뉴 투표를 시작하세요!");
+  const [vote, setVote] = useState<voteRecommend>();
   const { crewSeq } = useParams();
+
+  // 모달
+  const [modalOpen, setModalOpen] = useRecoilState(crewVoteModal);
 
   let eventSource: EventSource;
 
@@ -80,6 +90,7 @@ export const CrewDetail = () => {
 
       setCrewDetailInfo(info);
       setBtnState(info.crewStatus);
+      setVote(info.voteRecommend);
 
       if (info.crewStatus === "투표전") setBtnText("메뉴 투표를 시작하세요!");
       else if (info.crewStatus === "분석중")
@@ -117,9 +128,7 @@ export const CrewDetail = () => {
 
       eventSource.addEventListener("vote", (e) => {
         console.log("vote", JSON.parse(e.data));
-        let copy = { ...info };
-        copy.voteRecommend = JSON.parse(e.data);
-        setCrewDetailInfo(copy);
+        setVote(JSON.parse(e.data));
       });
 
       eventSource.onerror = (error) => {
@@ -170,6 +179,7 @@ export const CrewDetail = () => {
         break;
       case "투표중":
         console.log("투표 모달창 떠야함!!");
+        setModalOpen({ modalOpen: true });
         break;
     }
   };
@@ -231,6 +241,13 @@ export const CrewDetail = () => {
         </div>
       </CrewFrame>
       <FooterCrew />
+      <CrewVoteModal
+        crewRecommendSeq={vote?.crewRecommendSeq}
+        crewRecommendTime={vote?.crewRecommendTime}
+        foodList={vote?.foodList}
+        memberCnt={crewDetailInfo?.crewMembers.length}
+        crewSeq={crewDetailInfo?.crewSeq}
+      />
     </>
   );
 };

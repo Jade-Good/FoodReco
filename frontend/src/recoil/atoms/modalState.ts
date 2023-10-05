@@ -5,4 +5,18 @@ export const foodDetailModal = atom({
   default: {
     modalOpen: false,
   },
-}); 
+});
+
+export const crewVoteModal = atom({
+  key: "crewVoteModal",
+  default: {
+    modalOpen: false,
+  },
+});
+
+export const crewVoteHistorylModal = atom({
+  key: "crewVoteHistorylModal",
+  default: {
+    modalOpen: false,
+  },
+});
