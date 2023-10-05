@@ -27,7 +27,7 @@ public class WeatherService {
     @Value("${weather.service-key}")
     private String serviceKey;
 
-    public void getWeather(Double lon, Double let) throws Exception {
+    public String getWeather(Double lon, Double let) throws Exception {
 
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -120,11 +120,10 @@ public class WeatherService {
                         weather = "흐림";
                     }
 
-                    weatherStatus.setStatus(weather);
                 }
             }
         }
-
+        return weather;
     }
 
     LamcParameter map = new LamcParameter();
