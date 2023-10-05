@@ -180,7 +180,6 @@ public class JwtService {
     public boolean isTokenValid(String token) {
         try {
                 JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
-                log.info("토근 유효");
             return true;
         } catch (TokenExpiredException e) {
             log.info("액세스 토큰이 만료되었습니다. {}", e.getMessage());
@@ -195,9 +194,8 @@ public class JwtService {
         String newAccessToken = createAccessToken(jwtTokenDto.getEmail());
         String newRefeshToken = createRefreshToken();
         Member member = memberRepository.findByJwtRefreshToken(jwtTokenDto.getRefreshToken())
-                .orElseThrow(()-> new IllegalArgumentException("토큰다름"));
+                .orElseThrow(()-> new IllegalArgumentException("토큰이 DB와 다름"));
             member.setJwtRefreshToken(newRefeshToken);
-            log.info("jwt : " + newRefeshToken);
             memberRepository.save(member);
             return NewJwtTokenDto.builder()
                     .authorization(newAccessToken)
@@ -207,45 +205,11 @@ public class JwtService {
 
     @Transactional
     public LoginSuccessDto successLogin(Member member, Long accessTokenExpiration) {
-        List<MemberRecommend> recommends = memberRecommendRepository.findAllByMemberOrderByRecommendAtDesc(member);
-        List<RecentFoodDto> recentFoods= new ArrayList<>();
-        Map<String, Integer> m = new HashMap<>();
-        double maxCnt = 0;
-        for(MemberRecommend mr : recommends){
-            Food food = mr.getFood();
-            if(mr.getFoodRating()>=3 && recentFoods.size()<3){
-                recentFoods.add(RecentFoodDto.builder()
-                        .foodSeq(food.getFoodSeq())
-                        .foodName(food.getName())
-                        .foodImg(food.getImg())
-                        .build());
-            }
-            if(mr.getFoodRating()>0){
-                String type = food.getType();
-                int cnt = m.getOrDefault(type,0);
-                m.put(type,cnt+1);
-                maxCnt+=1;
-            }
-        }
-        List<TypeRateDto> typeRates = new ArrayList<>();
-        if(maxCnt >0){
-            log.info(maxCnt+"");
-            for(String type : m.keySet()){
-                typeRates.add(TypeRateDto.builder()
-                        .type(type)
-                        .rating(((int)((m.get(type)/maxCnt)*1000))/1000.0)
-                        .build());
-                log.info(type+" "+ m.get(type));
-            }
-        }
-
         LoginSuccessDto loginSuccessDto = LoginSuccessDto.builder()
                 .memberSeq(member.getMemberSeq())
                 .nickname(member.getNickname())
                 .email(member.getEmail())
                 .expAccessToken(new Date(new Date().getTime() + (accessTokenExpiration - 600000L)).toString())
-                .typeRates(typeRates)
-                .recentFoods(recentFoods)
                 .build();
         return loginSuccessDto;
     }
