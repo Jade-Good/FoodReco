@@ -26,10 +26,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -288,6 +285,8 @@ public class CrewService {
                     .foodVoteCount(crewMemberCount)
                     .isVote(isF)
                     .build());
+            Collections.sort(historiesByRecommend, Comparator.comparingLong(CrewRecommendHistoryByFoodDto::getFoodSeq));
+
             if(crew.getStatus().equals("투표중") && voteRecommendDto ==null){
                 voteRecommendDto = VoteRecommendDto.builder()
                         .crewRecommendSeq(crewRecommend.getCrewRecommendSeq())
@@ -443,6 +442,9 @@ public class CrewService {
                 .foodVoteCount(crewMemberCount)
                 .build());
         VoteRecommendDto voteRecommendDto = null;
+
+        Collections.sort(historiesByRecommend, Comparator.comparingLong(CrewRecommendHistoryByFoodDto::getFoodSeq));
+
         if(crew.getStatus().equals("투표중") && voteRecommendDto ==null){
             voteRecommendDto = VoteRecommendDto.builder()
                     .crewRecommendSeq(crewRecommend.getCrewRecommendSeq())

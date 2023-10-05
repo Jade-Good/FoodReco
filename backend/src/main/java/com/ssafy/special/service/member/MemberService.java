@@ -245,6 +245,7 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 친구 정보입니다."));
 
         if(member.getMemberSeq().equals(friendSeq)){
+            log.info("뭘까??");
             throw new IllegalStateException("자기 자신은 친구추가 불가");
         }
         List<FriendList> friendList = friendListRepository.findByOneMemberSeqOrOtherMemberSeq(member.getMemberSeq(),member.getMemberSeq());
