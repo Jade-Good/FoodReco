@@ -47,7 +47,7 @@ async def food_recommend(foods: List[Food]):
 
         for food in foods:
             food_index = food.foodSeq
-            cosine_similarities = linear_kernel(loaded_tfidf_matrix[food_index], loaded_tfidf_matrix).flatten()
+            cosine_similarities = linear_kernel(loaded_tfidf_matrix[food_index-1], loaded_tfidf_matrix).flatten()
 
             top_indices = cosine_similarities.argsort()[:-50:-1]
             for index in top_indices:
