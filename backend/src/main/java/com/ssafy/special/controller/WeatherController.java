@@ -38,11 +38,11 @@ public class WeatherController {
     private String serviceKey;
 
     @GetMapping("/weather")
-    public String getWeather(@RequestBody WeatherRequestDto weatherRequestDto) throws Exception {
+    public void getWeather(@RequestBody WeatherRequestDto weatherRequestDto) throws Exception {
 
         weatherService.getWeather(weatherRequestDto.getLon(),weatherRequestDto.getLet());
 
-        return weatherStatus.getStatus();
+
 
     }
 

@@ -15,7 +15,6 @@ import com.ssafy.special.dto.request.FeedbackDto;
 import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.response.RecommendFoodDto;
 import com.ssafy.special.dto.response.RecommendFoodResultDto;
-import com.ssafy.special.dto.response.WeatherStatus;
 import com.ssafy.special.repository.food.FoodIngredientRepository;
 import com.ssafy.special.repository.food.FoodRepository;
 import com.ssafy.special.repository.member.MemberAllergyRepository;
@@ -56,7 +55,6 @@ public class MemberRecommendService {
     private final FoodIngredientRepository foodIngredientRepository;
     private final MemberAllergyRepository memberAllergyRepository;
     private final MemberGoogleAuthService memberGoogleAuthService;
-    private final WeatherStatus weatherStatus;
 
 
     @Value("${cloud.aws.s3.bucket}")
@@ -75,7 +73,7 @@ public class MemberRecommendService {
 //    피드백시 다음 음식이 어떤건지 프론트에서 알려줌
 //    그 음식을 추천받은 DB 추가하기 -> 푸드 레이팅에 1로
 //    만약 다음 음식이 없는 경우 아무 처리x
-    public void implicitFeedback(String memberEmail, FeedbackDto feedbackDto, Long nextFoodSeq, int googleSteps) throws Exception {
+    public void implicitFeedback(String memberEmail, FeedbackDto feedbackDto, Long nextFoodSeq, int googleSteps, String weather) throws Exception {
         boolean isLast = false;
 
         Optional<Member> memberOptional = memberRepository.findByEmail(memberEmail);
@@ -91,8 +89,6 @@ public class MemberRecommendService {
         int lastFoodRating = -1;
         int steps = memberOptional.get().getActivity();
         int totalSteps = steps + googleSteps;
-
-        String weather = weatherStatus.getStatus();
         if(weather == null) {
             weather = "맑음";
         }
@@ -245,7 +241,7 @@ public class MemberRecommendService {
     }
 
     //    컨텐츠 기반 필터링
-    public List<RecommendFoodResultDto> recommendFood(String memberEmail, int googleSteps) throws EntityNotFoundException, Exception {
+    public List<RecommendFoodResultDto> recommendFood(String memberEmail, int googleSteps, String weather) throws EntityNotFoundException, Exception {
         Optional<Member> memberOptional = memberRepository.findByEmail(memberEmail);
         if (memberOptional.isEmpty()) {
             throw new EntityNotFoundException("해당 사용자를 찾을 수 없습니다.");
@@ -254,14 +250,13 @@ public class MemberRecommendService {
         LocalDateTime now = LocalDateTime.now();
         int steps = memberOptional.get().getActivity();
         int totalSteps = steps + googleSteps;
-        String weather = weatherStatus.getStatus();
         if(weather == null) {
             weather = "맑음";
         }
 
 
         // 추천 음식 가져오기
-        List<RecommendFoodDto> recommendFoodDtoList = getRecommendList(memberSeq, now, memberEmail, googleSteps);
+        List<RecommendFoodDto> recommendFoodDtoList = getRecommendList(memberSeq, now, memberEmail, googleSteps, weather);
 //        log.info("추천 음식: " + recommendFoodDtoList.get(0).getName());
 //        1. 첫 번째 음식은 추천받은 히스토리에 추가하기
         Optional<Long> foodSeqOptional = recommendFoodDtoList.stream()
@@ -327,10 +322,10 @@ public class MemberRecommendService {
         return null;
     }
 
-    public List<RecommendFoodDto> getRecommendList(Long memberSeq, LocalDateTime now,String memberEmail, int googleSteps) throws JsonProcessingException {
+    public List<RecommendFoodDto> getRecommendList(Long memberSeq, LocalDateTime now,String memberEmail, int googleSteps, String nowWeather) throws JsonProcessingException {
 //        지난 1~2주 사이에 추천 받은 음식을 기반으로 추천
         List<RecentRecommendFoodDto> recentlyRecommendedFood = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
-        String nowWeather = weatherStatus.getStatus();
+
         if(nowWeather == null) {
             nowWeather = "맑음";
         }
