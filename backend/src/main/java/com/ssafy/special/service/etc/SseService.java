@@ -76,7 +76,7 @@ public class SseService {
     }
 
     @Transactional
-    public void chageVote(Long crewSeq, String status){
+    public void chageVote(Long crewSeq, String status, VoteRecommendDto voteRecommendDto){
         Crew crew = crewRepository.findByCrewSeq(crewSeq)
                 .orElseThrow(() -> new EntityNotFoundException("해당 그룹을 찾을 수 없습니다."));
         for(CrewMember c : crew.getCrewMembers()){
@@ -84,7 +84,11 @@ public class SseService {
             SseEmitter sseEmitter = emitterRepository.get(crewMember.getMemberSeq());
             if(sseEmitter !=null){
                 try {
-                    sseEmitter.send(SseEmitter.event().id(crewSeq+"").name(status).data("Vote completed"));
+                    if(voteRecommendDto != null){
+                        sseEmitter.send(SseEmitter.event().id(crewSeq+"").name(status).data(voteRecommendDto));
+                    }else{
+                        sseEmitter.send(SseEmitter.event().id(crewSeq+"").name(status).data("그룹 상태 변경"));
+                    }
                 } catch (IOException exception) {
                     // IOException이 발생하면 저장된 SseEmitter를 삭제하고 예외를 발생시킨다.
                     emitterRepository.delete(crewMember.getMemberSeq());
