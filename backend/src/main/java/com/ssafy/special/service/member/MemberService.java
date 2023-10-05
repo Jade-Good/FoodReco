@@ -3,25 +3,17 @@ package com.ssafy.special.service.member;
 
 import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.food.Ingredient;
-import com.ssafy.special.domain.member.FriendList;
-import com.ssafy.special.domain.member.Member;
-import com.ssafy.special.domain.member.MemberAllergy;
-import com.ssafy.special.domain.member.MemberFoodPreference;
+import com.ssafy.special.domain.member.*;
 import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.request.UserInfoUpdateDto;
 import com.ssafy.special.dto.request.UserSignUpDto;
-import com.ssafy.special.dto.response.FriendListDto;
-import com.ssafy.special.dto.response.MemberDetailDto;
-import com.ssafy.special.dto.response.MemberInfoDto;
+import com.ssafy.special.dto.response.*;
 import com.ssafy.special.exception.DuplicateEmailException;
 import com.ssafy.special.exception.DuplicateNicknameException;
 import com.ssafy.special.exception.SignupFailedException;
 import com.ssafy.special.repository.food.FoodRepository;
 import com.ssafy.special.repository.food.IngredientRepository;
-import com.ssafy.special.repository.member.FriendListRepository;
-import com.ssafy.special.repository.member.MemberAllergyRepository;
-import com.ssafy.special.repository.member.MemberFoodPreferenceRepository;
-import com.ssafy.special.repository.member.MemberRepository;
+import com.ssafy.special.repository.member.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,9 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -42,6 +32,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberRecommendRepository memberRecommendRepository;
     private final FriendListRepository friendListRepository;
     private final PasswordEncoder passwordEncoder;
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
@@ -163,7 +154,7 @@ public class MemberService {
                 friends.add(MemberInfoDto.builder()
                         .memberSeq(friend.getMemberSeq())
                         .memberNickname(friend.getNickname())
-                        .memberImg(friend.getImg())
+                        .memberImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + friend.getImg())
                         .memberEmail(friend.getEmail())
                         .build());
             } else {
@@ -171,7 +162,7 @@ public class MemberService {
                 friends.add(MemberInfoDto.builder()
                         .memberSeq(friend.getMemberSeq())
                         .memberNickname(friend.getNickname())
-                        .memberImg(friend.getImg())
+                        .memberImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + friend.getImg())
                         .memberEmail(friend.getEmail())
                         .build());
             }
@@ -219,7 +210,7 @@ public class MemberService {
                 if (preference.getPreferenceType() == type) {
                     UserTasteDto userFavoriteDto = UserTasteDto.builder()
                             .foodSeq(preference.getFood().getFoodSeq())
-                            .foodUrl(preference.getFood().getImg())
+                            .foodUrl("https://" + bucket + ".s3." + region + ".amazonaws.com/" + preference.getFood().getImg())
                             .foodName(preference.getFood().getName())
                             .build();
                     userFavoriteList.add(userFavoriteDto);
@@ -282,7 +273,7 @@ public class MemberService {
                 friends.add(MemberInfoDto.builder()
                         .memberSeq(friend.getMemberSeq())
                         .memberNickname(friend.getNickname())
-                        .memberImg(friend.getImg())
+                        .memberImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + friend.getImg())
                         .memberEmail(friend.getEmail())
                         .build());
             } else {
@@ -291,7 +282,7 @@ public class MemberService {
                 friends.add(MemberInfoDto.builder()
                         .memberSeq(friend.getMemberSeq())
                         .memberNickname(friend.getNickname())
-                        .memberImg(friend.getImg())
+                        .memberImg("https://" + bucket + ".s3." + region + ".amazonaws.com/" + friend.getImg())
                         .memberEmail(friend.getEmail())
                         .build());
             }
@@ -300,6 +291,48 @@ public class MemberService {
         return FriendListDto.builder()
                 .memberEmail(memberEmail)
                 .friendList(friends)
+                .build();
+    }
+
+    public HomeDto homeData(String memberEmail) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        List<MemberRecommend> recommends = memberRecommendRepository.findAllByMemberOrderByRecommendAtDesc(member);
+        List<RecentFoodDto> recentFoods= new ArrayList<>();
+        Map<String, Integer> m = new HashMap<>();
+        double maxCnt = 0;
+        for(MemberRecommend mr : recommends){
+            Food food = mr.getFood();
+            if(mr.getFoodRating()>=3 && recentFoods.size()<3){
+                recentFoods.add(RecentFoodDto.builder()
+                        .foodSeq(food.getFoodSeq())
+                        .foodName(food.getName())
+                        .foodImg(food.getImg())
+                        .build());
+            }
+            if(mr.getFoodRating()>0){
+                String type = food.getType();
+                int cnt = m.getOrDefault(type,0);
+                m.put(type,cnt+1);
+                maxCnt+=1;
+            }
+        }
+        List<TypeRateDto> typeRates = new ArrayList<>();
+        if(maxCnt >0){
+            log.info(maxCnt+"");
+            for(String type : m.keySet()){
+                typeRates.add(TypeRateDto.builder()
+                        .type(type)
+                        .rating(((int)((m.get(type)/maxCnt)*1000))/1000.0)
+                        .build());
+                log.info(type+" "+ m.get(type));
+            }
+        }
+
+        return HomeDto.builder()
+                .recentFoods(recentFoods)
+                .typeRates(typeRates)
                 .build();
     }
 }

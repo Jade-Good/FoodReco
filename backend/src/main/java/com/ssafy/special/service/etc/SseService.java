@@ -62,7 +62,6 @@ public class SseService {
             SseEmitter sseEmitter = emitterRepository.get(crewMember.getMemberSeq());
             if (sseEmitter != null && !crewMember.getMemberSeq().equals(memberSeq)) {
                 try {
-                    String voteValue = objectMapper.writeValueAsString(voteRecommendDto);
                     sseEmitter.send(SseEmitter.event().id(crewSeq+"").name("vote")
                             .data(voteRecommendDto));
                     log.info(c.getMember().getNickname()+"님 sse send2");

@@ -1,6 +1,7 @@
 package com.ssafy.special.service.member;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.special.domain.food.Food;
 import com.ssafy.special.domain.food.FoodIngredient;
 import com.ssafy.special.domain.food.Ingredient;
@@ -9,6 +10,7 @@ import com.ssafy.special.domain.member.MemberAllergy;
 import com.ssafy.special.domain.member.MemberFoodPreference;
 import com.ssafy.special.domain.member.MemberRecommend;
 import com.ssafy.special.dto.RecentRecommendFoodDto;
+import com.ssafy.special.dto.RecentRecommendFoodResult;
 import com.ssafy.special.dto.request.FeedbackDto;
 import com.ssafy.special.dto.request.UserTasteDto;
 import com.ssafy.special.dto.response.RecommendFoodDto;
@@ -28,6 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -53,9 +56,8 @@ public class MemberRecommendService {
     private final FoodIngredientRepository foodIngredientRepository;
     private final MemberAllergyRepository memberAllergyRepository;
     private final MemberGoogleAuthService memberGoogleAuthService;
-//    private final WeatherStatus weatherStatus;
+    private final WeatherStatus weatherStatus;
 
-    private List<RecommendFoodDto> GlobalrecommendFoodDtoList;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -90,8 +92,10 @@ public class MemberRecommendService {
         int steps = memberOptional.get().getActivity();
         int totalSteps = steps + googleSteps;
 
-//        String weather = weatherStatus.getStatus();
-        String weather = "맑음";
+        String weather = weatherStatus.getStatus();
+        if(weather == null) {
+            weather = "맑음";
+        }
 
         List<MemberRecommend> memberRecommend = memberRecommendRepository
                 .findLatestMemberRecommend(memberSeq, foodSeq, PageRequest.of(0,1));
@@ -230,7 +234,8 @@ public class MemberRecommendService {
         }
     }
 
-    private Mono<List<RecommendFoodDto>> sendPostRequestAndReceiveRecommendFoodList(List<RecentRecommendFoodDto> recentlyRecommendedFood) {
+    private Mono<List<RecommendFoodDto>> sendPostRequestAndReceiveRecommendFoodList(List<RecentRecommendFoodDto> recentlyRecommendedFood) throws JsonProcessingException {
+
         return webClient.post()
                 .uri("/recommend")
                 .bodyValue(recentlyRecommendedFood)
@@ -249,12 +254,15 @@ public class MemberRecommendService {
         LocalDateTime now = LocalDateTime.now();
         int steps = memberOptional.get().getActivity();
         int totalSteps = steps + googleSteps;
-//        String weather = weatherStatus.getStatus();
-        String weather = "맑음";
+        String weather = weatherStatus.getStatus();
+        if(weather == null) {
+            weather = "맑음";
+        }
+
 
         // 추천 음식 가져오기
-        List<RecommendFoodDto> recommendFoodDtoList = getRecommendList(memberSeq, now, memberEmail, totalSteps);
-
+        List<RecommendFoodDto> recommendFoodDtoList = getRecommendList(memberSeq, now, memberEmail, googleSteps);
+//        log.info("추천 음식: " + recommendFoodDtoList.get(0).getName());
 //        1. 첫 번째 음식은 추천받은 히스토리에 추가하기
         Optional<Long> foodSeqOptional = recommendFoodDtoList.stream()
                 .findFirst()
@@ -285,14 +293,14 @@ public class MemberRecommendService {
             recommendFoodDtoList = filteringByRecently(memberRecommendsWithinOneWeek, recommendFoodDtoList);
 
 //        5. 추천 리스트가 없는 경우 일단 보류
-
-            GlobalrecommendFoodDtoList = new ArrayList<>(recommendFoodDtoList);
-
 //            추천된 음식에 해당하는 음식 상세정보 합쳐서 프론트로 넘겨주기
 //            foodRepository.findFoodByFoodSeq(foodSeq);
             List<RecommendFoodResultDto> RecommendFoodResultList = new ArrayList<>();
             for (RecommendFoodDto recommendFoodDto : recommendFoodDtoList) {
                 Food food = foodRepository.findFoodByFoodSeq(recommendFoodDto.getFoodSeq());
+
+                int ingredientSim = (int)(recommendFoodDto.getSimilarity()*100);
+//                int nameSim = (int) (recommendFoodDto.getNameSimilarity() * 100);
                 RecommendFoodResultDto recommendFoodResultDto = RecommendFoodResultDto.builder()
                         .recommendedFoodSeq(recommendFoodDto.getFoodSeq())
                         .ingredientSimilarity(recommendFoodDto.getSimilarity())
@@ -303,6 +311,11 @@ public class MemberRecommendService {
                         .category(food.getCategory())
                         .cookingMethod(food.getCookingMethod())
                         .img("https://" + bucket + ".s3." + region + ".amazonaws.com/" + food.getImg())
+                        .reason(recommendFoodDto.getName()
+                                + "은(는) 지난번에 드신 "
+                                + recommendFoodDto.getOriginName()
+                                + "와(과) 재료 및 조리방식이 "
+                                + ingredientSim + "% 유사하여 추천합니다.")
                         .build();
                 RecommendFoodResultList.add(recommendFoodResultDto);
             }
@@ -317,9 +330,12 @@ public class MemberRecommendService {
     public List<RecommendFoodDto> getRecommendList(Long memberSeq, LocalDateTime now,String memberEmail, int googleSteps) throws JsonProcessingException {
 //        지난 1~2주 사이에 추천 받은 음식을 기반으로 추천
         List<RecentRecommendFoodDto> recentlyRecommendedFood = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
-//        String nowWeather = weatherStatus.getStatus;
+        String nowWeather = weatherStatus.getStatus();
+        if(nowWeather == null) {
+            nowWeather = "맑음";
+        }
+
         Optional<Member> optionalMember = memberRepository.findByMemberSeq(memberSeq);
-        String nowWeather = "맑음";
         int steps = optionalMember.get().getActivity();
         int totalSteps = steps + googleSteps;
 
@@ -332,16 +348,24 @@ public class MemberRecommendService {
                     .collect(Collectors.toList());
         }
 //        현재상황과 유사한 활동량과 날씨를 추출
-        List<RecentRecommendFoodDto> similarFoodList = memberRecommendRepository.findSimilarRecommendedFood1000(memberSeq, nowWeather, totalSteps);
-        if (similarFoodList.size() == 0) {
-            similarFoodList = memberRecommendRepository.findSimilarRecommendedFood2000(memberSeq, nowWeather, totalSteps);
+        List<RecentRecommendFoodResult> resultList = new ArrayList<>();
+
+        if(totalSteps >= 1000)
+            resultList = memberRecommendRepository.findSimilarRecommendedFood(memberSeq, nowWeather, totalSteps-1000, totalSteps+1000);
+        else if (resultList.size() == 0 && totalSteps >= 2000) {
+            resultList = memberRecommendRepository.findSimilarRecommendedFood(memberSeq, nowWeather, totalSteps-2000, totalSteps+2000);
         }
-        if (similarFoodList.size() == 0) {
-            similarFoodList = memberRecommendRepository.findSimilarRecommendedFood3000(memberSeq, nowWeather, totalSteps);
+        else if (resultList.size() == 0 && totalSteps >= 3000) {
+            resultList = memberRecommendRepository.findSimilarRecommendedFood(memberSeq, nowWeather, totalSteps -3000, totalSteps+3000);
         }
+
+        List<RecentRecommendFoodDto> similarFoodList = resultList.stream()
+                .map(result -> new RecentRecommendFoodDto(result.getFoodSeq(), result.getName()))
+                .collect(Collectors.toList());
 
         Set<RecentRecommendFoodDto> similarAdded = new HashSet<>();
         similarAdded.addAll(recentlyRecommendedFood);
+        similarAdded.addAll(similarFoodList);
 
         List<RecentRecommendFoodDto> similarAddedList = new ArrayList<>(similarAdded);
 
