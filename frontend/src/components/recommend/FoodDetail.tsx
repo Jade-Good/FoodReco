@@ -10,11 +10,6 @@ import { Map, MapMarker } from "react-kakao-maps-sdk";
 
 import SearchIcon from "@mui/icons-material/Search";
 
-interface Coords {
-  latitude: number | null;
-  longitude: number | null;
-}
-
 interface Stores {
   address_name?: string;
   category_name?: string;
@@ -26,33 +21,19 @@ interface Stores {
   y?: number;
 }
 
-const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
+interface FoodDetailProps {
+  foodName: string;
+  longitude: number;
+  latitude: number;
+}
+
+const FoodDetail: React.FC<FoodDetailProps> = ({
+  foodName,
+  longitude,
+  latitude,
+}) => {
   // -------------------------- 모달 --------------------------
   const [modal, setModalOpen] = useRecoilState(foodDetailModal);
-
-  // -------------------------- 현위치 -------------------------
-  const [coords, setCoords] = useState<Coords>({
-    latitude: null,
-    longitude: null,
-  });
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // 위치 정보 가져오기 시도
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setCoords({ latitude, longitude });
-        },
-        (err) => {
-          setError(`오류: ${err.message}`);
-        }
-      );
-    } else {
-      setError("브라우저에서 Geolocation을 지원하지 않습니다.");
-    }
-  }, []);
 
   // -------------------------- 검색 --------------------------
 
@@ -82,8 +63,8 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
 
     ps.keywordSearch(foodName, placesSearchCB, {
       category_group_code: "FD6",
-      x: Number(`${coords.longitude}`),
-      y: Number(`${coords.latitude}`),
+      x: Number(longitude),
+      y: Number(latitude),
       radius: 2000,
       sort: kakao.maps.services.SortBy.DISTANCE,
     });
@@ -208,8 +189,8 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
         </SearchButtonLayout>
         <Map // 로드뷰를 표시할 Container
           center={{
-            lat: Number(`${coords.latitude}`),
-            lng: Number(`${coords.longitude}`),
+            lat: Number(latitude),
+            lng: Number(longitude),
           }}
           style={{
             width: "100%",
@@ -221,8 +202,8 @@ const FoodDetail: React.FC<{ foodName: string }> = ({ foodName }) => {
           {/* 현위치 마커 */}
           <MapMarker
             position={{
-              lat: Number(coords.latitude),
-              lng: Number(coords.longitude),
+              lat: Number(latitude),
+              lng: Number(longitude),
             }}
             image={{
               src: "/images/현위치 마커.png",

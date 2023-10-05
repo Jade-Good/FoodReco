@@ -6,7 +6,6 @@ import api from "../../utils/axios";
 import { FooterCrew } from "../../components/footer/FooterCrew";
 import HeaderCrewDetail from "../../components/header/HeaderCrewDetail";
 
-import { CrewProps } from "../../pages/crew/CrewList";
 import CrewMemberProfile from "../../components/crewpage/CrewMemberProfile";
 
 interface CrewDetailProps {
@@ -46,31 +45,52 @@ interface crewMembers {
 interface history {
   crewRecommendSeq: number;
   crewRecommendTime: Date;
-  foodList: {
-    foodSeq: number;
-    foodName: string;
-    foodImg: string;
-    foodVoteCount: number;
-  };
+  foodList: foodList[];
 }
 
 export const CrewDetail = () => {
-  const [crewDetailInfo, setCrewDetailInfo] = useState<CrewDetailProps | null>(
-    null
-  );
+  const [crewDetailInfo, setCrewDetailInfo] = useState<CrewDetailProps>();
+  const [btnState, setBtnState] = useState("투표전");
+  const [btnText, setBtnText] = useState("메뉴 투표를 시작하세요!");
   const { crewSeq } = useParams();
 
-  useEffect(() => {
-    console.log("크루 상세 정보 조회");
+  let eventSource: EventSource;
 
-    let eventSource: EventSource;
+  const getCrewDetailInfo = async () => {
+    try {
+      const res = await api.get(
+        `${process.env.REACT_APP_BASE_URL}/crew/detail/${crewSeq}`
+      );
+      console.log("그룹 상세 정보 조회 성공 : ", res);
+      return res.data;
+    } catch (err) {
+      console.error("그룹 상세 정보 못가져옴:", err);
+      setTimeout(getCrewDetailInfo, 1000); // 1초 후 재시도
+      throw err; // 에러를 다시 throw하여 오류 핸들링을 위임합니다.
+    }
+  };
 
-    async function getCrewInfo() {
-      await getCrewDetail();
+  const connectSSE = async () => {
+    try {
+      const info = await getCrewDetailInfo();
 
-      console.log("투표 SSE 연결");
+      if (!info) {
+        throw new Error("그룹 상세 정보 없음");
+      }
+
+      setCrewDetailInfo(info);
+      setBtnState(info.crewStatus);
+
+      if (info.crewStatus === "투표전") setBtnText("메뉴 투표를 시작하세요!");
+      else if (info.crewStatus === "분석중")
+        setBtnText("그룹 메뉴 분석 중입니다");
+      else if (info.crewStatus === "투표중")
+        setBtnText(">> 메뉴 투표에 참여하세요 <<");
+
+      console.log("투표 SSE 연결 시도! / 멤버 시퀀스 : ", info.memberSeq);
+
       eventSource = new EventSource(
-        `${process.env.REACT_APP_BASE_URL}/crew/sse/${crewSeq}/${crewDetailInfo?.memberSeq}`
+        `${process.env.REACT_APP_BASE_URL}/crew/sse/${crewSeq}/${info.memberSeq}`
       );
 
       eventSource.addEventListener("connect", (e) => {
@@ -78,70 +98,104 @@ export const CrewDetail = () => {
       });
       eventSource.addEventListener("start", (e) => {
         console.log("start", e);
+
+        let copy = { ...info };
+        copy.voteRecommend = e.data;
+        setCrewDetailInfo(copy);
+
+        setBtnState("투표중");
+        setBtnText(">> 메뉴 투표에 참여하세요 <<");
+        console.log("투표시작 : ", btnState, btnText);
+        console.log("투표목록 : ", copy.voteRecommend);
       });
       eventSource.addEventListener("end", (e) => {
         console.log("end", e);
+        setBtnState("투표전");
+        setBtnText("메뉴 투표를 시작하세요!");
+        console.log("투표종료 : ", btnState, btnText);
       });
 
       eventSource.addEventListener("vote", (e) => {
-        console.log(JSON.parse(e.data));
+        console.log("vote", JSON.parse(e.data));
+        let copy = { ...info };
+        copy.voteRecommend = JSON.parse(e.data);
+        setCrewDetailInfo(copy);
       });
+
       eventSource.onerror = (error) => {
         console.error("SSE Error:", error);
         eventSource.close();
+
+        setTimeout(() => {
+          console.log("연결 재시도");
+          connectSSE();
+        }, 3000); // 3초 후 재시도
       };
+    } catch (err) {
+      console.error(err);
+      setTimeout(connectSSE, 2000); // 2초 후 재시도
     }
+  };
 
-    getCrewInfo();
+  useEffect(() => {
+    if (eventSource) eventSource.close();
 
-    // if (!crewDetailInfo?.memberSeq) {
-    //   console.log("회원 번호 없음 - SSE 연결 취소");
-    //   return;
-    // }
+    connectSSE();
 
     return () => {
-      eventSource.close();
+      console.log("투표 SSE 종료");
+      if (eventSource) eventSource.close();
     };
   }, []);
 
-  const getCrewDetail = () => {
-    api
-      .get(`${process.env.REACT_APP_BASE_URL}/crew/detail/${crewSeq}`)
-      .then((res) => {
-        console.log(res);
-        setCrewDetailInfo(res.data);
-        console.log(res.data);
-        console.log(crewDetailInfo);
-      })
-      .catch((err) => {
-        console.log("그룹 상세 정보 못가져옴:", err);
-      });
+  const voteStartBtnHandler = () => {
+    if (!crewDetailInfo) return;
+
+    switch (btnState) {
+      case "투표전":
+        console.log("투표 시작 누름!!!");
+        setBtnState("분석중");
+        setBtnText("그룹 메뉴 분석 중입니다");
+        api
+          .get(`${process.env.REACT_APP_BASE_URL}/recommend/crew/${crewSeq}`)
+          .then((res) => {
+            console.log(res.data); // 그룹 투표 시작
+          })
+          .catch((err) => {
+            console.error("투표 시작 실패", err);
+          });
+        break;
+      case "분석중":
+        console.log("분석중이라 무시~~");
+        break;
+      case "투표중":
+        console.log("투표 모달창 떠야함!!");
+        break;
+    }
   };
 
   return (
     <>
       <HeaderCrewDetail />
       <CrewFrame>
-        <CrewImg
-          src={
-            `${crewDetailInfo?.crewImg}`
-              ? `${crewDetailInfo?.crewImg}`
-              : "/favicon.ico"
-          }
-        />
-        <h1 style={{ margin: "0", fontSize: "4vmax" }}>
-          {crewDetailInfo?.crewName}
-        </h1>
+        {/* 크루 이미지와 이름 */}
+        <div style={{ textAlign: "center" }}>
+          <CrewImg
+            src={
+              `${crewDetailInfo?.crewImg}`
+                ? `${crewDetailInfo?.crewImg}`
+                : "/favicon.ico"
+            }
+          />
+          <h1 style={{ margin: "0", fontSize: "4vmax" }}>
+            {crewDetailInfo?.crewName}
+          </h1>
+        </div>
+
+        {/* 그룹원 목록 */}
         <div style={{ width: "90vw" }}>
           <h1 style={{ margin: "0 0 2vmin 0", fontSize: "1.3rem" }}>그룹원</h1>
-          <div
-            style={{
-              display: "flex",
-              gap: "5vmin",
-              overflowX: "scroll",
-              padding: " 1rem 1rem 0 1rem",
-            }}
-          >
+          <CrewMemberList>
             {crewDetailInfo?.crewMembers.map((member, key) => {
               return (
                 <CrewMemberProfile
@@ -152,12 +206,27 @@ export const CrewDetail = () => {
                 />
               );
             })}
-          </div>
+          </CrewMemberList>
         </div>
+
+        {/* 메뉴 투표 창 */}
         <div style={{ width: "90vw" }}>
           <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.3rem" }}>
             메뉴투표
           </h1>
+          <div style={{ textAlign: "center" }}>
+            <VoteStartBtn status={btnState} onClick={voteStartBtnHandler}>
+              {btnText}
+            </VoteStartBtn>
+          </div>
+        </div>
+
+        {/* 투표 기록 */}
+        <div style={{ width: "90vw" }}>
+          <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.3rem" }}>
+            투표 기록
+          </h1>
+          <div>메뉴 버튼이나 투표 리스트~</div>
           <div>메뉴 버튼이나 투표 리스트~</div>
         </div>
       </CrewFrame>
@@ -166,13 +235,50 @@ export const CrewDetail = () => {
   );
 };
 
+const VoteStartBtn = styled.button<{ status: string | undefined }>`
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  background-color: #fe9d3a;
+
+  &:active {
+    background-color: #cf7f2f;
+  }
+  user-select: none;
+
+  /* width: 80vw; */
+  padding: 0 1rem;
+  height: 8vh;
+  border-radius: 1rem;
+  border: 0;
+
+  ${(props) =>
+    props.status === "분석중" &&
+    css`
+      background-color: white;
+      border: solid #fe9d3a 1px;
+      color: #fe9d3a;
+    `}
+`;
+
+const CrewMemberList = styled.div`
+  display: flex;
+  gap: 5vmin;
+  overflow-x: scroll;
+  padding: 1rem 1rem 0 1rem;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
 const CrewFrame = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 24vmin;
+  margin: 24vmin 0;
   /* height: 80vh; */
-  gap: 2vh;
+  gap: 3vh;
 
   overflow-y: scroll;
 `;
@@ -185,7 +291,7 @@ const CrewImg = styled.img<{ src: string }>`
   max-height: 30vh;
 
   border-radius: 100%;
-  margin-bottom: 2vmax;
+  margin-bottom: 1vmax;
 
   /* border: solid orange 1px; */
 `;
