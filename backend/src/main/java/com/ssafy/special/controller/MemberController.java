@@ -162,6 +162,9 @@ public class MemberController {
         }catch (IllegalArgumentException e){
             log.info("잘못된 친구 SEQ : "+ e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (IllegalStateException e){
+            log.info("친구 추가 불가 : "+ e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }catch (Exception e){
             e.printStackTrace();
             log.info("처리되지 않은 에러 발생 : "+ e.getMessage());
