@@ -38,14 +38,17 @@ export const CrewAdd: React.FC<FriendProps> = ({
             />
           )}
         </div>
+
         <h3>{name}</h3>
+
         <div
           style={{
             backgroundColor: selected ? "orange" : "white",
             borderRadius: "50%",
             border: "1px solid black",
             width: "5vw",
-            height: "5vw", // 높이와 너비를 동일하게 설정하여 동그란 원을 만듭니다.
+            height: "5vw",
+            marginLeft: "30vw",
           }}
         ></div>
       </div>
