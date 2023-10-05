@@ -4,8 +4,6 @@ import classes from "./CrewCard.module.css";
 import { useNavigate } from "react-router-dom";
 
 import { CrewProps } from "../../pages/crew/CrewList";
-import { useRecoilState } from "recoil";
-import { crewDetail } from "../../recoil/atoms/crewState";
 
 interface CrewCardProps {
   key: number;
@@ -14,14 +12,11 @@ interface CrewCardProps {
 
 const CrewCard = ({ crew, key }: CrewCardProps) => {
   const navigate = useNavigate();
-  const [crewDetails, setCrewDetail] = useRecoilState(crewDetail);
 
   const crewDetailNav = () => {
     if (!crew) return;
 
-    setCrewDetail(crew);
-
-    navigate(`/crew/detail`);
+    navigate(`/crew/detail/${crew.crewSeq}`);
   };
 
   return (

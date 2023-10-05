@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 import api from "../../utils/axios";
 
@@ -6,16 +7,15 @@ import { FooterCrew } from "../../components/footer/FooterCrew";
 import HeaderCrewDetail from "../../components/header/HeaderCrewDetail";
 
 import { CrewProps } from "../../pages/crew/CrewList";
-import { useRecoilState } from "recoil";
-import { crewDetail } from "../../recoil/atoms/crewState";
 import CrewMemberProfile from "../../components/crewpage/CrewMemberProfile";
 
 interface CrewDetailProps {
+  memberSeq: number;
   crewSeq: number;
   crewName: string;
   crewImg: string;
-  crewStatus: "투표중" | "분석중" | "투표중";
-  memberStatus: "미응답" | "수락" | "거절"; // 본인의 그룹 가입 여부
+  crewStatus: "투표전" | "분석중" | "투표중";
+  memberStatus: "미응답" | "수락"; // 본인의 그룹 가입 여부
   crewMembers: crewMembers[];
 
   // 투표 중인경우만 존재(아닌경우 null)
@@ -58,17 +58,55 @@ export const CrewDetail = () => {
   const [crewDetailInfo, setCrewDetailInfo] = useState<CrewDetailProps | null>(
     null
   );
-  const [crewDetails, setCrewDetail] = useRecoilState(crewDetail);
+  const { crewSeq } = useParams();
 
   useEffect(() => {
-    getCrewDetail();
+    console.log("크루 상세 정보 조회");
+
+    let eventSource: EventSource;
+
+    async function getCrewInfo() {
+      await getCrewDetail();
+
+      console.log("투표 SSE 연결");
+      eventSource = new EventSource(
+        `${process.env.REACT_APP_BASE_URL}/crew/sse/${crewSeq}/${crewDetailInfo?.memberSeq}`
+      );
+
+      eventSource.addEventListener("connect", (e) => {
+        console.log("connect");
+      });
+      eventSource.addEventListener("start", (e) => {
+        console.log("start", e);
+      });
+      eventSource.addEventListener("end", (e) => {
+        console.log("end", e);
+      });
+
+      eventSource.addEventListener("vote", (e) => {
+        console.log(JSON.parse(e.data));
+      });
+      eventSource.onerror = (error) => {
+        console.error("SSE Error:", error);
+        eventSource.close();
+      };
+    }
+
+    getCrewInfo();
+
+    // if (!crewDetailInfo?.memberSeq) {
+    //   console.log("회원 번호 없음 - SSE 연결 취소");
+    //   return;
+    // }
+
+    return () => {
+      eventSource.close();
+    };
   }, []);
 
   const getCrewDetail = () => {
     api
-      .get(
-        `${process.env.REACT_APP_BASE_URL}/crew/detail/${crewDetails.crewSeq}`
-      )
+      .get(`${process.env.REACT_APP_BASE_URL}/crew/detail/${crewSeq}`)
       .then((res) => {
         console.log(res);
         setCrewDetailInfo(res.data);
@@ -85,35 +123,41 @@ export const CrewDetail = () => {
       <HeaderCrewDetail />
       <CrewFrame>
         <CrewImg
-          src={`${crewDetails.img}` ? `${crewDetails.img}` : "/favicon.ico"}
+          src={
+            `${crewDetailInfo?.crewImg}`
+              ? `${crewDetailInfo?.crewImg}`
+              : "/favicon.ico"
+          }
         />
-        <h1 style={{ margin: "0", fontSize: "4vmax" }}>{crewDetails.name}</h1>
-        <div style={{ width: "90vw", margin: "10vw" }}>
-          <h1 style={{ margin: "0 0 2vmin 0", fontSize: "3vmax" }}>그룹원</h1>
+        <h1 style={{ margin: "0", fontSize: "4vmax" }}>
+          {crewDetailInfo?.crewName}
+        </h1>
+        <div style={{ width: "90vw" }}>
+          <h1 style={{ margin: "0 0 2vmin 0", fontSize: "1.3rem" }}>그룹원</h1>
           <div
             style={{
               display: "flex",
-              gap: "8vmin",
+              gap: "5vmin",
               overflowX: "scroll",
-              padding: "1rem",
+              padding: " 1rem 1rem 0 1rem",
             }}
           >
-            {crewDetailInfo
-              ? crewDetailInfo.crewMembers.map((member, key) => {
-                  return (
-                    <CrewMemberProfile
-                      name={member.memberName}
-                      profileImg={member.memberImg}
-                      memberStatus={member.memberStatus}
-                      key={key}
-                    />
-                  );
-                })
-              : null}
+            {crewDetailInfo?.crewMembers.map((member, key) => {
+              return (
+                <CrewMemberProfile
+                  name={member.memberName}
+                  profileImg={member.memberImg}
+                  memberStatus={member.memberStatus}
+                  key={key}
+                />
+              );
+            })}
           </div>
         </div>
         <div style={{ width: "90vw" }}>
-          <h1 style={{ margin: "0 0 5vmin 0", fontSize: "3vmax" }}>메뉴투표</h1>
+          <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.3rem" }}>
+            메뉴투표
+          </h1>
           <div>메뉴 버튼이나 투표 리스트~</div>
         </div>
       </CrewFrame>
@@ -127,7 +171,10 @@ const CrewFrame = styled.div`
   flex-direction: column;
   align-items: center;
   margin-top: 24vmin;
-  height: 80vh;
+  /* height: 80vh; */
+  gap: 2vh;
+
+  overflow-y: scroll;
 `;
 
 const CrewImg = styled.img<{ src: string }>`

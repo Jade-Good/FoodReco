@@ -3,11 +3,8 @@ import styled, { css } from "styled-components";
 
 import { IoIosAddCircleOutline } from "react-icons/io";
 import classes from "./CrewCard.module.css";
-import { useNavigate } from "react-router-dom";
 
 import { CrewProps } from "../../pages/crew/CrewList";
-import { useRecoilState } from "recoil";
-import { crewDetail } from "../../recoil/atoms/crewState";
 
 interface CrewMemberProps {
   name: string;
@@ -22,12 +19,9 @@ const CrewMemberProfile = ({
   memberStatus,
   key,
 }: CrewMemberProps) => {
-  const navigate = useNavigate();
-  const [crewDetails, setCrewDetail] = useRecoilState(crewDetail);
-
   return (
     <ProfileFrame key={key} memberStatus={memberStatus}>
-      <ProfileImg src={profileImg} />
+      <ProfileImg src={`${profileImg}` ? `${profileImg}` : "/favicon.ico"} />
       <CrewName>{name}</CrewName>
     </ProfileFrame>
   );
