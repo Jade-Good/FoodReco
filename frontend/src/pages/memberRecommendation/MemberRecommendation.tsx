@@ -16,10 +16,16 @@ export interface FoodList {
   ingredientSimilarity: number;
   foodNameSimilarity: number;
   originalFoodName: string;
+  reason: string;
 }
 
 export interface FoodFeedBackProps {
   foodFeedBack: (point: number) => void;
+}
+
+export interface Coords {
+  latitude: number;
+  longitude: number;
 }
 
 export const MemberRecommendation = () => {
@@ -34,28 +40,61 @@ export const MemberRecommendation = () => {
       ingredientSimilarity: 0.776180681744197,
       foodNameSimilarity: 0.15384615384615385,
       originalFoodName: "짬뽕",
+      reason: "대기하세요",
     },
   ]);
+  // -------------------------- 현위치 -------------------------
+  const [coords, setCoords] = useState<Coords | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
+  // -------------------------- 추천메뉴 -------------------------
   const [foodIdx, setFoodIdx] = useState(0);
 
-  // 최초 1회 검색 및 지도 생성
-  useEffect(() => {
-    foodRecommend();
-  }, []);
+  const getPos = async (): Promise<Coords | undefined> => {
+    try {
+      if ("geolocation" in navigator) {
+        const position = await new Promise<any>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            (position) => resolve(position),
+            (err) => reject(err)
+          );
+        });
 
-  const foodRecommend = () => {
-    api
-      .get(`${process.env.REACT_APP_BASE_URL}/recommend/personal`)
-      .then((res) => {
-        console.log(res);
-        setFoodList(res.data);
-      })
-      .catch((err) => {
-        console.log("추천 메뉴 못가져옴:", err);
-      });
-    setFoodIdx(0);
+        const { latitude, longitude } = position.coords;
+        return { latitude, longitude };
+      } else {
+        setError("브라우저에서 Geolocation을 지원하지 않습니다.");
+      }
+    } catch (error) {
+      console.error("GPS 정보를 가져오지 못했습니다:", error);
+    }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const pos = await getPos();
+
+      if (!pos || pos.latitude === 0 || pos.longitude === 0) {
+        setTimeout(fetchData, 1000); // 1초 후 재시도
+        return;
+      }
+
+      try {
+        const response = await api.get<FoodList[]>(
+          `${process.env.REACT_APP_BASE_URL}/recommend/personal/${pos.longitude}/${pos.latitude}`
+        );
+        setFoodList(response.data);
+      } catch (err) {
+        console.error("추천 메뉴 못가져옴:", err);
+        // 오류 처리를 추가하거나 재시도 등의 조치를 취할 수 있습니다.
+      }
+
+      setCoords(pos);
+      setFoodIdx(0);
+    };
+
+    fetchData();
+  }, []);
 
   const foodfeedback = (point: number) => {
     let nowSeq = foodList[foodIdx].recommendedFoodSeq;
@@ -67,7 +106,7 @@ export const MemberRecommendation = () => {
     console.log(nowSeq, nextIdx, nextSeq, point);
     api
       .patch(
-        `${process.env.REACT_APP_BASE_URL}/recommend/feedback/${nextSeq}`,
+        `${process.env.REACT_APP_BASE_URL}/recommend/feedback/${nextSeq}/${coords?.longitude}/${coords?.latitude}`,
         { foodSeq: nowSeq, feedback: point }
       )
       .then((res) => {
@@ -91,7 +130,11 @@ export const MemberRecommendation = () => {
         foodFeedBack={foodfeedback}
       />
 
-      <FoodDetail foodName={foodList[foodIdx].recommendedFoodName} />
+      <FoodDetail
+        foodName={foodList[foodIdx].recommendedFoodName}
+        longitude={coords ? coords.longitude : 0}
+        latitude={coords ? coords.latitude : 0}
+      />
 
       <FoodButton foodFeedBack={foodfeedback} />
 
