@@ -28,7 +28,10 @@ public class WeatherService {
     private String serviceKey;
 
     public String getWeather(Double lon, Double let) throws Exception {
-
+        if (lon == 0 && let == 0){
+            lon = 127.3940;
+            let = 36.3398;
+        }
 
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
@@ -91,7 +94,7 @@ public class WeatherService {
         conn.disconnect();
         String data = sb.toString();
 
-        System.out.println(data);
+//        System.out.println(data);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> weatherData = objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {
         });

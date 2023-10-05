@@ -183,7 +183,7 @@ export const Login = () => {
         </div>
 
         <div className={classes.autoLoginContainer}>
-          {isAutoLogin ? (
+          {/* {isAutoLogin ? (
             <BsFillCheckSquareFill
               style={{
                 height: "17px",
@@ -203,9 +203,9 @@ export const Login = () => {
                 setIsAutoLogin(1);
               }}
             />
-          )}
+          )} */}
           &nbsp;
-          <span style={{ fontSize: "13px", color: "#C6C5C5" }}>
+          {/* <span style={{ fontSize: "13px", color: "#C6C5C5" }}>
             자동 로그인
           </span>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -229,11 +229,11 @@ export const Login = () => {
                 setIsRememberId(1);
               }}
             />
-          )}
+          )} */}
           &nbsp;
-          <span style={{ fontSize: "13px", color: "#C6C5C5" }}>
+          {/* <span style={{ fontSize: "13px", color: "#C6C5C5" }}>
             아이디 저장
-          </span>
+          </span> */}
         </div>
         <br />
         <br />

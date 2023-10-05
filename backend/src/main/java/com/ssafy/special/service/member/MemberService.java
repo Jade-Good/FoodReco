@@ -244,14 +244,28 @@ public class MemberService {
         Member friend = memberRepository.findByMemberSeq(friendSeq)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 친구 정보입니다."));
 
-        FriendList friendList = FriendList.builder()
+        if(member.getMemberSeq().equals(friendSeq)){
+            log.info("뭘까??");
+            throw new IllegalStateException("자기 자신은 친구추가 불가");
+        }
+        List<FriendList> friendList = friendListRepository.findByOneMemberSeqOrOtherMemberSeq(member.getMemberSeq(),member.getMemberSeq());
+
+        for(FriendList f : friendList){
+            if((f.getOne().getMemberSeq().equals(friendSeq) && f.getOther().getMemberSeq().equals(member.getMemberSeq()))
+                    || (f.getOne().getMemberSeq().equals(member.getMemberSeq()) && f.getOther().getMemberSeq().equals(friendSeq))){
+                log.info("이미 친구");
+                throw new IllegalStateException("이미 친구 상태");
+            }
+        }
+
+        FriendList fff = FriendList.builder()
                 .one(member)
                 .other(friend)
                 .createdAt(LocalDateTime.now())
                 .deletedAt(LocalDateTime.now())
                 .build();
 
-        friendListRepository.save(friendList);
+        friendListRepository.save(fff);
     }
 
     public FriendListDto getFriendListByNickname(String memberEmail,String searchKeyword) {

@@ -129,7 +129,7 @@ public class CrewRecommendService {
                     .build();
             recommendList.add(crewRecommendHistoryByFoodDto);
         }
-
+        Collections.sort(recommendList, Comparator.comparingLong(CrewRecommendHistoryByFoodDto::getFoodSeq));
         VoteRecommendDto voteRecommendDto =VoteRecommendDto.builder()
                 .crewRecommendSeq(crewRecommend.getCrewRecommendSeq())
                 .foodList(recommendList)
@@ -143,7 +143,7 @@ public class CrewRecommendService {
         crewRepository.save(crew);
 
         // 5분뒤 종료하는 스케줄러 실행
-        taskScheduler.schedule(() -> endVote(crew), Instant.now().plusSeconds(30));
+        taskScheduler.schedule(() -> endVote(crew), Instant.now().plusSeconds(60));
     }
 
     public void endVote(Crew crew) {
