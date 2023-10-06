@@ -392,7 +392,7 @@ public class CrewService {
         log.info("voteONE1");
         for(CrewMember m : crew.getCrewMembers()){
             log.info("voteONE2");
-            VoteRecommendDto voteRecommendDto = getVoteList(crewRecommend,crew,m);
+            VoteRecommendDto voteRecommendDto = getVoteList(crewRecommend,crew,m.getMember());
             sseService.voteToOne(m.getMember().getMemberSeq(),voteRecommendDto);
 
         }
