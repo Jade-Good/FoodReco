@@ -94,14 +94,13 @@ const Donut: React.FC<DonutProps> = () => {
 
   console.log(customLabels[0]);
   return (
-    <div className="donut" style={{ zIndex: "-99" }}>
+    <div className="donut" style={{ width: "90vw" }}>
       {customSeries && customLabels ? (
         <Chart
           options={state}
           series={customSeries}
           // label={customLabels}
           type="donut"
-          width="380"
         />
       ) : (
         <p>Loading...</p>

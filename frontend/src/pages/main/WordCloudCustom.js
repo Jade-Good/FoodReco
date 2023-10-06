@@ -49,7 +49,7 @@ const WordCloudCustom = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ width: "90vw" }}>
       <WordCloud
         data={data}
         width={500}

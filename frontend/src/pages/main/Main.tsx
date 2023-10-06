@@ -59,6 +59,7 @@ export const Main: React.FC = () => {
           overflow: "scroll",
           marginBottom: "10vh",
           height: "100vh",
+          justifyContent: "center",
         }}
       >
         <div>
