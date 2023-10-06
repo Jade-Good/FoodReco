@@ -93,6 +93,7 @@ export const MyPage = () => {
           justifyContent: "center",
           flexDirection: "column",
           marginTop: "5rem",
+          paddingBottom: "6rem",
           overflow: "scroll",
         }}
       >
