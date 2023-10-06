@@ -87,12 +87,12 @@ export const MyPage = () => {
       <HeaderLogo />
       <div
         style={{
-          height: "75vh",
+          // height: "90vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "column",
-          marginTop: "10vh",
+          marginTop: "5rem",
           overflow: "scroll",
         }}
       >
