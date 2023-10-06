@@ -318,7 +318,7 @@ public class MemberService {
         double maxCnt = 0;
         for(MemberRecommend mr : recommends){
             Food food = mr.getFood();
-            if(mr.getFoodRating()>=3 && recentFoods.size()<3){
+            if(mr.getFoodRating()>=3 && recentFoods.size()<10){
                 recentFoods.add(RecentFoodDto.builder()
                         .foodSeq(food.getFoodSeq())
                         .foodName(food.getName())
