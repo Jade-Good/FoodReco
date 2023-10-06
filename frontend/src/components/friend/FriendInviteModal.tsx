@@ -48,7 +48,7 @@ export const FriendInviteModal = ({ exitModal }: ModalProps) => {
         <hr></hr>
         {/* <h6>{msg}</h6> */}
 
-        <div className={classes.shareList}>
+        {/* <div className={classes.shareList}>
           <div>
             <img
               src={`/images/카카오톡 로고 엣지.png`}
@@ -63,7 +63,7 @@ export const FriendInviteModal = ({ exitModal }: ModalProps) => {
             </div>
             <p>주소복사</p>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
