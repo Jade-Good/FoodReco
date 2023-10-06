@@ -49,7 +49,7 @@ const WordCloudCustom = () => {
   }, []);
 
   return (
-    <div style={{ border: "1px solid orange" }}>
+    <div>
       <WordCloud
         data={data}
         width={500}
