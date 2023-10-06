@@ -421,9 +421,11 @@ public class CrewService {
         boolean isF = true;
         for (Food food: m.keySet()) {
             boolean isT = false;
-            if(isF && m.get(food).contains(member)){
-                isT = true;
-                isF = false;
+            for(Member mmm :m.get(food)){
+                if (mmm.getMemberSeq().equals(member.getMemberSeq())){
+                    isT = true;
+                    isF = false;
+                }
             }
             historiesByRecommend.add(CrewRecommendHistoryByFoodDto.builder()
                     .foodSeq(food.getFoodSeq())
