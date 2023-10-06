@@ -70,66 +70,73 @@ const VoteHistoryModal: React.FC<voteModalProps> = ({
       {/* 메뉴 투표 창 */}
       <div style={{ padding: "1rem" }}>
         <h1 style={{ margin: "0 0 5vmin 0", fontSize: "1.5rem" }}>메뉴 투표</h1>
+        <h6 style={{ textAlign: "right" }}>
+          미투표 : {foodList ? foodList[0].foodVoteCount : 0}명
+        </h6>
         <div style={{ textAlign: "center" }}>
-          {foodList?.map((food, key) => (
-            <VoteItem
-              onClick={() => {
-                check(food.foodSeq);
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-end",
-                  userSelect: "none",
+          {foodList?.map((food, key) => {
+            if (key === 0) return;
+            return (
+              <VoteItem
+                check={food.vote}
+                onClick={() => {
+                  check(food.foodSeq);
                 }}
               >
-                <div style={{ display: "flex", alignItems: "flex-end" }}>
-                  <FoodImg src={food.foodImg} />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "flex-start",
-                      marginLeft: "3vmin",
-                    }}
-                  >
-                    <h5
-                      style={{
-                        margin: "0 0 1vmin 0",
-                        fontSize: "1.2rem",
-                        textAlign: "left",
-                      }}
-                    >
-                      {food.foodName}
-                    </h5>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-end",
+                    userSelect: "none",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "flex-end" }}>
+                    <FoodImg src={food.foodImg} />
                     <div
                       style={{
-                        display: "inline",
-                        textAlign: "center",
-                        width: "6rem",
-                        padding: "0.2rem 0.2rem",
-                        border: "1px solid #fe9d3a",
-                        color: "#fe9d3a",
-                        borderRadius: "1rem",
-                        fontSize: "0.8rem",
-                      }}
-                      onClick={() => {
-                        console.log("클릭");
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "flex-start",
+                        marginLeft: "3vmin",
                       }}
                     >
-                      상세보기 버튼
+                      <h5
+                        style={{
+                          margin: "0 0 1vmin 0",
+                          fontSize: "1.2rem",
+                          textAlign: "left",
+                        }}
+                      >
+                        {food.foodName}
+                      </h5>
+                      <div
+                        style={{
+                          display: "inline",
+                          textAlign: "center",
+                          width: "6rem",
+                          padding: "0.2rem 0.2rem",
+                          border: "1px solid #fe9d3a",
+                          color: "#fe9d3a",
+                          borderRadius: "1rem",
+                          fontSize: "0.8rem",
+                        }}
+                        onClick={() => {
+                          console.log("클릭");
+                        }}
+                      >
+                        상세보기 버튼
+                      </div>
                     </div>
                   </div>
+                  <p style={{ fontSize: "1rem" }}>
+                    {foodList[key].foodVoteCount}명
+                  </p>
                 </div>
-                <p style={{ fontSize: "1rem" }}>
-                  {foodList[key].foodVoteCount}명
-                </p>
-              </div>
-              <ProgressBar percentage={progress[key]} />
-            </VoteItem>
-          ))}
+                <ProgressBar percentage={progress[key]} />
+              </VoteItem>
+            );
+          })}
         </div>
       </div>
     </Modal>
@@ -138,13 +145,22 @@ const VoteHistoryModal: React.FC<voteModalProps> = ({
 
 export default VoteHistoryModal;
 
-const VoteItem = styled.div`
+const VoteItem = styled.div<{ check: boolean }>`
   margin: 1rem 0;
   overflow: scroll;
+  padding: 1rem;
   /* border: 1px solid orange; */
   &:active {
     background-color: #dcdcdc;
   }
+
+  ${(props) =>
+    props.check &&
+    css`
+      background-color: #fff0e7;
+      /* border: solid #fe9d3a 1px; */
+      /* color: #fe9d3a; */
+    `}
 `;
 
 const FoodImg = styled.img<{ src: string }>`
