@@ -60,6 +60,8 @@
 - 그룹 음식 추천은 모든 그룹원의 개인 추천 결과를 합집합 한 뒤 내부적인 점수를 기준으로 추천합니다.
 - 그룹원은 투표를 통해 함께 먹을 음식을 정할 수 있습니다.
 
+## 개발환경
+
 ### 백엔드
 
 ![Static Badge](https://img.shields.io/badge/java-11-0B9A47?style=flat-square)
