@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs "NodeJS" // 여기서 "Node18"은 위에서 설정한 Node.js의 이름입니다.
+    }
+
+    stages {
+        
+    stage('React build') {
+        steps {
+            dir('frontend') {
+                echo 'React build'
+                sh 'npm install' // --save 옵션은 더 이상 필요하지 않습니다.
+                sh 'CI=false npm run build'
+            }
+        }
+    }
+
+    stage('Dockerimage build') {
+        steps {
+            dir('frontend') {
+                sh '''
+                echo 'Dockerimage build for React'
+                docker build -t docker-react:0.0.1 .
+                '''
+            }
+        }
+    }
+
+    stage('Deploy') {
+        steps {
+            sh '''
+            echo 'Deploy React'
+            docker stop react
+            docker rm react
+            docker run -d -p 127.0.0.1:3000:3000 --name react docker-react:0.0.1
+            docker images -f "dangling=true" -q | xargs -r docker rmi
+            '''
+        }
+    }
+}
+}
