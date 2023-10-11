@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+stages {
+    stage('Springboot build') {
+        steps {
+            dir('backend'){
+                sh '''
+                echo 'springboot build'
+                chmod +x gradlew
+                ./gradlew clean build
+                '''
+            }
+        }
+    }
+    stage('Dockerimage build') {
+        steps {
+            dir('backend'){
+                sh '''
+                echo 'Dockerimage build'
+                docker build -t docker-springboot:0.0.1 .
+                '''
+            }
+        }
+    }
+    stage('Deploy') {
+        steps {
+            dir('backend'){
+
+                sh '''
+                echo 'Deploy'
+                docker stop springboot
+                docker rm springboot
+                docker run -d -p 127.0.0.1:8080:8080 --name springboot docker-springboot:0.0.1
+                docker images -f "dangling=true" -q | xargs -r docker rmi
+                '''
+            }
+        }
+    }
+
+
+
+
+}
+}

@@ -1,0 +1,23 @@
+.friendBox {
+  width: 100%;
+  height: 4rem;
+  border-bottom: 1px solid #c6c5c5;
+  display: flex;
+  /* justify-content: space-around; */
+  align-items: center;
+  padding: 0.2rem;
+}
+
+.profileBox {
+  border-radius: 100%;
+  width: 3rem;
+  height: 3rem;
+  overflow: hidden;
+  /* border: 1px solid black; */
+  margin: 1rem;
+}
+
+.profileImg {
+  width: 3rem;
+  height: 4rem;
+}
