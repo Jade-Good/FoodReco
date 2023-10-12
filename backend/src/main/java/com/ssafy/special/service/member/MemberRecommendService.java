@@ -324,7 +324,7 @@ public class MemberRecommendService {
 
     public List<RecommendFoodDto> getRecommendList(Long memberSeq, LocalDateTime now,String memberEmail, int googleSteps, String nowWeather) throws JsonProcessingException {
 //        지난 1~2주 사이에 추천 받은 음식을 기반으로 추천
-        List<RecentRecommendFoodDto> recentlyRecommendedFood = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
+        List<RecentRecommendFoodResult> recentlyRecommendedFood = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
 
         if(nowWeather == null) {
             nowWeather = "맑음";
@@ -334,22 +334,30 @@ public class MemberRecommendService {
         int steps = optionalMember.get().getActivity();
         int totalSteps = steps + googleSteps;
 
-        List<RecentRecommendFoodDto> favoriteList = memberRecommendRepository.findRecentlyRecommendedFood(memberSeq, now);
+
 
 
 //          좋아하는 음식 리스트
         Set<RecentRecommendFoodDto> recommendedSet = new HashSet<>();
-        recommendedSet.addAll(recentlyRecommendedFood);
+        if(recentlyRecommendedFood.size()>0){
+            List<RecentRecommendFoodDto> recentlyRecommendedFoodList = recentlyRecommendedFood.stream()
+                    .map(result -> new RecentRecommendFoodDto(result.getFoodSeq(), result.getName()))
+                    .collect(Collectors.toList());
+            recommendedSet.addAll(recentlyRecommendedFoodList);
+        }
+
+
+
         List<UserTasteDto> userFavoriteList = memberService.getUserPreference(memberEmail, 0);
         if(userFavoriteList.size()>0) {
-            favoriteList = userFavoriteList.stream()
+            List<RecentRecommendFoodDto> favoriteList = userFavoriteList.stream()
                     .map(RecentRecommendFoodDto::new)
                     .collect(Collectors.toList());
             recommendedSet.addAll(favoriteList);
         }
 
 
-        recentlyRecommendedFood = recommendedSet.stream().distinct().collect(Collectors.toList());
+        List<RecentRecommendFoodDto> unionedList = recommendedSet.stream().distinct().collect(Collectors.toList());
 
 //        현재상황과 유사한 활동량과 날씨를 추출
         List<RecentRecommendFoodResult> resultList = new ArrayList<>();
@@ -368,7 +376,7 @@ public class MemberRecommendService {
                 .collect(Collectors.toList());
 
         Set<RecentRecommendFoodDto> similarAdded = new HashSet<>();
-        similarAdded.addAll(recentlyRecommendedFood);
+        similarAdded.addAll(unionedList);
         similarAdded.addAll(similarFoodList);
 
         List<RecentRecommendFoodDto> similarAddedList = new ArrayList<>(similarAdded);
