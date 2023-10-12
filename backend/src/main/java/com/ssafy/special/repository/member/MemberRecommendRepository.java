@@ -25,8 +25,8 @@ public interface MemberRecommendRepository extends JpaRepository<MemberRecommend
     void updateFoodRating(@Param("newRate") int newRate, @Param("memberRecommendSeq") Long memberRecommendSeq);
 
     /* 14일 이전부터 7일 전까지 추천받은 음식 리스트 */
-    @Query("SELECT mr.food.foodSeq, mr.food.name FROM member_recommend mr WHERE mr.member.memberSeq = :memberSeq AND DATEDIFF(:now, mr.recommendAt) < 14 and DATEDIFF(:now, mr.recommendAt) > 7 AND mr.foodRating > 1 ORDER BY mr.foodRating DESC, mr.recommendAt DESC")
-    List<RecentRecommendFoodDto>
+    @Query(value = "SELECT f.food_seq as foodSeq, f.name FROM member_recommend mr join food f on mr.food_seq = f.food_seq WHERE mr.member_seq = :memberSeq AND DATEDIFF(:now, mr.recommend_at) < 14 and DATEDIFF(:now, mr.recommend_at) > 7 AND mr.food_rating > 1 ORDER BY mr.food_rating DESC, mr.recommend_at DESC", nativeQuery = true)
+    List<RecentRecommendFoodResult>
     findRecentlyRecommendedFood(@Param("memberSeq") Long memberSeq, @Param("now")LocalDateTime now);
 
     List<MemberRecommend> findAllByMemberOrderByRecommendAtDesc(Member member);
