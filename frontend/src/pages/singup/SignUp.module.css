@@ -1,0 +1,43 @@
+.container {
+  height: calc(var(--vh, 1vh) * 100);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.containerNoHeight {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+}
+
+.inputContainer {
+  margin: 10px;
+}
+
+.autoLoginContainer {
+  display: flex;
+  justify-content: left;
+}
+
+.labelContainer {
+  display: flex;
+  justify-content: space-between; /* 수평으로 양 옆에 정렬 */
+  margin-bottom: 10px;
+}
+
+.labelStyle {
+  color: "#525252";
+  font-size: "1rem";
+  font-weight: "600";
+  display: "flex";
+}
+
+.rowContainer {
+  display: flex;
+  justify-content: space-between; /* 수평으로 양 옆에 정렬 */
+}
+
+.mB {
+  margin-bottom: 15px;
+}

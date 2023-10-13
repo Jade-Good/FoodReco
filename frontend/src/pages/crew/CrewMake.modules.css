@@ -1,0 +1,13 @@
+.input {
+  border-radius: 20px;
+  border: 1px solid #fe9d3a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70vw;
+  height: 3vh;
+}
+
+.input:focus {
+  border: 1px solid #ff8100;
+}
