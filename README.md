@@ -1,127 +1,314 @@
-# SAFFY 특화 프로젝트: Food Reco
+<img src="https://capsule-render.vercel.app/api?type=waving&color=FE9D3E&height=250&section=header&text=FoodReco&fontSize=90&fontAlign=70&fontAlignY=40&fontColor=FFE7D1" />
 
-<div align="center">
-  <img src="./img/food_reco_logo.png" width="125" />
-</div>
+### 목차
 
-## 목차
+| [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소개&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;](#소개) | [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;구현&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;](#구현) | [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;마치며&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;](#마치며) |
+| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                                                                    [🎈 개요](#🎈-개요)                                                                                                    |                                                                                                    [🚀 기능](#🚀-기능)                                                                                                    |                                                                                                      [👦 팀원](#👦-팀원)                                                                                                      |
+|                                                                                      [✨ 프로젝트 기획 배경](#✨-프로젝트-기획-배경)                                                                                      |                                                                                           [🍕 빅데이터 추천](#🍕-빅데이터-추천)                                                                                           |                                                                                                      [📣 소감](#📣-소감)                                                                                                      |
+|                                                                                               [🌳 빌드 환경](#🌳-빌드-환경)                                                                                               |                                                                                                  [👀 산출물](#👀-산출물)                                                                                                  |                                                                                                 [🌱 회고 기록](#🌱-회고-기록)                                                                                                 |
+|                                                                                             [🎯 기술 차별점](#🎯-기술-차별점)                                                                                             |                                                                                             [📚 파일 구조도](#📚-파일-구조도)                                                                                             |                                                                                                                                                                                                                               |
 
-| No. | 소제목                                            |
-| --- | ------------------------------------------------- |
-| 1   | [Food Reco란?](#1-food-reco란)                    |
-| 2   | [기존 메뉴 추천 시스템](#2-기존-메뉴-추천-시스템) |
-| 3   | [Food Reco 구현 사항](#3-food-reco-구현-사항)     |
-| 4   | [빅데이터 전처리](#4-빅데이터-전처리)             |
-| 5   | [개발 기간](#5-개발-기간)                         |
-| 6   | [팀원](#6-팀원)                                   |
-| 7   | [담당 역할](#7-담당-역할)                         |
-| 8   | [개발 환경](#8-개발환경)                          |
-| 9   | [지라 번다운 차트](#9-지라-번다운-차트)           |
-| 10  | [깃 플로우](#10-깃-플로우)                        |
-| 11  | [프로젝트 리뷰](#11-프로젝트-리뷰)                |
+<br/>
+<br/>
 
-## 1) Food Reco란?
+# 소개
 
-- 사용자의 취향에 맞춘 메뉴 추천 시스템입니다.
+## 🎈 개요
 
-## 2) 기존 메뉴 추천 시스템
+**_🖐 SSAFY 9기 2학기 특화 프로젝트 🖐_**  
+빅데이터 추천 알고리즘을 사용한 서비스를 개발해보자
 
-- 개인이 먹을 음식만을 추천하여 여럿이서 먹을 때 도움을 주지 못합니다.
+> 2023.08.25 ~ 2023.10.06 (6주)
 
-## 3) Food Reco 구현 사항
+[🔼 목차로 돌아가기](#목차)
 
-- 마이페이지 및 친구, 개인 음식 추천
+<br/>
 
-<div align="center">
-<img src="./img/mypage.jpg" width="125" height="250"/>
-  <img src="./img/friend_list.jpg" width="125" height="250"/>
-  <img src="./img/personal_reco.PNG" width="125" height="250"/>
-</div>
+## ✨ 프로젝트 기획 배경
 
-- 그룹 참가 및 그룹 상세페이지, 투표 페이지
+**"오늘 저녁 뭐먹지?"**
 
-<div align="center" style="margin-bottom: 30px">
-  <img src="./img/group_list.jpg" width="125" height="250"/>
-    <img src="./img/group_detail.jpg" width="125" height="250"/>
-    <img src="./img/group_vote.jpg" width="125" height="250"/>
+> 매일 사람들이 고민하는 이 고민을 _'빅데이터 추천 알고리즘'_ 을 이용해서 해결해보고자 했습니다.  
+> 우리는 주위 친구, 동료들에게 묻곤 하지만, 나의 기분과 경제상황, 최근에 먹은 음식들을 다 고려해서 추천해서 추천하기란 쉽지 않아 금새 실증이 나곤 합니다.
 
-</div>
+<br/>
 
-- 구글 피트니스 연동을 통해 개인의 활동량 데이터를 받습니다.
-- 개인 음식 피드백 점수, 날씨, 활동량, 재료를 기반으로 사전에 학습시킨 TF-IDF 벡터의 코사인 유사도를 비교하여 음식을 추천합니다.
-- 추천 알고리즘 결과중 특정 음식이 알러지 재료를 포함하거나, 차단 또는 최근에 먹은 음식이 있다면 필터링 하여 제공합니다.
-- 그룹 음식 추천은 모든 그룹원의 개인 추천 결과를 합집합 한 뒤 내부적인 점수를 기준으로 추천합니다.
-- 그룹원은 투표를 통해 함께 먹을 음식을 정할 수 있습니다.
+**"알아서 내 상황을 고려해 추천해줄 수는 없을까?"**
 
-## 4) 빅데이터 전처리
+> 나의 음식 취향, 최근 먹은 메뉴, 오늘 활동량, 알러지, 날씨 등 다양한 요소들을 모두 고려한 하이 태크 추천 시스템을 만들어보고자 했습니다.  
+> 서버의 숨겨진 뒷 작업으로는 많은 데이터가 오가지만, 사용자가 보기에는 딱히 귀찮게 입력하는 것 없이 오늘의 메뉴가 추천되는 컨셉입니다.
 
-1. 만개의 레시피 데이터중 음식명 열에서 음식명이 아닌 음식 제거
-2. 중복되는 음식명 제거
-3. 재료가 카테고리형식으로 되어있지 않았기에 재료를 30개로 재한하여 정리
-4. 재료에는 없지만 음식명에 재료가 포함되어 있는 경우 재료에 추가
-5. 조리방식, 음식분류1, 음식분류2 열을 통일시켜 정리
-6. TF-IDF 벡터 유사도를 사용하여 음식명이 유사한 행을 한개만 남기고 제거
+[🔼 목차로 돌아가기](#목차)
 
-## 5) 개발 기간
+<br/>
 
-- 2023년 8월 25일 ~ 2023년 10월 6일
+## 🌳 빌드 환경
 
-## 6) 팀원
+| FrontEnd                    | BackEnd                        | Database               | Infra                      |
+| :-------------------------- | :----------------------------- | :--------------------- | :------------------------- |
+| Node.js 16.18.50            | Java 11 (Oracle jdk : 11.0.20) | MySQL 8.0.33           | AWS EC2 (Ubuntu 20.04 LTS) |
+| React.js 18.2.21            | Spring Boot 2.7.15             | MySQL Workbench 8.0 CE | AWS S3 Bucket              |
+| react-router-dom 6.14.2     | Gradle 8.2.1                   | Redis 7.2.1            | Nginx 1.18.0               |
+| react-toastify 9.1.3        | Spring Security 5.7.10         |                        | Jenkins 2.402              |
+| react-hook-form 7.46.1      | JPA & QueryDsl                 |                        | Docker 23.0.6              |
+| react-hot-toast 2.4.1       | Hibernate 7.0.5                |                        | Docker Compose 2.17.3      |
+| react-icons 4.11.0          | IntelliJ Ultimate 2023.1.3     |                        | SonarQube 10.0.0.68432     |
+| react-kakao-maps-sdk 1.1.21 | JWT 4.2.1                      |
+| react-modal 3.16.1          | smtp 2.7.0                     |
+| react-query 3.39.3          | S3 2.2.1                       |
+| Axios 1.5.0                 | lombok 1.18.14                 |
+| TypeScript 4.9.5            |                                |
+| Recoil 0.7.7                |                                |
+| Styled-Components 6.0.8     |                                |
+| mui-iconsmaterial 5.14.11   |                                |
+| mui-material 5.14.11        |                                |
 
-- 강수민(팀장)
+[🔼 목차로 돌아가기](#목차)
+
+<br/>
+
+## 🎯 기술 차별점
+
+[🔼 목차로 돌아가기](#목차)
+
+<br/>
+
+# 구현
+
+## 🚀 기능
+
+|                                                             로그인                                                             |                                           회원가입                                            |             마이페이지              |
+| :----------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------: | :---------------------------------: |
+|                                                  ![로그인](./img/로그인.gif)                                                   |                                ![회원가입](./img/회원가입.gif)                                | ![마이페이지](./img/마이페이지.gif) |
+| 로그인입니다. <br> 로그인 기능을 설명해야하는데 <br> 주절주절 떠들 면 표가 어떻게 되려나?? <br> 좀 길어질텐데 어케될까요? <br> | 회원가입이다. <br> 얘도 주절주절 떠들면 어떻게될까? <br> 설명을 여기다 넣는다는게 좀 에바였나 |             마이페이지              |
+
+|            메뉴추천             |          친구           |           그룹           |
+| :-----------------------------: | :---------------------: | :----------------------: |
+| ![메뉴추천](./img/메뉴추천.gif) | ![친구](./img/친구.gif) | !![그룹](./img/그룹.gif) |
+|          메뉴추천이다           |       친구추가다        |         그룹기능         |
+
+[🔼 목차로 돌아가기](#목차)
+
+<br/>
+
+## 🍕 빅데이터 추천
+
+[🔼 목차로 돌아가기](#목차)
+
+<br/>
+
+## 👀 산출물
+
+### 와이어 프레임, 디자인, 목업
+
+### ERD
+
+![ERD](./img/특화ERD.png)
+
+### 시스템 구조도
+
+![시스템구조도](./img/시스템구조도.png)
+
+### 간트차트
+
+<img src="./img/간트차트1.png" width=40%>
+<img src="./img/간트차트2.png" width=40%>
+
+### 지라 이슈
+
+![지라이슈](./img/지라이슈.png)
+
+### 지라 번다운 차트
+
+|            1주차 스프린트             |            2주차 스프린트             |            3주차 스프린트             |
+| :-----------------------------------: | :-----------------------------------: | :-----------------------------------: |
+| ![번다운차트1](./img/번다운차트1.png) | ![번다운차트2](./img/번다운차트2.png) | ![번다운차트3](./img/번다운차트3.png) |
+
+|            4주차 스프린트             |            5주차 스프린트             |
+| :-----------------------------------: | :-----------------------------------: |
+| ![번다운차트4](./img/번다운차트4.png) | ![번다운차트5](./img/번다운차트5.png) |
+
+### 중간발표 ppt
+
+![중간발표](./img/중간발표.gif)
+
+### 최종발표 ppt
+
+![최종발표](./img/최종발표.gif)
+[🔼 목차로 돌아가기](#목차)
+
+<br/>
+
+## 📚 파일 구조도
+
+### FrontEnd
+
+```
+📦frontend
+ ┣ 📂public
+ ┃ ┣ 📂images
+ ┣ 📂src
+ ┃ ┣ 📂components
+ ┃ ┃ ┣ 📂crewpage
+ ┃ ┃ ┣ 📂footer
+ ┃ ┃ ┣ 📂friend
+ ┃ ┃ ┣ 📂header
+ ┃ ┃ ┣ 📂inputs
+ ┃ ┃ ┣ 📂membercomponents
+ ┃ ┃ ┣ 📂option
+ ┃ ┃ ┗ 📂recommend
+ ┃ ┣ 📂fonts
+ ┃ ┣ 📂hooks
+ ┃ ┣ 📂model
+ ┃ ┣ 📂pages
+ ┃ ┃ ┣ 📂crew
+ ┃ ┃ ┣ 📂crewRecomendation
+ ┃ ┃ ┣ 📂friend
+ ┃ ┃ ┣ 📂login
+ ┃ ┃ ┣ 📂main
+ ┃ ┃ ┣ 📂member
+ ┃ ┃ ┣ 📂memberRecommendation
+ ┃ ┃ ┣ 📂notfound
+ ┃ ┃ ┣ 📂singup
+ ┃ ┣ 📂recoil
+ ┃ ┃ ┗ 📂atoms
+ ┃ ┣ 📂redux
+ ┃ ┃ ┣ 📂slices
+ ┃ ┃ ┗ 📂store
+ ┃ ┣ 📂styles
+ ┃ ┣ 📂utils
+```
+
+### BackEnd
+
+```
+📦backend
+ ┣ 📂src
+ ┃ ┗ 📂main
+ ┃ ┃ ┗ 📂java
+ ┃ ┃ ┃ ┗ 📂com
+ ┃ ┃ ┃ ┃ ┗ 📂ssafy
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂special
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂controller
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂crew
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂etc
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂food
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📂member
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂response
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂repository
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂crew
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂etc
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂food
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂member
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂security
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂filter
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂handler
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📂service
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂service
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂crew
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂etc
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂food
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📂member
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂util
+
+ 📦fastapi
+ ┣ 📂app
+ ┃ ┣ 📂model
+
+ 📦dataproccess
+ ┣ 📂food_process
+ ┃ ┣ 📂model
+ ┃ ┣ 📂preprocessed_data
+ ┃ ┃ ┣ 📂food_calorie
+ ┃ ┃ ┗ 📂menu_ingredient
+```
+
+[🔼 목차로 돌아가기](#목차)
+
+<br/>
+
+# 마치며
+
+## 👦 팀원
+
+| [강수민(팀장)](https://github.com/Jade-Good) |     [김동우](#👦-팀원)      | [이대건](https://github.com/leedaegeon) | [임규돈](https://github.com/KyuDonLim) | [조준희](https://github.com/jjunehee) |
+| :------------------------------------------: | :-------------------------: | :-------------------------------------: | :------------------------------------: | :-----------------------------------: |
+|         ![강수민](./img/강수민.png)          | ![김동우](./img/김동우.png) |       ![이대건](./img/이대건.png)       |      ![임규돈](./img/임규돈.png)       |      ![조준희](./img/조준희.png)      |
+|                   FE / PM                    |             FE              |               BE / RecSys               |                 BE /DB                 |              BE / Infra               |
+
+### 팀원 역할
+
+**_FrontEnd_**
+
+- 강수민
+  - 디자인
+  - 컴포넌트
 - 김동우
-- 조준희
+
+**_BackEnd_**
+
+- 이대건
 - 임규돈
-- 이대건
+- 조준희
 
-### 7) 담당 역할
+**_Infra_**
 
-- 이대건: 빅데이터 전처리 및 백엔드 개발
+- 조준희
 
-  - 음식 빅데이터 전처리
-  - fastAPI 추천 시스템 개발
-  - spring boot와 fastAPI 통신
-  - spring 서버에서 추천 결과 후처리(필터링)
-  - 구글 OAuth2.0 권한 연동
-  - google fitness API를 통해 유저 걸음 정보 수집
+[🔼 목차로 돌아가기](#목차)
 
-## 8) 개발환경
+<br/>
 
-### 백엔드
+## 📣 소감
 
-![Static Badge](https://img.shields.io/badge/java-11-0B9A47?style=flat-square)
-![Static Badge](https://img.shields.io/badge/Spring%20Boot-2.7.15-0B9A47?style=flat-square)
-![Static Badge](https://img.shields.io/badge/redis-2.7.15-0B9A47?style=flat-square)
-![Static Badge](https://img.shields.io/badge/JPA-5.6.15-0B9A47?style=flat-square)
-![Static Badge](https://img.shields.io/badge/Spring%20Security-5.7.10-0B9A47?style=flat-square)
-![Static Badge](https://img.shields.io/badge/Webflux-2.7.15-0B9A47)
+**_수민_**
 
-![Static Badge](https://img.shields.io/badge/Python-3.11-0B9A47)
-![Static Badge](https://img.shields.io/badge/fastAPI-0.103.1-0B9A47)
+> 끝까지 포기하지 않고 프로젝트 개발을 위해 노력했습니다. 새롭게 접하는 분야라고 너무 어렵다고 걱정만 하는 게 아니라, 도전적으로 기술을 접하고 사용하는게 좋은 경험이 된 것 같습니다. 디자인에서 특히 느꼈지만, 팀원들의 피드백을 받고 수용하는게 정말 중요한 것 같습니다.
 
-### 프론트 엔드
+**_동우_**
 
-![Static Badge](https://img.shields.io/badge/Node-18.16.1-0B9A47?style=flat-square)
-![Static Badge](https://img.shields.io/badge/React-18.2.0-0B9A47?style=flat-square)
-![Static Badge](https://img.shields.io/badge/Axios-1.5.0-0B9A47?style=flat-square)
-![Static Badge](https://img.shields.io/badge/React%20router%20dom-6.14.2-0B9A47?style=flat-square)
-![Static Badge](https://img.shields.io/badge/recoil-0.7.7-0B9A47)
+> 이전 프로젝트때 코드가 굉장히 복잡했는데 이러한 코드를 해결하기 위해 새로운 라이브러리를 도입하여 클린코드를 일부 성취했다고 생각함. 새로운 시도, 도전하는 용기. 끝맺음, 성공하기 위해 끝까지 끊임없이 수행
 
-## 9) 지라 번다운 차트
+**_규돈_**
 
-![img](./img/food_reco_burndown.PNG)
+> 팀원들 설득해서라도 프로젝트의 완성도를 위해 노력하기. 개발할 때에 최대한의 상황을 고려하여 코드 작성을 하여 발생할 수 있는 모든 경우의 수에 대한 처리를 해 놓는 것이 좋았습니다. 같이 작업하는 팀원의 피드백을 바탕으로 더 나은 정보를 제공하는 것이 좋다.
 
-## 10) 깃 플로우
+**_준희_**
 
-- master: 실제 서비스에 적용될 코드
-- develop(default) : 스프린트 단위로 적용될 코드(1주)
-- feat : 맡은 파트별 기준 브랜치(띄어쓰기는 -)
-  - `feature/fe/login`
-  - `feature/be/login-api`
-- hotfix: master에서 급하게 수정할 것
+> 그래도 프로젝트가 서비스는 가능한 수준으로 완성했다. 팀원들과 많은 의견을 나누며 프로젝트를 진행했다.
 
-## 11) 프로젝트 리뷰
+**_대건_**
 
-- 이대건
-  - 내부적으로는 많은 데이터를 처리하여 결과를 도출하지만 발표 시에 처리 과정을 드러내지 못해 아쉬움이 남습니다.
-  - 데이터 전처리를 일일이 해야 하는 것인 것을 깨달았고 앞으로도 데이터 전처리를 하게 되면 더 꼼꼼히 하고 싶습니다.
+> 일정을 맞추는 것은 굉장히 중요한 일임을 알게되었다. 안될것 같은 오픈을 어찌저찌 해냈다. 구글 oauth, fastapi, jpa 처음 사용하는 기술을 사용하는 경험이 좋았다. 앞으로도 더 많은 기술을 찾아보자
+
+[🔼 목차로 돌아가기](#목차)
+
+<br/>
+
+## 🌱 회고 기록
+
+### 데일리 회고
+
+[🔹 강수민 데일리 회고](./회고/kangsoomin/README.md)
+
+[🔹 김동우 데일리 회고](./회고/kimdongwoo/Readme.md)
+
+[🔹 이대건 데일리 회고](./회고/leedaegeon/Readme.md)
+
+[🔹 임규돈 데일리 회고](./회고/limkyudon/README.md)
+
+[🔹 조준희 데일리 회고](./회고/chojunhee/README.md)
+
+[🔼 목차로 돌아가기](#목차)
+
+<br/>
+
+### 스크럼
+
+### 스프린트 회고
