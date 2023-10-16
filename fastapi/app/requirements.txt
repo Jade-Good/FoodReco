@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pandas
+scikit-learn
+Levenshtein
+joblib
+pydantic
+uvloop
+openpyxl

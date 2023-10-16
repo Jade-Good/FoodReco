@@ -1,0 +1,26 @@
+{
+  "short_name": "Food Reco",
+  "name": "Food Reco",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "geolocation": {
+    "default": "allow",
+    "high_accuracy": true,
+    "maximum_age": 0,
+    "timeout": 60000
+  },
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
