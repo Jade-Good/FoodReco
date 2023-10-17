@@ -1,4 +1,4 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=FE9D3E&height=250&section=header&text=FoodReco&fontSize=90&fontAlign=70&fontAlignY=40&fontColor=FFE7D1" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=FE9D3E&height=250&section=header&text=🌭FoodReco&fontSize=90&fontAlign=65&fontAlignY=40&fontColor=FFE7D1" />
 
 ### 목차
 
