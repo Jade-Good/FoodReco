@@ -1,0 +1,74 @@
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2vmin;
+  box-shadow: 0px -0.1vmin 0 0 rgba(0, 0, 0, 0.25);
+  background-color: white;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* ------------------------------------------ */
+
+/* 버튼 = 아이콘 + 텍스트 */
+.iconBtn {
+  display: flex;
+  width: 20vmin;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #c6c5c5;
+}
+/* 아이콘 */
+.iconStyle {
+  cursor: pointer;
+  font-size: 10vmin;
+  pointer-events: none;
+}
+
+/* 텍스트 */
+.iconText {
+  font-size: 3.5vmin;
+  font-weight: bold;
+}
+
+/* ------------------------------------------ */
+
+/* 원 모양의 아이콘을 감싸는 div 스타일 */
+.circleStyle {
+  display: flex;
+  position: absolute;
+  bottom: 8vmin;
+  justify-content: center;
+  align-items: center;
+  width: 16vmin;
+  height: 16vmin;
+  border-radius: 100%;
+  background-color: #c6c5c5;
+  box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 추천 아이콘 */
+.starIconStyle {
+  font-size: 12vmin;
+  color: white;
+  cursor: pointer;
+  pointer-events: none;
+
+}
+
+/* ------------------------------------------ */
+
+/* 활성 버튼 */
+.iconBtnAtive {
+  color: #fe9d3a;
+}
+
+.iconBtnAtive > .circleStyle {
+  background-color: #fe9d3a;
+}

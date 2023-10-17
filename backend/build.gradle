@@ -1,0 +1,75 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.15'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.ssafy'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '11'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation group: 'org.hibernate', name: 'hibernate-validator', version: '7.0.5.Final'
+
+	// security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// JWT
+	implementation 'com.auth0:java-jwt:4.2.1'
+
+	// thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// mysql
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	// 기본 설정
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok:1.18.14'
+	annotationProcessor 'org.projectlombok:lombok:1.18.14'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
+	// redis 설정
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// smtp
+	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.0'
+	implementation group: 'org.json', name: 'json', version: '20210307'
+
+
+	// fcm, okhttp
+	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.1.1'
+	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0'
+
+	// S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
+
+	// web client
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// jackson
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
