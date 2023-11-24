@@ -4,7 +4,7 @@
 
 | [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소개&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;](#소개) | [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;구현&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;](#구현) | [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;마치며&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;](#마치며) |
 | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                                                              [:balloon: 개요](#balloon-개요)                                                                                              |                                                                                               [:rocket: 기능 시연](#rocket-기능-시연)                                                                                               |                                                                                                    [:boy: 팀원](#boy-팀원)                                                                                                    |
+|                                                                                              [:balloon: 개요](#balloon-개요)                                                                                              |                                                                                          [:rocket: 기능 시연](#rocket-기능-시연)                                                                                          |                                                                                                    [:boy: 팀원](#boy-팀원)                                                                                                    |
 |                                                                               [:sparkles: 프로젝트 기획 배경](#sparkles-프로젝트-기획-배경)                                                                               |                                                                                       [:pizza: 빅데이터 추천](#pizza-빅데이터-추천)                                                                                       |                                                                                                   [:mega: 소감](#mega-소감)                                                                                                   |
 |                                                                                  [:deciduous_tree: 빌드 환경](#deciduous_tree-빌드-환경)                                                                                  |                                                                                               [:eyes: 산출물](#eyes-산출물)                                                                                               |                                                                                          [:seedling: 회고 기록](#seedling-회고-기록)                                                                                          |
 |                                                                                            [:dart: 기능 설명](#dart-기능-설명)                                                                                            |                                                                                         [:books: 파일 구조도](#books-파일-구조도)                                                                                         |                                                                                                                                                                                                                               |
@@ -145,6 +145,8 @@
 
 ## :pizza: 빅데이터 추천
 
+### 빅데이터 전처리 과정
+
 1. 만개의 레시피 데이터중 음식명 열에서 음식명이 아닌 메뉴를 제거했습니다.
 
 2. 중복되는 음식명의 메뉴를 제거했습니다.
@@ -159,9 +161,14 @@
 
 7. TF-IDF 모델을 활용하여 기준이 되는 음식과 코사인 유사도를 계산하는 방식으로 컨텐츠 기반 추천을 진행했습니다.
 
-[🗂️ 전처리 데이터 보러가기](./fastapi/app/model/indexed_new_ingredient.xlsx)
+> [🗂️ 전처리 데이터 보러가기](./fastapi/app/model/indexed_new_ingredient.xlsx)
 
-<br>
+### 메뉴 추천 알고리즘
+
+- 위에서 만든 모델에 사용자의 선호 음식을 입력시 유사한 음식이 추천
+
+- python의 머신러닝, 행렬 계산 라이브러리를 사용하기 위해 fastAPI 서버를 별도로 운영
+  <br>
 
 [🔼 목차로 돌아가기](#목차)
 
@@ -345,6 +352,7 @@
 - 이대건
   - ERD 설계
   - 음식 빅데이터 전처리
+  - 전처리된 빅데이터를 기반으로 모델 학습
   - fastAPI를 활용하여 추천 시스템 개발
   - spring boot와 fastAPI 통신
   - spring 서버에서 추천 결과 후처리(필터링)
